@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
             $table->string('ref_num')->unique();
+            $table->string('title');
             $table->text('description');
             $table->enum('status', ['pending', 'validated', 'rejected', 'resolved'])->default('pending');
             $table->decimal('latitude', 10, 8);
