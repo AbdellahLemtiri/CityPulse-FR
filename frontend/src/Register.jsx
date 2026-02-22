@@ -18,3 +18,27 @@ export default function Register() {
         <div></div>
     );
 }
+const handleChange = (event) => {
+    setFormData((prevState) => ({
+        ...prevState,
+        [event.target.id]: event.target.value,
+    }));
+};
+
+const nextStep = () => setStep((prevState) => prevState + 1);
+const prevStep = () => setStep((prevState) => prevState - 1);
+/*************  ✨ Smart Paste 📚  *************/
+/*******  be4f8d33-76a6-44e1-8a1f-45dc62e9feb7  *******/
+const handleSubmit = (event) => {
+    event.preventDefault();
+    nextStep();
+};
+
+const handleFormSubmit = (event) => {
+    event.preventDefault();
+    nextStep();
+};
+
+
+/*************  ✨ Smart Paste 📚  *************/
+/*******  33aee643-56ac-44bf-af6d-fe08f01a414d  *******/
