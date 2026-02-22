@@ -59,4 +59,17 @@ const onSubmit = (e) => {
                     setErrors(response.data.errors);
                 }
             });
-    };
+    };return (
+        <div className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+            <div className="w-full max-w-lg z-10">
+                <div className="mb-8 text-center">
+                    <h1 className="text-3xl font-bold tracking-tight">Safi<span className="text-orange-600">Pulse</span></h1>
+                    <p className="text-slate-500 mt-2">Création de votre compte citoyen</p>
+                </div>
+                
+                {/* hnaya ghadi nzidou lbaqi */}
+            </div>
+        </div>
+    );
