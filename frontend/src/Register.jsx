@@ -73,3 +73,19 @@ const onSubmit = (e) => {
             </div>
         </div>
     );
+<div className="mb-8">
+    <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
+        {[1, 2, 3].map((stepNumber, index) => (
+            <span key={index} className={step >= stepNumber ? "text-orange-600" : ""}>
+                {index === 0 ? "Identité" : index === 1 ? "Localisation" : "Sécurité"}
+            </span>
+        ))}
+    </div>
+    <div className="flex gap-2 h-1.5">
+        {[1, 2, 3].map((stepNumber, index) => (
+            <div key={index} className={`flex-1 rounded-full transition-all ${step >= stepNumber ? "bg-orange-600" : "bg-slate-200 dark:bg-slate-800"}`}></div>
+        ))}
+    </div>
+</div>
+/*************  ✨ Smart Paste 📚  *************/
+/*******  1f0d39c7-4241-493d-a328-a4501869ae9e  *******/
