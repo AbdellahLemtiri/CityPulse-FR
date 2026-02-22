@@ -94,4 +94,31 @@ const onSubmit = (e) => {
                             <p key={key}>{errors[key][0]}</p>
                         ))}
                     </div>
-                )}
+                )}<div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 relative">
+                    <form onSubmit={onSubmit} className="flex flex-col min-h-[350px] justify-between">
+                        
+                        {step === 1 && (
+                            <div className="animate-fade-in space-y-4">
+                                <h2 className="text-2xl font-bold mb-4">Qui êtes-vous ?</h2>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-xs font-bold text-slate-500 uppercase ml-1">Prénom</label>
+                                        <input type="text" id="first_name" value={formData.first_name} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 outline-none focus:border-orange-500 mt-1" />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-bold text-slate-500 uppercase ml-1">Nom</label>
+                                        <input type="text" id="last_name" value={formData.last_name} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 outline-none focus:border-orange-500 mt-1" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-slate-500 uppercase ml-1">CIN</label>
+                                    <input type="text" id="cin" value={formData.cin} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 outline-none focus:border-orange-500 mt-1" />
+                                </div>
+                                <button type="button" onClick={nextStep} className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl transition-all mt-4">
+                                    Suivant
+                                </button>
+                            </div>
+                        )}
+                        
+                    </form>
+                </div>
