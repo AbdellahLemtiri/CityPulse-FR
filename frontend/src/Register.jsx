@@ -88,4 +88,10 @@ const onSubmit = (e) => {
     </div>
 </div>
 /*************  ✨ Smart Paste 📚  *************/
-/*******  1f0d39c7-4241-493d-a328-a4501869ae9e  *******/
+/*******  1f0d39c7-4241-493d-a328-a4501869ae9e  *******/{errors && (
+                    <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-3 rounded-lg mb-4">
+                        {Object.keys(errors).map(key => (
+                            <p key={key}>{errors[key][0]}</p>
+                        ))}
+                    </div>
+                )}
