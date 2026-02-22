@@ -42,3 +42,21 @@ const handleFormSubmit = (event) => {
 
 /*************  ✨ Smart Paste 📚  *************/
 /*******  33aee643-56ac-44bf-af6d-fe08f01a414d  *******/
+const onSubmit = (e) => {
+        e.preventDefault();
+        setErrors(null);
+        setLoading(true);
+
+        axiosClient.post('/register', formData)
+            .then(({ data }) => {
+                setUser(data.user);
+                setToken(data.access_token);
+            })
+            .catch(err => {
+                setLoading(false);
+                const response = err.response;
+                if (response && response.status === 422) {
+                    setErrors(response.data.errors);
+                }
+            });
+    };
