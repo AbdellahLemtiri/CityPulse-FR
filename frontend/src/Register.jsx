@@ -121,4 +121,21 @@ const onSubmit = (e) => {
                         )}
                         
                     </form>
-                </div>
+                </div>{step === 2 && (
+                            <div className="animate-fade-in space-y-4">
+                                <h2 className="text-2xl font-bold mb-4">Votre Secteur</h2>
+                                <div>
+                                    <label className="text-xs font-bold text-slate-500 uppercase ml-1">Quartier</label>
+                                    <select id="quartier" value={formData.quartier} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 outline-none focus:border-orange-500 mt-1">
+                                        <option value="" disabled>Choisir...</option>
+                                        <option value="Plateau">Plateau</option>
+                                        <option value="Jrifat">Jrifat</option>
+                                        <option value="Sidi Bouzid">Sidi Bouzid</option>
+                                    </select>
+                                </div>
+                                <div className="flex gap-3 mt-6">
+                                    <button type="button" onClick={prevStep} className="px-6 border border-slate-200 dark:border-slate-700 text-slate-500 font-bold py-3.5 rounded-xl">Retour</button>
+                                    <button type="button" onClick={nextStep} className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl transition-all">Suivant</button>
+                                </div>
+                            </div>
+                        )}
