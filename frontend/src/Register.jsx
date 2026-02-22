@@ -5,44 +5,39 @@ import { useStateContext } from './contexts/ContextProvider';
 
 export default function Register() {
     const { token, setToken, setUser } = useStateContext();
+    
+    // هادي كتحكم فـ أي مرحلة حنا (1, 2, أو 3)
     const [step, setStep] = useState(1);
     
+    // هادي كتجمع ڭاع المعلومات ديال المواطن فدقة وحدة
     const [formData, setFormData] = useState({
-        first_name: '', last_name: '', email: '', password: '', cin: '', telephone: '', quartier: '',
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        // هادو زايدين عندك فـ الديزاين، تقدر تزيدهم فـ Database من بعد
+        cin: '', 
+        telephone: '',
+        quartier: '',
     });
 
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    return (
-        <div></div>
-    );
-}
-const handleChange = (event) => {
-    setFormData((prevState) => ({
-        ...prevState,
-        [event.target.id]: event.target.value,
-    }));
-};
+    // إلا كان ديجا مكونيكطي، يرجع لـ Dashboard
+    if (token) return <Navigate to="/dashboard" />;
 
-const nextStep = () => setStep((prevState) => prevState + 1);
-const prevStep = () => setStep((prevState) => prevState - 1);
-/*************  ✨ Smart Paste 📚  *************/
-/*******  be4f8d33-76a6-44e1-8a1f-45dc62e9feb7  *******/
-const handleSubmit = (event) => {
-    event.preventDefault();
-    nextStep();
-};
+    // هاد الفانكشن كتشد أي حاجة تكتبات فـ Inputs وكتحطها فـ formData
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.id]: e.target.value });
+    };
 
-const handleFormSubmit = (event) => {
-    event.preventDefault();
-    nextStep();
-};
+    // باش ندوزو للمرحلة الجاية (مع تأكد خفيف)
+    const nextStep = () => setStep((prev) => prev + 1);
+    const prevStep = () => setStep((prev) => prev - 1);
 
-
-/*************  ✨ Smart Paste 📚  *************/
-/*******  33aee643-56ac-44bf-af6d-fe08f01a414d  *******/
-const onSubmit = (e) => {
+    // هادي لي غاتصيفط الداتا لـ Laravel
+    const onSubmit = (e) => {
         e.preventDefault();
         setErrors(null);
         setLoading(true);
@@ -50,17 +45,20 @@ const onSubmit = (e) => {
         axiosClient.post('/register', formData)
             .then(({ data }) => {
                 setUser(data.user);
-                setToken(data.access_token);
+                setToken(data.access_token); // شدينا الـ Token!
             })
             .catch(err => {
                 setLoading(false);
                 const response = err.response;
                 if (response && response.status === 422) {
-                    setErrors(response.data.errors);
+                    setErrors(response.data.errors); // أخطاء ديال Laravel Validation
                 }
             });
-    };return (
+    };
+
+    return (
         <div className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+            {/* الديكور ديال اللور */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
             <div className="w-full max-w-lg z-10">
@@ -68,35 +66,34 @@ const onSubmit = (e) => {
                     <h1 className="text-3xl font-bold tracking-tight">Safi<span className="text-orange-600">Pulse</span></h1>
                     <p className="text-slate-500 mt-2">Création de votre compte citoyen</p>
                 </div>
-                
-                {/* hnaya ghadi nzidou lbaqi */}
-            </div>
-        </div>
-    );
-<div className="mb-8">
-    <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
-        {[1, 2, 3].map((stepNumber, index) => (
-            <span key={index} className={step >= stepNumber ? "text-orange-600" : ""}>
-                {index === 0 ? "Identité" : index === 1 ? "Localisation" : "Sécurité"}
-            </span>
-        ))}
-    </div>
-    <div className="flex gap-2 h-1.5">
-        {[1, 2, 3].map((stepNumber, index) => (
-            <div key={index} className={`flex-1 rounded-full transition-all ${step >= stepNumber ? "bg-orange-600" : "bg-slate-200 dark:bg-slate-800"}`}></div>
-        ))}
-    </div>
-</div>
-/*************  ✨ Smart Paste 📚  *************/
-/*******  1f0d39c7-4241-493d-a328-a4501869ae9e  *******/{errors && (
+
+                {/* Progress Bar (ساهلة بزاف فالفهم) */}
+                <div className="mb-8">
+                    <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
+                        <span className={step >= 1 ? "text-orange-600" : ""}>Identité</span>
+                        <span className={step >= 2 ? "text-orange-600" : ""}>Localisation</span>
+                        <span className={step >= 3 ? "text-orange-600" : ""}>Sécurité</span>
+                    </div>
+                    <div className="flex gap-2 h-1.5">
+                        <div className={`flex-1 rounded-full transition-all ${step >= 1 ? 'bg-orange-600' : 'bg-slate-200 dark:bg-slate-800'}`}></div>
+                        <div className={`flex-1 rounded-full transition-all ${step >= 2 ? 'bg-orange-600' : 'bg-slate-200 dark:bg-slate-800'}`}></div>
+                        <div className={`flex-1 rounded-full transition-all ${step >= 3 ? 'bg-orange-600' : 'bg-slate-200 dark:bg-slate-800'}`}></div>
+                    </div>
+                </div>
+
+                {/* أخطاء السيرفر */}
+                {errors && (
                     <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-3 rounded-lg mb-4">
                         {Object.keys(errors).map(key => (
                             <p key={key}>{errors[key][0]}</p>
                         ))}
                     </div>
-                )}<div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 relative">
+                )}
+
+                <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 relative">
                     <form onSubmit={onSubmit} className="flex flex-col min-h-[350px] justify-between">
                         
+                        {/* ---------------- ÉTAPE 1 ---------------- */}
                         {step === 1 && (
                             <div className="animate-fade-in space-y-4">
                                 <h2 className="text-2xl font-bold mb-4">Qui êtes-vous ?</h2>
@@ -119,9 +116,9 @@ const onSubmit = (e) => {
                                 </button>
                             </div>
                         )}
-                        
-                    </form>
-                </div>{step === 2 && (
+
+                        {/* ---------------- ÉTAPE 2 ---------------- */}
+                        {step === 2 && (
                             <div className="animate-fade-in space-y-4">
                                 <h2 className="text-2xl font-bold mb-4">Votre Secteur</h2>
                                 <div>
@@ -138,7 +135,10 @@ const onSubmit = (e) => {
                                     <button type="button" onClick={nextStep} className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3.5 rounded-xl transition-all">Suivant</button>
                                 </div>
                             </div>
-                        )}{step === 3 && (
+                        )}
+
+                        {/* ---------------- ÉTAPE 3 ---------------- */}
+                        {step === 3 && (
                             <div className="animate-fade-in space-y-4">
                                 <h2 className="text-2xl font-bold mb-4">Sécurisation</h2>
                                 <div>
@@ -157,3 +157,13 @@ const onSubmit = (e) => {
                                 </div>
                             </div>
                         )}
+                    </form>
+                </div>
+
+                <p className="mt-8 text-center text-sm text-slate-500">
+                    Déjà inscrit ? <Link to="/login" className="text-orange-600 font-bold hover:underline">Se connecter</Link>
+                </p>
+            </div>
+        </div>
+    );
+}
