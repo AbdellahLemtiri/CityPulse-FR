@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('model_id')->nullable();
             $table->json('changes')->nullable();  
             $table->string('ip_address')->nullable();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null'); // Who did it
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
     }
