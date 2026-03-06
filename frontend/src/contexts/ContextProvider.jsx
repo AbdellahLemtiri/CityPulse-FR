@@ -1,4 +1,6 @@
-/*************  ✨ Smart Paste 📚  *************/
+import { createContext, useContext, useState } from "react";
+
+// كانصاوبو الـ Context الخاوي فالأول
 const StateContext = createContext({
     user: null,
     token: null,
@@ -8,10 +10,11 @@ const StateContext = createContext({
 
 export const ContextProvider = ({ children }) => {
     const [user, setUser] = useState({});
-    const [token, setTokenLocalStorage] = useState(() => localStorage.getItem('ACCESS_TOKEN') || null);
+    
+     const [token, _setToken] = useState(localStorage.getItem('ACCESS_TOKEN'));
 
-    const setToken = (token) => {
-        setTokenLocalStorage(token);
+     const setToken = (token) => {
+        _setToken(token);
         if (token) {
             localStorage.setItem('ACCESS_TOKEN', token);
         } else {
@@ -26,5 +29,4 @@ export const ContextProvider = ({ children }) => {
     );
 };
 
-export const useStateContext = () => useContext(StateContext);
-/*******  654348cc-1722-4e20-9457-79fc6c1247b0  *******/
+ export const useStateContext = () => useContext(StateContext);
