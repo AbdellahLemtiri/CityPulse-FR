@@ -3,7 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+ 
+use Illuminate\Validation\Rules\Password;
 class RegisterRequest extends FormRequest
 {
     /**
@@ -11,7 +12,7 @@ class RegisterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -19,15 +20,24 @@ class RegisterRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+public function rules(): array
     {
+        //
         return [
-            //
-            'first_name' => 'required|string|max:255',
-            'last_name'  => 'required|string|max:255',
-            'email'      => 'required|string|email|max:255|unique:users',
-            'password'   => 'required|string|min:8', // زيد confirmed إلا بغيتي
-            'phone'      => 'nullable|string|max:20',
+            'first_name' => 'required|string|max:50',
+            'last_name' => 'required|string|max:50',
+            'email' => 'required|email|unique:users,email',
+            'password' => [
+                'required',
+                Password::min(8)
+                    ->letters()
+                    ->numbers()
+                    ->symbols()
+            ],
+            'cin' => 'required|string', 
+            'telephone' => 'required|string',  
+            'sector_id' => 'required|integer',  
+            'adresse' => 'nullable|string',
         ];
     }
 }
