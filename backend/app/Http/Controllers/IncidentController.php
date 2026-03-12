@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreIncidentRequest;
 use Illuminate\Http\Request;
-
+use App\Models\Incident;
 class IncidentController extends Controller
 {
     /**
@@ -13,6 +14,8 @@ class IncidentController extends Controller
     public function index()
     {
         //
+
+
     }
 
     /**
@@ -26,9 +29,19 @@ class IncidentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreIncidentRequest $request)
     {
         //
+
+        $request->validated();
+        Incident::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'sector_id' => $request->sector_id,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
+        ]);
     }
 
     /**

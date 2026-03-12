@@ -28,7 +28,7 @@ class StoreIncidentRequest extends FormRequest
             'sector_id' => 'required|exists:sectors,id', 
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // <--- باش يقدر يصيفط تصويرة
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'  
         ];
     }
 }
