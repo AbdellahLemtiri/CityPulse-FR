@@ -12,8 +12,7 @@ export default function Login() {
   const [errors, setErrors] = useState({ email: '', password: '', global: '' });
   const [isLoading, setIsLoading] = useState(false);
 
-  // Dark mode setup (mirrors the original HTML behaviour)
-  useEffect(() => {
+   useEffect(() => {
     if (
       localStorage.theme === 'dark' ||
       (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -24,8 +23,7 @@ export default function Login() {
     }
   }, []);
 
-  // Validation functions (same as original)
-  const validateEmail = (email) => {
+   const validateEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(email);
   };
@@ -34,7 +32,7 @@ export default function Login() {
     return password.length >= 6;
   };
 
-  // Real‑time validation on blur (email only, as in original)
+ 
   const handleEmailBlur = () => {
     if (email.trim() && !validateEmail(email)) {
       setErrors((prev) => ({ ...prev, email: "Format d'email invalide" }));
@@ -70,36 +68,34 @@ export default function Login() {
     setErrors(newErrors);
     if (!isValid) return;
 
-    setIsLoading(true);
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login', {
-        email,
-        password,
-      });
-
-      // Store token and user data (adjust according to your API response)
-      localStorage.setItem('token', response.data.access_token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-
-      // Redirect to home page
-      navigate('/');
-    } catch (err) {
-      console.error(err);
-      if (err.response && err.response.status === 401) {
-        setErrors((prev) => ({
-          ...prev,
-          global: 'Identifiants incorrects (Email ou mot de passe)',
-        }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          global: 'Erreur de connexion serveur. Réessayez plus tard.',
-        }));
+      setIsLoading(true);
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/api/login', {
+          email,
+          password,
+        });
+  
+        localStorage.setItem('token', response.data.access_token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+  
+        navigate('/');
+      } catch (err) {
+        console.error(err);
+        if (err.response && err.response.status === 401) {
+          setErrors((prev) => ({
+            ...prev,
+            global: 'Identifiants incorrects (Email ou mot de passe)',
+          }));
+        } else {
+          setErrors((prev) => ({
+            ...prev,
+            global: 'Erreur de connexion serveur. Réessayez plus tard.',
+          }));
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
 
   return (
     <div className="font-sans min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden bg-[#F8FAFC] dark:bg-[#020617] text-[#0F172A] dark:text-white transition-colors duration-300">
