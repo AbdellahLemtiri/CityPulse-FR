@@ -1,11 +1,9 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: `http://127.0.0.1:8000/api` // الرابط الأصلي د API
+  baseURL: `http://127.0.0.1:8000/api` 
 });
-
-// 1. قبل ما يمشي الطلب (Request Interceptor)
-// هاد الكود كيلصق التوكن فأي طلب غادي للسيرفر اوتوماتيك
+ 
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
