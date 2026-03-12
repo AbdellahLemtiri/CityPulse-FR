@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SafiPulse - Espace Citoyen</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 
+                            50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 
+                            400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 
+                            800: '#9a3412', 900: '#7c2d12' 
+                        },
+                    },
+                    fontFamily: {
+                        sans: ["Plus Jakarta Sans", "sans-serif"],
+                    }
+                },
+            },
+        }
+    </script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-outline { font-variation-settings: 'FILL' 0; }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .story-ring { background: linear-gradient(45deg, #f97316, #eab308); padding: 2px; border-radius: 50%; }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-900 font-sans h-screen flex overflow-hidden">
+
+    <aside class="hidden md:flex flex-col w-72 bg-white border-r border-gray-100 h-full fixed left-0 top-0 z-50 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+        <div class="p-6 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/20">
+                <span class="material-symbols-rounded text-white">favorite</span>
+            </div>
+            <span class="text-2xl font-extrabold tracking-tight text-slate-900">Safi<span class="text-primary-500">Pulse</span></span>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <button onclick="renderView('home')" data-target="home" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-primary-50 text-primary-600 font-bold transition-all">
+                <span class="material-symbols-rounded">feed</span> Fil d'actualité
+            </button>
+            <button onclick="renderView('agenda')" data-target="agenda" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-gray-500 font-medium transition-all hover:bg-gray-50 hover:text-slate-900 group">
+                <span class="material-symbols-rounded icon-outline group-hover:font-variation-settings-[FILL:1] transition-all">event</span> Agenda Solidaire
+            </button>
+            <button onclick="renderView('safigram')" data-target="safigram" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-gray-500 font-medium transition-all hover:bg-gray-50 hover:text-slate-900 group">
+                <span class="material-symbols-rounded icon-outline group-hover:font-variation-settings-[FILL:1] transition-all">photo_camera</span> SafiGram
+            </button>
+            <button onclick="renderView('reports')" data-target="reports" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-gray-500 font-medium transition-all hover:bg-gray-50 hover:text-slate-900 group">
+                <span class="material-symbols-rounded icon-outline group-hover:font-variation-settings-[FILL:1] transition-all">assignment</span> Mes Signalements
+            </button>
+            <button onclick="renderView('profile')" data-target="profile" class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-gray-500 font-medium transition-all hover:bg-gray-50 hover:text-slate-900 group">
+                <span class="material-symbols-rounded icon-outline group-hover:font-variation-settings-[FILL:1] transition-all">person</span> Mon Profil
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-gray-100 bg-gray-50/50">
+            <button onclick="openReportModal()" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-slate-900/20 hover:bg-primary-600 transition-colors flex items-center justify-center gap-2 mb-4 active:scale-95">
+                <span class="material-symbols-rounded text-[20px]">add_circle</span> Signaler un incident
+            </button>
+            <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-white cursor-pointer transition-colors border border-transparent hover:border-gray-200 hover:shadow-sm">
+                <img src="https://i.pravatar.cc/150?u=abdellah" class="w-10 h-10 rounded-full border-2 border-primary-100 object-cover" alt="Profile">
+                <div class="flex-1 overflow-hidden">
+                    <p class="text-sm font-bold text-slate-900 truncate">Abdellah Lemtiri</p>
+                    <p class="text-[10px] font-extrabold text-primary-600 uppercase tracking-wide">Niveau 5 • 1200 XP</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 h-full overflow-y-auto relative no-scrollbar md:ml-72 bg-gray-50 scroll-smooth" id="main-container">
+        
+        <header class="md:hidden sticky top-0 z-40 bg-white/85 backdrop-blur-lg px-4 py-3 border-b border-gray-100 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-sm">
+                    <span class="material-symbols-rounded text-white text-[18px]">favorite</span>
+                </div>
+                <span class="text-xl font-extrabold text-slate-800 tracking-tight">Safi<span class="text-primary-500">Pulse</span></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="w-9 h-9 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 relative hover:bg-gray-100 transition-colors active:scale-95">
+                    <span class="material-symbols-rounded text-[20px]">notifications</span>
+                    <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse"></span>
+                </button>
+                <img onclick="renderView('profile')" src="https://i.pravatar.cc/150?u=abdellah" class="w-9 h-9 rounded-full border border-gray-200 cursor-pointer object-cover active:scale-95 transition-transform">
+            </div>
+        </header>
+
+        <div id="app-content" class="max-w-3xl mx-auto p-0 md:p-8 pb-24 md:pb-8">
+            </div>
+
+    </main>
+
+    <button onclick="openReportModal()" id="fab-btn" class="md:hidden fixed bottom-[84px] right-4 w-14 h-14 bg-slate-900 text-white rounded-2xl shadow-xl shadow-slate-900/30 flex items-center justify-center z-40 active:scale-90 transition-transform ring-4 ring-gray-50">
+        <span class="material-symbols-rounded text-[28px]">add_a_photo</span>
+    </button>
+
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-lg border-t border-gray-200 pb-safe z-40 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.08)]">
+        <div class="grid grid-cols-5 h-[68px]">
+            <button onclick="renderView('home')" data-target="home" class="mobile-nav-btn flex flex-col items-center justify-center text-primary-600 relative">
+                <div class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full"></div>
+                <span class="material-symbols-rounded text-[26px] mb-0.5">feed</span>
+                <span class="text-[10px] font-extrabold">Fil</span>
+            </button>
+            <button onclick="renderView('agenda')" data-target="agenda" class="mobile-nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-slate-600 transition-colors relative">
+                <div class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full hidden"></div>
+                <span class="material-symbols-rounded icon-outline text-[26px] mb-0.5">event</span>
+                <span class="text-[10px] font-medium">Agenda</span>
+            </button>
+            <button onclick="renderView('safigram')" data-target="safigram" class="mobile-nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-slate-600 transition-colors relative">
+                <div class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full hidden"></div>
+                <span class="material-symbols-rounded icon-outline text-[26px] mb-0.5">photo_camera</span>
+                <span class="text-[10px] font-medium">Photos</span>
+            </button>
+            <button onclick="renderView('reports')" data-target="reports" class="mobile-nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-slate-600 transition-colors relative">
+                <div class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full hidden"></div>
+                <span class="material-symbols-rounded icon-outline text-[26px] mb-0.5">assignment</span>
+                <span class="text-[10px] font-medium">Suivi</span>
+            </button>
+            <button onclick="renderView('profile')" data-target="profile" class="mobile-nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-slate-600 transition-colors relative">
+                <div class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full hidden"></div>
+                <span class="material-symbols-rounded icon-outline text-[26px] mb-0.5">person</span>
+                <span class="text-[10px] font-medium">Profil</span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="report-modal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeReportModal()"></div>
+        
+        <div class="absolute bottom-0 w-full md:w-[600px] md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 md:h-auto h-[92vh] bg-white rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col slide-up overflow-hidden ring-1 ring-gray-200">
+            <div class="w-full flex justify-center pt-3 pb-1 md:hidden bg-white rounded-t-3xl">
+                <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+            </div>
+            <div class="px-6 py-3 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                <h2 class="text-xl font-extrabold text-slate-900">Nouveau Signalement</h2>
+                <button onclick="closeReportModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                    <span class="material-symbols-rounded text-gray-600 text-lg">close</span>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6 space-y-7 no-scrollbar">
+                <div>
+                    <label class="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3"><span class="material-symbols-rounded text-primary-500 text-xl">category</span> Type d'incident</label>
+                    <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                        <div class="flex-shrink-0 w-24 h-24 border-2 border-primary-500 bg-primary-50 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer shadow-sm shadow-primary-500/20 active:scale-95 transition-transform"><span class="material-symbols-rounded text-3xl text-primary-600">lightbulb</span><span class="text-xs font-bold text-primary-800">Éclairage</span></div>
+                        <div class="flex-shrink-0 w-24 h-24 border border-gray-200 bg-white rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-50 active:scale-95 transition-transform"><span class="material-symbols-rounded text-3xl text-blue-500">water_drop</span><span class="text-xs font-bold text-gray-600">Eau & Fuite</span></div>
+                        <div class="flex-shrink-0 w-24 h-24 border border-gray-200 bg-white rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-50 active:scale-95 transition-transform"><span class="material-symbols-rounded text-3xl text-gray-500">edit_road</span><span class="text-xs font-bold text-gray-600">Voirie</span></div>
+                        <div class="flex-shrink-0 w-24 h-24 border border-gray-200 bg-white rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-50 active:scale-95 transition-transform"><span class="material-symbols-rounded text-3xl text-green-500">delete</span><span class="text-xs font-bold text-gray-600">Propreté</span></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="flex justify-between items-center text-sm font-bold text-gray-800 mb-3"><span class="flex items-center gap-2"><span class="material-symbols-rounded text-primary-500 text-xl">add_a_photo</span> Photos</span><span class="text-xs font-normal text-gray-500">Max 4 photos</span></label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div class="col-span-2 row-span-2 border-2 border-dashed border-primary-300 bg-primary-50/50 rounded-2xl aspect-square flex flex-col items-center justify-center cursor-pointer hover:bg-primary-50 transition-colors group">
+                            <span class="material-symbols-rounded text-4xl text-primary-400 mb-1 group-hover:scale-110 transition-transform">upload</span><span class="text-xs text-primary-600 font-bold">Principale*</span>
+                        </div>
+                        <div class="border border-dashed border-gray-300 bg-gray-50 rounded-xl aspect-square flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors"><span class="material-symbols-rounded text-gray-400">add</span></div>
+                        <div class="border border-dashed border-gray-300 bg-gray-50 rounded-xl aspect-square flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors"><span class="material-symbols-rounded text-gray-400">add</span></div>
+                        <div class="border border-dashed border-gray-300 bg-gray-50 rounded-xl aspect-square flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors"><span class="material-symbols-rounded text-gray-400">add</span></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3"><span class="material-symbols-rounded text-primary-500 text-xl">description</span> Détails</label>
+                    <div class="relative"><textarea class="w-full border border-gray-200 rounded-2xl p-4 text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all resize-none" rows="3" placeholder="Décrivez l'incident..."></textarea><span class="absolute bottom-3 right-3 text-[10px] text-gray-400 font-medium">0/250</span></div>
+                    <button class="mt-3 flex items-center gap-2 text-primary-600 text-sm font-bold bg-primary-50 hover:bg-primary-100 transition-colors px-4 py-3 rounded-xl w-full justify-center active:scale-95"><span class="material-symbols-rounded">mic</span> Ajouter une note vocale</button>
+                </div>
+
+                <div>
+                    <label class="flex justify-between items-center text-sm font-bold text-gray-800 mb-3"><span class="flex items-center gap-2"><span class="material-symbols-rounded text-primary-500 text-xl">location_on</span> Localisation</span><button class="text-xs text-primary-600 font-bold hover:underline">Modifier</button></label>
+                    <div class="h-32 bg-slate-200 rounded-2xl flex items-center justify-center relative overflow-hidden group cursor-pointer">
+                        <img src="https://maps.googleapis.com/maps/api/staticmap?center=Safi,Morocco&zoom=14&size=600x300&maptype=roadmap&sensor=false" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Map">
+                        <span class="absolute material-symbols-rounded text-4xl text-red-500 drop-shadow-md">location_on</span>
+                        <div class="absolute bottom-2 left-2 right-2 bg-white/95 backdrop-blur px-3 py-2 rounded-xl text-xs font-bold shadow-sm flex items-center justify-between"><span class="text-slate-800 truncate">Quartier Plateau, Safi</span><span class="flex items-center gap-1 text-green-600 ml-2 whitespace-nowrap"><span class="material-symbols-rounded text-[14px]">my_location</span> Précis</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-t border-gray-100 bg-white pb-safe">
+                <button onclick="closeReportModal()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 active:scale-95 transition-all flex justify-center items-center gap-2"><span class="material-symbols-rounded text-lg">send</span> Envoyer le signalement</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MOCK DATA
+        const currentUser = { name: "Abdellah Lemtiri", avatar: "https://i.pravatar.cc/150?u=abdellah", level: 5, xp: 1200, nextXp: 2000, quartier: "Plateau" };
+        const posts = [
+            { id: 1, author: "Rédaction SafiPulse", avatar: "https://i.pravatar.cc/150?u=journaliste", isVerified: true, role: "Officiel", time: "Il y a 2h", tag: { text: "URGENT", color: "red" }, content: "⚠️ Avis important aux habitants du secteur Sud. Coupure d'eau prévue demain de 09h00 à 16h00.", image: "https://images.unsplash.com/photo-1585314062340-f1a5a7c9328d?q=80&w=800", likes: 145, comments: 34 },
+            { id: 2, author: "Responsable Quartier Plateau", avatar: "https://i.pravatar.cc/150?u=manager", isVerified: false, role: "Manager", time: "Hier à 14:00", tag: { text: "TRAVAUX", color: "orange" }, content: "🚧 Début des travaux de réfection de la chaussée. Merci de votre patience !", image: "https://images.unsplash.com/photo-1584650589355-d6062f5e1040?q=80&w=800", likes: 56, comments: 12 }
+        ];
+        const events = [
+            { id: 1, title: "Grand Nettoyage Plage", date: "15 OCT", category: "BÉNÉVOLAT", image: "https://images.unsplash.com/photo-1558008258-3256797b43f3?q=80&w=800", time: "09:00 - 13:00", location: "Plage Lalla Fatna", registered: 42, capacity: 60 },
+            { id: 2, title: "Atelier Poterie Enfants", date: "22 OCT", category: "CULTURE", image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800", time: "14:00 - 16:00", location: "Maison des Jeunes", registered: 18, capacity: 20 }
+        ];
+        const safigramPosts = [
+            { user: "Nadia_Art", avatar: "u=1", img: "https://images.unsplash.com/photo-1580227974542-c51722880791?q=80&w=600", caption: "Coucher de soleil magique 🌅" },
+            { user: "Safi_Surf", avatar: "u=2", img: "https://images.unsplash.com/photo-1517983694060-32df9c9bd82c?q=80&w=600", caption: "Bonnes vagues ce matin ! 🏄‍♂️" }
+        ];
+        const tickets = [
+            { title: "Lampe grillée", date: "12/02/2026", status: "En cours", color: "yellow" },
+            { title: "Nid de poule", date: "10/02/2026", status: "Résolu", color: "green" },
+            { title: "Fuite d'eau", date: "08/02/2026", status: "Rejeté", color: "red" }
+        ];
+
+        // RENDER FUNCTIONS
+        function renderHome() {
+            const container = document.getElementById('app-content');
+            let html = `<div class="sticky top-[60px] md:top-0 z-30 bg-gray-50/95 backdrop-blur pt-2 pb-4 px-4 md:px-0"><div class="bg-white p-1 rounded-xl flex font-bold text-sm shadow-sm border border-gray-200"><button class="flex-1 py-2.5 rounded-lg bg-primary-50 text-primary-600 border border-primary-100 shadow-sm">Tout</button><button class="flex-1 py-2.5 text-gray-500">Officiel</button><button class="flex-1 py-2.5 text-gray-500">Quartier</button></div></div><div class="space-y-6 px-0 md:px-0 pb-20">`;
+            posts.forEach(post => {
+                const badgeColor = post.tag.color === 'red' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-orange-50 text-orange-600 border-orange-100';
+                html += `<div class="bg-white md:rounded-2xl border-y md:border border-gray-200 shadow-sm animate-fade-in"><div class="p-4 flex items-center gap-3"><img src="${post.avatar}" class="w-10 h-10 rounded-full border border-gray-100"><div><div class="flex items-center gap-1"><h3 class="font-bold text-slate-900">${post.author}</h3>${post.isVerified ? '<span class="material-symbols-rounded text-blue-500 text-sm">verified</span>' : ''}</div><p class="text-xs text-gray-500 flex items-center gap-1">${post.time} • <span class="material-symbols-rounded text-[10px]">public</span></p></div><span class="ml-auto ${badgeColor} text-xs font-bold px-2 py-1 rounded-full border">${post.tag.text}</span></div><div class="px-4 pb-3"><p class="text-slate-800 text-sm leading-relaxed">${post.content}</p></div><div class="w-full h-64 md:h-80 bg-gray-100 relative cursor-pointer"><img src="${post.image}" class="w-full h-full object-cover"></div><div class="px-2 py-1 flex justify-between border-t border-gray-100 mt-2"><button class="flex-1 flex items-center justify-center gap-2 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"><span class="material-symbols-rounded">thumb_up</span> ${post.likes}</button><button class="flex-1 flex items-center justify-center gap-2 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"><span class="material-symbols-rounded">comment</span> ${post.comments}</button><button class="flex-1 flex items-center justify-center gap-2 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"><span class="material-symbols-rounded">share</span></button></div></div>`;
+            });
+            container.innerHTML = html + '</div>';
+        }
+
+        function renderAgenda() {
+            const container = document.getElementById('app-content');
+            let html = `<h2 class="text-2xl font-bold text-slate-900 px-4 md:px-0 mb-6 mt-4">Agenda Solidaire</h2><div class="space-y-6 px-4 md:px-0 pb-20">`;
+            events.forEach(evt => {
+                const percent = (evt.registered / evt.capacity) * 100;
+                const barColor = percent > 80 ? 'bg-red-500' : 'bg-green-500';
+                html += `<div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden animate-fade-in"><div class="relative h-48"><img src="${evt.image}" class="w-full h-full object-cover"><div class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1 text-center shadow-md"><span class="block text-xs font-bold text-gray-500 uppercase">${evt.date.split(' ')[1]}</span><span class="block text-2xl font-black text-slate-900 leading-none">${evt.date.split(' ')[0]}</span></div><span class="absolute top-3 right-3 bg-slate-900 text-white text-xs font-bold px-2 py-1 rounded-md shadow-md">${evt.category}</span></div><div class="p-5"><h3 class="text-xl font-bold text-slate-900 mb-2">${evt.title}</h3><div class="flex flex-col gap-2 mb-4"><div class="flex items-center gap-2 text-sm text-gray-600"><span class="material-symbols-rounded text-primary-500">schedule</span> ${evt.time}</div><div class="flex items-center gap-2 text-sm text-gray-600"><span class="material-symbols-rounded text-primary-500">location_on</span> ${evt.location}</div></div><div class="mb-4"><div class="flex justify-between text-xs font-bold mb-1"><span class="text-gray-500">Participants</span><span class="${percent > 80 ? 'text-red-500' : 'text-green-600'}">${evt.registered} / ${evt.capacity}</span></div><div class="w-full bg-gray-100 rounded-full h-2.5"><div class="${barColor} h-full rounded-full" style="width: ${percent}%"></div></div></div><button class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold shadow-lg shadow-slate-900/20 active:scale-95 transition-transform">Je participe</button></div></div>`;
+            });
+            container.innerHTML = html + '</div>';
+        }
+
+        function renderSafigram() {
+            const container = document.getElementById('app-content');
+            let html = `<div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar px-4 mb-2 mt-4"><div class="flex-shrink-0 flex flex-col items-center gap-1"><div class="w-16 h-16 rounded-full p-[2px] story-ring relative"><img src="${currentUser.avatar}" class="w-full h-full rounded-full border-2 border-white object-cover"><div class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-0.5 border-2 border-white"><span class="material-symbols-rounded text-xs">add</span></div></div><span class="text-xs font-medium">Moi</span></div>${[1,2,3].map(i => `<div class="flex-shrink-0 flex flex-col items-center gap-1"><div class="w-16 h-16 rounded-full p-[2px] story-ring"><img src="https://i.pravatar.cc/150?u=${i+10}" class="w-full h-full rounded-full border-2 border-white object-cover"></div><span class="text-xs font-medium">User${i}</span></div>`).join('')}</div><div class="space-y-6 pb-20 px-0 md:px-0">`;
+            safigramPosts.forEach(post => {
+                html += `<div class="bg-white md:rounded-2xl border-y md:border border-gray-200 shadow-sm animate-fade-in"><div class="p-3 flex items-center justify-between"><div class="flex items-center gap-3"><img src="https://i.pravatar.cc/150?${post.avatar}" class="w-8 h-8 rounded-full"><span class="font-bold text-sm">${post.user}</span></div><span class="material-symbols-rounded text-gray-400">more_horiz</span></div><img src="${post.img}" class="w-full h-96 object-cover"><div class="p-3"><div class="flex gap-4 mb-2"><span class="material-symbols-rounded text-2xl">favorite</span><span class="material-symbols-rounded text-2xl">chat_bubble</span><span class="material-symbols-rounded text-2xl ml-auto">share</span></div><p class="text-sm"><span class="font-bold">${post.user}</span> ${post.caption}</p></div></div>`;
+            });
+            container.innerHTML = html + '</div>';
+        }
+
+        function renderReports() {
+            const container = document.getElementById('app-content');
+            let html = `<h2 class="text-2xl font-bold text-slate-900 px-4 md:px-0 mb-6 mt-4">Mes Signalements</h2><div class="px-4 md:px-0 space-y-4 pb-20">`;
+            tickets.forEach(t => {
+                const bg = t.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' : (t.color === 'green' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800');
+                html += `<div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between animate-fade-in"><div class="flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-500"><span class="material-symbols-rounded">image</span></div><div><h3 class="font-bold text-slate-800">${t.title}</h3><p class="text-xs text-gray-500">${t.date}</p></div></div><span class="${bg} px-3 py-1 rounded-full text-xs font-bold border border-white/20 shadow-sm">${t.status}</span></div>`;
+            });
+            container.innerHTML = html + '</div>';
+        }
+
+        function renderProfile() {
+            const container = document.getElementById('app-content');
+            const percent = (currentUser.xp / currentUser.nextXp) * 100;
+            container.innerHTML = `<div class="animate-fade-in px-4 md:px-0 pb-20 pt-4"><div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-6 text-center relative overflow-hidden"><div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-primary-500 to-primary-600"></div><div class="relative z-10 -mt-2"><div class="w-24 h-24 mx-auto rounded-full border-4 border-white shadow-md bg-white p-1"><img src="${currentUser.avatar}" class="w-full h-full rounded-full object-cover"></div><h2 class="text-2xl font-bold text-slate-900 mt-3">${currentUser.name}</h2><p class="text-gray-500 text-sm">Citoyen Engagé • Quartier ${currentUser.quartier}</p><div class="mt-6 max-w-xs mx-auto"><div class="flex justify-between text-xs font-bold mb-1"><span class="text-primary-600">Niveau ${currentUser.level}</span><span class="text-gray-400">${currentUser.xp} / ${currentUser.nextXp} XP</span></div><div class="w-full bg-gray-100 rounded-full h-3"><div class="bg-gradient-to-r from-primary-500 to-yellow-400 h-3 rounded-full shadow-sm" style="width: ${percent}%"></div></div></div></div></div><h3 class="font-bold text-lg mb-3">Mes Badges</h3><div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar mb-6"><div class="flex-shrink-0 w-24 h-28 bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center p-2"><span class="text-3xl mb-2">🌱</span><span class="text-xs font-bold">Écolo</span></div><div class="flex-shrink-0 w-24 h-28 bg-white rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center p-2"><span class="text-3xl mb-2">📸</span><span class="text-xs font-bold">Reporter</span></div><div class="flex-shrink-0 w-24 h-28 bg-gray-50 rounded-xl border border-gray-200 shadow-inner flex flex-col items-center justify-center p-2 opacity-60 grayscale"><span class="text-3xl mb-2">🏆</span><span class="text-xs font-bold">Expert</span></div></div><div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"><button class="w-full p-4 flex items-center justify-between hover:bg-gray-50 border-b border-gray-100"><span class="flex items-center gap-3 font-medium text-gray-700"><span class="material-symbols-rounded text-gray-400">person</span> Éditer profil</span><span class="material-symbols-rounded text-gray-400">chevron_right</span></button><button class="w-full p-4 flex items-center justify-between hover:bg-gray-50 border-b border-gray-100"><span class="flex items-center gap-3 font-medium text-gray-700"><span class="material-symbols-rounded text-gray-400">dark_mode</span> Mode Sombre</span><span class="text-xs text-gray-400">Off</span></button><button class="w-full p-4 flex items-center justify-between hover:bg-red-50 text-red-500"><span class="flex items-center gap-3 font-medium"><span class="material-symbols-rounded">logout</span> Déconnexion</span></button></div></div>`;
+        }
+
+        // NAVIGATION LOGIC
+        function renderView(viewName) {
+            // Mobile Nav update
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                btn.classList.remove('text-primary-600');
+                btn.classList.add('text-gray-400');
+                btn.querySelector('.material-symbols-rounded').classList.add('icon-outline');
+                btn.querySelector('.active-indicator').classList.add('hidden');
+                
+                if(btn.dataset.target === viewName) {
+                    btn.classList.add('text-primary-600');
+                    btn.classList.remove('text-gray-400');
+                    btn.querySelector('.material-symbols-rounded').classList.remove('icon-outline');
+                    btn.querySelector('.active-indicator').classList.remove('hidden');
+                }
+            });
+
+            // Desktop Nav update
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.remove('bg-primary-50', 'text-primary-600', 'font-bold');
+                btn.classList.add('text-gray-500', 'font-medium');
+                btn.querySelector('.material-symbols-rounded').classList.add('icon-outline');
+                
+                if(btn.dataset.target === viewName) {
+                    btn.classList.add('bg-primary-50', 'text-primary-600', 'font-bold');
+                    btn.classList.remove('text-gray-500', 'font-medium');
+                    btn.querySelector('.material-symbols-rounded').classList.remove('icon-outline');
+                }
+            });
+
+            // FAB Visibility
+            const fab = document.getElementById('fab-btn');
+            if(viewName === 'reports' || viewName === 'profile') fab.classList.add('hidden');
+            else fab.classList.remove('hidden');
+
+            // Render Function Mapping
+            if(viewName === 'home') renderHome();
+            if(viewName === 'agenda') renderAgenda();
+            if(viewName === 'safigram') renderSafigram();
+            if(viewName === 'reports') renderReports();
+            if(viewName === 'profile') renderProfile();
+
+            document.getElementById('main-container').scrollTop = 0;
+        }
+
+        function openReportModal() { document.getElementById('report-modal').classList.remove('hidden'); }
+        function closeReportModal() { document.getElementById('report-modal').classList.add('hidden'); }
+
+        // Start App
+        renderView('home');
+    </script>
+</body>
+</html>

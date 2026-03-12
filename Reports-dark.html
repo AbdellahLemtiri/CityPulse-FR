@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SafiPulse - Mes Signalements (Dark)</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#fff7ed",
+                100: "#ffedd5",
+                200: "#fed7aa",
+                300: "#fdba74",
+                400: "#fb923c",
+                500: "#f97316",
+                600: "#ea580c",
+                700: "#c2410c",
+                800: "#9a3412",
+                900: "#7c2d12",
+              },
+            },
+            fontFamily: {
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .material-symbols-rounded {
+        font-variation-settings:
+          "FILL" 1,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .icon-outline {
+        font-variation-settings: "FILL" 0;
+      }
+      .fade-in {
+        animation: fadeIn 0.3s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .slide-up {
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+      .story-ring {
+        background: linear-gradient(45deg, #f97316, #eab308);
+        padding: 2px;
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-900 text-gray-100 font-sans h-screen flex overflow-hidden">
+    <aside
+      class="hidden md:flex flex-col w-72 bg-gray-800 border-r border-gray-700 h-full fixed left-0 top-0 z-50 shadow-[4px_0_24px_rgba(0,0,0,0.5)]">
+      <div class="p-6 flex items-center gap-3">
+        <div
+          class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/20">
+          <span class="material-symbols-rounded text-white">favorite</span>
+        </div>
+        <span class="text-2xl font-extrabold tracking-tight text-white"
+          >Safi<span class="text-primary-400">Pulse</span></span
+        >
+      </div>
+
+      <nav class="flex-1 px-4 space-y-2 mt-4">
+        <button
+          class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-gray-400 font-medium transition-all hover:bg-gray-700 hover:text-gray-200 group">
+          <span
+            class="material-symbols-rounded icon-outline group-hover:font-variation-settings-[FILL:1] transition-all"
+            >feed</span
+          >
+          Fil d'actualité
+        </button>
+        <button
+          class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-gray-400 font-medium transition-all hover:bg-gray-700 hover:text-gray-200 group">
+          <span
+            class="material-symbols-rounded icon-outline group-hover:font-variation-settings-[FILL:1] transition-all"
+            >event</span
+          >
+          Agenda Solidaire
+        </button>
+        <button
+          class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-gray-400 font-medium transition-all hover:bg-gray-700 hover:text-gray-200 group">
+          <span
+            class="material-symbols-rounded icon-outline group-hover:font-variation-settings-[FILL:1] transition-all"
+            >photo_camera</span
+          >
+          SafiGram
+        </button>
+        <!-- Active -->
+        <button
+          class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl bg-primary-900/50 text-primary-400 font-bold transition-all">
+          <span class="material-symbols-rounded">assignment</span> Mes
+          Signalements
+        </button>
+        <button
+          class="nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-gray-400 font-medium transition-all hover:bg-gray-700 hover:text-gray-200 group">
+          <span
+            class="material-symbols-rounded icon-outline group-hover:font-variation-settings-[FILL:1] transition-all"
+            >person</span
+          >
+          Mon Profil
+        </button>
+      </nav>
+
+      <div class="p-4 border-t border-gray-700 bg-gray-800/50">
+        
+        <div
+          class="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-700 cursor-pointer transition-colors border border-transparent hover:border-gray-600 hover:shadow-sm">
+          <img
+            src="https://i.pravatar.cc/150?u=abdellah"
+            class="w-10 h-10 rounded-full border-2 border-primary-700 object-cover"
+            alt="Profile" />
+          <div class="flex-1 overflow-hidden">
+            <p class="text-sm font-bold text-gray-100 truncate">
+              Abdellah Lemtiri
+            </p>
+            <p
+              class="text-[10px] font-extrabold text-primary-400 uppercase tracking-wide">
+              Niveau 5 • 1200 XP
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main
+      class="flex-1 h-full overflow-y-auto relative no-scrollbar md:ml-72 bg-gray-900 scroll-smooth"
+      id="main-container">
+      <header
+        class="md:hidden sticky top-0 z-40 bg-gray-900/85 backdrop-blur-lg px-4 py-3 border-b border-gray-700 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-sm">
+            <span class="material-symbols-rounded text-white text-[18px]"
+              >favorite</span
+            >
+          </div>
+          <span class="text-xl font-extrabold text-white tracking-tight"
+            >Safi<span class="text-primary-400">Pulse</span></span
+          >
+        </div>
+        <div class="flex items-center gap-3">
+          <button
+            class="w-9 h-9 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-300 relative hover:bg-gray-700 transition-colors active:scale-95">
+            <span class="material-symbols-rounded text-[20px]"
+              >notifications</span
+            >
+            <span
+              class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-gray-900 animate-pulse"></span>
+          </button>
+          <img
+            src="https://i.pravatar.cc/150?u=abdellah"
+            class="w-9 h-9 rounded-full border border-gray-700 cursor-pointer object-cover active:scale-95 transition-transform" />
+        </div>
+      </header>
+
+      <div
+        id="app-content"
+        class="max-w-3xl mx-auto p-0 md:p-8 pb-24 md:pb-8">
+        <!-- Contenu statique de la vue Reports -->
+        <h2 class="text-2xl font-bold text-gray-100 px-4 md:px-0 mb-6 mt-4">
+          Mes Signalements
+        </h2>
+        <div  id="sig" class="px-4 md:px-0 space-y-4 pb-20">
+          <!-- Ticket 1 -->
+    
+          <!-- Ticket 3 -->
+           <script >
+const sig = document.getElementById('sig');
+for (let i = 0; i < 10; i++) {
+        sig.innerHTML += `
+  <div
+            class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-sm flex items-center justify-between animate-fade-in">
+            <div class="flex items-center gap-4">
+              <div
+                class="w-20 h-20 rounded-lg bg-gray-700 border border-gray-600 flex items-center justify-center text-gray-400">
+                <span class="material-symbols-rounded">image</span>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-100">Fuite d'eau</h3>
+                <p class="text-xs text-gray-400">08/02/2026</p> <span
+                class="bg-red-900/50 text-red-400 px-3 py-1 rounded-full text-xs font-bold border border-red-700 shadow-sm"
+                >Rejeté</span
+              >
+              </div>
+            </div>
+            <div class="gap-8 flex">
+              <button>
+                <span class="material-symbols-rounded">info</span>
+              </button>
+              <!-- //status egale en cours -->
+              <button class="">
+                <span class="material-symbols-rounded">close</span>
+              </button>
+             
+            </div>
+          </div>
+        `;
+      }
+           </script>
+      
+        </div>
+      </div>
+    </main>
+
+    <!-- FAB caché -->
+    <button
+      onclick="openReportModal()"
+      id="fab-btn"
+      class="md:hidden fixed bottom-[84px] right-4 w-14 h-14 bg-primary-600 text-white rounded-2xl shadow-xl shadow-primary-900/50 flex items-center justify-center z-40 active:scale-90 transition-transform ring-4 ring-gray-900 hidden">
+      <span class="material-symbols-rounded text-[28px]">add_a_photo</span>
+    </button>
+
+    <nav
+      class="md:hidden fixed bottom-0 left-0 w-full bg-gray-900/90 backdrop-blur-lg border-t border-gray-700 pb-safe z-40 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.5)]">
+      <div class="grid grid-cols-5 h-[68px]">
+        <button
+          class="mobile-nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors relative">
+          <div
+            class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full hidden"></div>
+          <span class="material-symbols-rounded icon-outline text-[26px] mb-0.5"
+            >feed</span
+          >
+          <span class="text-[10px] font-medium">Fil</span>
+        </button>
+        <button
+          class="mobile-nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors relative">
+          <div
+            class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full hidden"></div>
+          <span class="material-symbols-rounded icon-outline text-[26px] mb-0.5"
+            >event</span
+          >
+          <span class="text-[10px] font-medium">Agenda</span>
+        </button>
+        <button
+          class="mobile-nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors relative">
+          <div
+            class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full hidden"></div>
+          <span class="material-symbols-rounded icon-outline text-[26px] mb-0.5"
+            >photo_camera</span
+          >
+          <span class="text-[10px] font-medium">Photos</span>
+        </button>
+        <!-- Active -->
+        <button
+          class="mobile-nav-btn flex flex-col items-center justify-center text-primary-400 relative">
+          <div
+            class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full"></div>
+          <span class="material-symbols-rounded text-[26px] mb-0.5"
+            >assignment</span
+          >
+          <span class="text-[10px] font-extrabold">Suivi</span>
+        </button>
+        <button
+          class="mobile-nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 transition-colors relative">
+          <div
+            class="active-indicator absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full hidden"></div>
+          <span class="material-symbols-rounded icon-outline text-[26px] mb-0.5"
+            >person</span
+          >
+          <span class="text-[10px] font-medium">Profil</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Modal signalement (dark) -->
+    <div
+      id="report-modal"
+      class="fixed inset-0 z-[60] hidden">
+      <!-- ... identique aux autres ... -->
+      <div
+        class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
+        onclick="closeReportModal()"></div>
+      <div
+        class="absolute bottom-0 w-full md:w-[600px] md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 md:h-auto h-[92vh] bg-gray-800 rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col slide-up overflow-hidden ring-1 ring-gray-700">
+        <!-- ... -->
+        <div
+          class="w-full flex justify-center pt-3 pb-1 md:hidden bg-gray-800 rounded-t-3xl">
+          <div class="w-12 h-1.5 bg-gray-600 rounded-full"></div>
+        </div>
+        <div
+          class="px-6 py-3 border-b border-gray-700 flex justify-between items-center bg-gray-800 sticky top-0 z-10">
+          <h2 class="text-xl font-extrabold text-gray-100">
+            Nouveau Signalement
+          </h2>
+          <button
+            onclick="closeReportModal()"
+            class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center hover:bg-gray-600 transition-colors">
+            <span class="material-symbols-rounded text-gray-300 text-lg"
+              >close</span
+            >
+          </button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-6 space-y-7 no-scrollbar">
+          <!-- ... (identique) ... -->
+          <div>
+            <label
+              class="flex items-center gap-2 text-sm font-bold text-gray-300 mb-3"
+              ><span class="material-symbols-rounded text-primary-400 text-xl"
+                >category</span
+              >
+              Type d'incident</label
+            >
+            <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+              <div
+                class="flex-shrink-0 w-24 h-24 border-2 border-primary-600 bg-primary-900/30 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer shadow-sm shadow-primary-900/20 active:scale-95 transition-transform">
+                <span class="material-symbols-rounded text-3xl text-primary-400"
+                  >lightbulb</span
+                ><span class="text-xs font-bold text-primary-300"
+                  >Éclairage</span
+                >
+              </div>
+              <div
+                class="flex-shrink-0 w-24 h-24 border border-gray-600 bg-gray-700 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-600 active:scale-95 transition-transform">
+                <span class="material-symbols-rounded text-3xl text-blue-400"
+                  >water_drop</span
+                ><span class="text-xs font-bold text-gray-300"
+                  >Eau & Fuite</span
+                >
+              </div>
+              <div
+                class="flex-shrink-0 w-24 h-24 border border-gray-600 bg-gray-700 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-600 active:scale-95 transition-transform">
+                <span class="material-symbols-rounded text-3xl text-gray-400"
+                  >edit_road</span
+                ><span class="text-xs font-bold text-gray-300">Voirie</span>
+              </div>
+              <div
+                class="flex-shrink-0 w-24 h-24 border border-gray-600 bg-gray-700 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-gray-600 active:scale-95 transition-transform">
+                <span class="material-symbols-rounded text-3xl text-green-400"
+                  >delete</span
+                ><span class="text-xs font-bold text-gray-300">Propreté</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label
+              class="flex justify-between items-center text-sm font-bold text-gray-300 mb-3"
+              ><span class="flex items-center gap-2"
+                ><span class="material-symbols-rounded text-primary-400 text-xl"
+                  >add_a_photo</span
+                >
+                Photos</span
+              ><span class="text-xs font-normal text-gray-400"
+                >Max 4 photos</span
+              ></label
+            >
+            <div class="grid grid-cols-4 gap-2">
+              <div
+                class="col-span-2 row-span-2 border-2 border-dashed border-primary-600 bg-primary-900/20 rounded-2xl aspect-square flex flex-col items-center justify-center cursor-pointer hover:bg-primary-900/40 transition-colors group">
+                <span
+                  class="material-symbols-rounded text-4xl text-primary-400 mb-1 group-hover:scale-110 transition-transform"
+                  >upload</span
+                ><span class="text-xs text-primary-300 font-bold"
+                  >Principale*</span
+                >
+              </div>
+              <div
+                class="border border-dashed border-gray-600 bg-gray-700 rounded-xl aspect-square flex items-center justify-center cursor-pointer hover:bg-gray-600 transition-colors">
+                <span class="material-symbols-rounded text-gray-400">add</span>
+              </div>
+              <div
+                class="border border-dashed border-gray-600 bg-gray-700 rounded-xl aspect-square flex items-center justify-center cursor-pointer hover:bg-gray-600 transition-colors">
+                <span class="material-symbols-rounded text-gray-400">add</span>
+              </div>
+              <div
+                class="border border-dashed border-gray-600 bg-gray-700 rounded-xl aspect-square flex items-center justify-center cursor-pointer hover:bg-gray-600 transition-colors">
+                <span class="material-symbols-rounded text-gray-400">add</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label
+              class="flex items-center gap-2 text-sm font-bold text-gray-300 mb-3"
+              ><span class="material-symbols-rounded text-primary-400 text-xl"
+                >description</span
+              >
+              Détails</label
+            >
+            <div class="relative">
+              <textarea
+                class="w-full border border-gray-600 rounded-2xl p-4 text-sm bg-gray-700 focus:bg-gray-600 focus:ring-2 focus:ring-primary-500 focus:outline-none transition-all resize-none text-gray-200"
+                rows="3"
+                placeholder="Décrivez l'incident..."></textarea
+              ><span
+                class="absolute bottom-3 right-3 text-[10px] text-gray-400 font-medium"
+                >0/250</span
+              >
+            </div>
+            <button
+              class="mt-3 flex items-center gap-2 text-primary-400 text-sm font-bold bg-primary-900/30 hover:bg-primary-900/50 transition-colors px-4 py-3 rounded-xl w-full justify-center active:scale-95">
+              <span class="material-symbols-rounded">mic</span> Ajouter une note
+              vocale
+            </button>
+          </div>
+          <div>
+            <label
+              class="flex justify-between items-center text-sm font-bold text-gray-300 mb-3"
+              ><span class="flex items-center gap-2"
+                ><span class="material-symbols-rounded text-primary-400 text-xl"
+                  >location_on</span
+                >
+                Localisation</span
+              ><button
+                class="text-xs text-primary-400 font-bold hover:underline">
+                Modifier
+              </button></label
+            >
+            <div
+              class="h-32 bg-gray-700 rounded-2xl flex items-center justify-center relative overflow-hidden group cursor-pointer">
+              <img
+                src="https://maps.googleapis.com/maps/api/staticmap?center=Safi,Morocco&zoom=14&size=600x300&maptype=roadmap&sensor=false"
+                class="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                alt="Map" />
+              <span
+                class="absolute material-symbols-rounded text-4xl text-red-400 drop-shadow-md"
+                >location_on</span
+              >
+              <div
+                class="absolute bottom-2 left-2 right-2 bg-gray-800/95 backdrop-blur px-3 py-2 rounded-xl text-xs font-bold shadow-sm flex items-center justify-between">
+                <span class="text-gray-200 truncate"
+                  >Quartier Plateau, Safi</span
+                ><span
+                  class="flex items-center gap-1 text-green-400 ml-2 whitespace-nowrap"
+                  ><span class="material-symbols-rounded text-[14px]"
+                    >my_location</span
+                  >
+                  Précis</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 border-t border-gray-700 bg-gray-800 pb-safe">
+          <button
+            onclick="closeReportModal()"
+            class="w-full bg-primary-600 text-white py-4 rounded-xl font-bold shadow-xl shadow-primary-900/30 hover:bg-primary-500 active:scale-95 transition-all flex justify-center items-center gap-2">
+            <span class="material-symbols-rounded text-lg">send</span> Envoyer
+            le signalement
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openReportModal() {
+        document.getElementById("report-modal").classList.remove("hidden");
+      }
+      function closeReportModal() {
+        document.getElementById("report-modal").classList.add("hidden");
+      }
+    </script>
+  </body>
+</html>
