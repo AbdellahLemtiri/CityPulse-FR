@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreIncidentRequest;
 use Illuminate\Http\Request;
 use App\Models\Incident;
+
 class IncidentController extends Controller
 {
     /**
@@ -35,7 +36,6 @@ class IncidentController extends Controller
         $data = $request->validated();
         Incident::create($data);
         return response()->json(['message' => 'Incident créé avec succès'], 201);
-
     }
 
     /**
@@ -52,13 +52,12 @@ class IncidentController extends Controller
     public function edit(string $id)
     {
         //
-
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update( $request, string $id)
+    public function update($request, string $id)
     {
         //
     }
@@ -66,8 +65,11 @@ class IncidentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Incident $incident)
+
     {
         //
+        $incident->softDelete();
+        return response()->json(['message' => 'Incident supprimé avec succès'], 200);
     }
 }

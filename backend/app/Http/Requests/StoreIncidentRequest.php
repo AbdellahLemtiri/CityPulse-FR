@@ -30,8 +30,7 @@ class StoreIncidentRequest extends FormRequest
             'longitude' => 'nullable|numeric',
             'address' => 'nullable|string',
             'images_count' => 'integer|min:1|max:4',
-            'hasAudio' => 'boolean default false',
-            
+            'hasAudio' => 'boolean default false'
 
         ];
     }
