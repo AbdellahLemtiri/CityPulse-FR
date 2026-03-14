@@ -1,5 +1,26 @@
 $kind: http-request
 name: update
-url: ""
-method: GET
+url: http://127.0.0.1:8000/api/articles/1
+method: PATCH
+headers:
+  Accept: application/json
+  Authorization: "{{token}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"title\": \"oui  à Safi\",\r
+
+    \    \"slug\": \"nouveau-projet-infrastructure-oui-2026\",\r
+
+    \    \"content\": \"La commune annonce le lancement d'un nouveau projet pour
+    améliorer les routes principales de la ville..\",\r
+
+    \    \"scope\": \"local\",\r
+
+    \    \"sector_id\": 1,\r
+
+    \    \"status\": \"published\"\r
+
+    }"
 order: 3993779357785424
