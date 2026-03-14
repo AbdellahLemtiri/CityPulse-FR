@@ -27,13 +27,7 @@ public function rules(): array
             'first_name' => 'required|string|max:50',
             'last_name' => 'required|string|max:50',
             'email' => 'required|email|unique:users,email',
-            'password' => [
-                'required',
-                Password::min(8)
-                    ->letters()
-                    ->numbers()
-                    ->symbols()
-            ],
+            'password' => ['required',Password::min(8)->letters()->numbers()->symbols()],
             'cin' => 'required|string', 
             'telephone' => 'required|string',  
             'sector_id' => 'required|integer',  
