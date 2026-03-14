@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreCommentRequest;
+
 class CommentController extends Controller
 {
     /**
@@ -32,14 +33,12 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
-         $UserId = Auth::id();
+        $UserId = Auth::id();
         $data = $request->validated();
-
         $modelClass = 'App\\Models\\' . $data['commentable_type'];
         $model = $modelClass::findOrFail($data['commentable_id']);
-
         $comment = $model->comments()->create([
-            'user_id' => $UserId ,
+            'user_id' => $UserId,
             'body'    => $data['body'],
         ]);
 
@@ -78,7 +77,7 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-         $UserId = Auth::id();
+        $UserId = Auth::id();
 
         if ($UserId !== $comment->user_id) {
             return response()->json(['message' => 'Non autorisé'], 403);

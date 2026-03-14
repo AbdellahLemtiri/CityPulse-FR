@@ -1,0 +1,20 @@
+$kind: http-request
+name: add
+url: http://127.0.0.1:8000/api/posts
+method: POST
+headers:
+  Accept: application/json
+  Authorization: "{{token}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"caption\": \"Fuite d'eau au niveau du marché central, merci
+    d'intervenir rapidement.\",\r
+
+    \    \"location\": \"Marché Central, Safi\",\r
+
+    \    \"status\": \"published\"\r
+
+    }\r\n"
+order: 1773498004567

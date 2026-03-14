@@ -12,7 +12,7 @@ class Comment extends Model
     //
 
     use SoftDeletes;
-    protected $fillable = ['body', 'is_flagged', 'user_id'];
+    protected $fillable = ['body', 'is_flagged', 'user_id','deleted_at'];
 
     public function commentable(): MorphTo { return $this->morphTo(); }
     public function user(): BelongsTo { return $this->belongsTo(User::class); }

@@ -1,0 +1,17 @@
+$kind: http-request
+name: toggle like
+url: http://127.0.0.1:8000/api/likes/toggle
+method: POST
+headers:
+  Accept: application/json
+  Authorization: "{{token}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"likeable_type\": \"Post\",\r
+
+    \    \"likeable_id\": 1\r
+
+    }"
+order: 1773498047194
