@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+// use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class Article extends Model
 {
     /** @use HasFactory<\Database\Factories\ArticleFactory> */
-    use SoftDeletes, HasFactory;
+    // use SoftDeletes, HasFactory;
 
     protected $fillable = [
         'user_id',
