@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('caption');
             $table->string('location')->nullable();
-            $table->boolean('is_approved')->default(false);
+            $table->boolean('is_approved')->default(true);
             $table->enum('status', ['draft', 'published'])->default('published');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
