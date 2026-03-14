@@ -1,0 +1,14 @@
+$kind: http-request
+name: login
+url: ""
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \    \"email\": \"lemtiriabdo@gmail.com\",\r
+
+    \    \"password\": \"lemtiriabdo@gmail.comA1\"\r
+
+    }"
+order: 1773451061232

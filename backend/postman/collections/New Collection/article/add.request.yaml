@@ -1,0 +1,30 @@
+$kind: http-request
+name: add
+url: http://127.0.0.1:8000/api/articles
+method: POST
+headers:
+  Accept: application/json
+  Authorization: "{{token}}"
+body:
+  type: json
+  content: "{\r
+
+    \    \"title\": \"Nouveau projet d'infrastructure à Safi\",\r
+
+    \    \"slug\": \"nouveau-projet-infrastructure-safi-2026\",\r
+
+    \    \"content\": \"La commune annonce le lancement d'un nouveau projet pour
+    améliorer les routes principales de la ville..\",\r
+
+    \    \"scope\": \"global\",\r
+
+    \    \"sector_id\": null,\r
+
+    \    \"status\": \"published\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: ""
+order: 1773452196987

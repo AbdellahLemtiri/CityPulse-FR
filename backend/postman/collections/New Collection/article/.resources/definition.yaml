@@ -1,0 +1,7 @@
+$kind: collection
+name: article
+auth:
+  - id: 0dce0a30-6c34-4467-b90f-3bbe4ef6d7f9
+    type: noauth
+    name: No Auth
+order: 1300117332164607

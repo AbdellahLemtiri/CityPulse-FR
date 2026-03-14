@@ -1,0 +1,28 @@
+$kind: http-request
+name: register
+url: http://127.0.0.1:8000/api/register/
+method: POST
+headers:
+  Accept: application/json
+body:
+  type: json
+  content: "{\r
+
+    \    \"first_name\" : \"abdo\" ,\r
+
+    \            \"last_name\" : \"lemtiriA1\"  ,\r
+
+    \            \"email\" : \"lemtiriabdo@gmail.com\" ,\r
+
+    \            \"password\" : \"lemtiriabdo@gmail.comA1\" ,\r
+
+    \            \"cin\" : \"HH22334\", \r
+
+    \            \"telephone\" : \"0662858585\" ,  \r
+
+    \            \"sector_id\" : 2 ,  \r
+
+    \            \"adresse\" : \"b3id akhay\" \r
+
+    }"
+order: 746892606893805
