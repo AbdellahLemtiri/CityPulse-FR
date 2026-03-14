@@ -1,0 +1,11 @@
+$kind: http-request
+name: delete
+url: http://127.0.0.1:8000/api/comments/1
+method: DELETE
+headers:
+  Accept: application/json
+  Authorization: "{{token}}"
+body:
+  type: json
+  content: "\r\n"
+order: 4055210223139736

@@ -1,5 +1,6 @@
 $kind: http-request
-url: http://127.0.0.1:8000/api/posts
+name: add
+url: http://127.0.0.1:8000/api/comments
 method: POST
 headers:
   Accept: application/json
@@ -8,12 +9,11 @@ body:
   type: json
   content: "{\r
 
-    \    \"caption\": \"Fuite d'eau au niveau du marché central, merci
-    d'intervenir rapidement.\",\r
+    \    \"body\": \"Excellente initiative ! Je serai présent.\",\r
 
-    \    \"location\": \"Marché Central, Safi\",\r
+    \    \"commentable_type\": \"Article\",\r
 
-    \    \"status\": \"published\"\r
+    \    \"commentable_id\": 1\r
 
-    }\r\n"
+    }"
 order: 4024888241424058

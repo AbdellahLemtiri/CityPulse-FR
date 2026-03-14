@@ -206,8 +206,7 @@ export default function SafiGram() {
         time: "À l'instant",
       };
 
-      // تحديث المودال و الـ Feed
-      const updatedActivePost = { ...activePost, comments: [...activePost.comments, newComment] };
+       const updatedActivePost = { ...activePost, comments: [...activePost.comments, newComment] };
       setActivePost(updatedActivePost);
       setPosts(posts.map(p => p.id === activePost.id ? updatedActivePost : p));
       setCommentText("");
