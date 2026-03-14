@@ -9,13 +9,13 @@ export default function BottomNav() {
   return (
     <nav className="md:hidden fixed bottom-0 left-0 w-full glass-nav pb-safe z-40 transition-colors duration-300">
       <div className="grid grid-cols-5 h-[68px]">
-        <NavLink to="/citoyen/feed" className={mobileNavClass}>
+        <NavLink to="/homefeed" className={mobileNavClass}>
           {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>feed</span><span className="text-[10px] font-medium">Fil</span></>)}
         </NavLink>
-        <NavLink to="/citoyen/agenda" className={mobileNavClass}>
+        <NavLink to="/agenda" className={mobileNavClass}>
           {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>event</span><span className="text-[10px] font-medium">Agenda</span></>)}
         </NavLink>
-        <NavLink to="/citoyen/safigram" className={mobileNavClass}>
+        <NavLink to="/safigram" className={mobileNavClass}>
           {({ isActive }) => (
             <>
               {isActive && <div className="absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full shadow-[0_2px_8px_#f97316]"></div>}
@@ -24,10 +24,10 @@ export default function BottomNav() {
             </>
           )}
         </NavLink>
-        <NavLink to="/citoyen/signalements" className={mobileNavClass}>
+        <NavLink to="/signalements" className={mobileNavClass}>
           {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>assignment</span><span className="text-[10px] font-medium">Suivi</span></>)}
         </NavLink>
-        <NavLink to="/citoyen/profil" className={mobileNavClass}>
+        <NavLink to="/profil" className={mobileNavClass}>
           {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>person</span><span className="text-[10px] font-medium">Profil</span></>)}
         </NavLink>
       </div>

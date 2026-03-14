@@ -23,12 +23,16 @@ class StoreIncidentRequest extends FormRequest
     {
         return [      
             'title' => 'required|string|max:200',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'sector_id' => 'required|exists:sectors,id', 
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'  
+            'address' => 'nullable|string',
+            'images_count' => 'integer|min:1|max:4',
+            'hasAudio' => 'boolean default false',
+            
+
         ];
     }
 }

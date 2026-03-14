@@ -32,16 +32,10 @@ class IncidentController extends Controller
     public function store(StoreIncidentRequest $request)
     {
         //
+        $data = $request->validated();
+        Incident::create($data);
+        return response()->json(['message' => 'Incident créé avec succès'], 201);
 
-        $request->validated();
-        Incident::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'category_id' => $request->category_id,
-            'sector_id' => $request->sector_id,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude
-        ]);
     }
 
     /**
@@ -58,12 +52,13 @@ class IncidentController extends Controller
     public function edit(string $id)
     {
         //
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update( $request, string $id)
     {
         //
     }

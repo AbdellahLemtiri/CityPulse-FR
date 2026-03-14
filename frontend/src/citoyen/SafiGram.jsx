@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import axiosClient from "../config/axios-client";
- 
+import axiosClient from "../config/axios-client";  
+
 const currentUser = {
   name: "Abdellah Lemtiri",
   avatar: "https://i.pravatar.cc/150?u=abdellah",
+  id: 99  
 };
-
+ 
 const initialPosts = [
   {
     id: 1,
-    author: { name: "Nadia_Art", avatar: "https://i.pravatar.cc/150?u=1", verified: true },
+    author: { id: 1, name: "Nadia_Art", avatar: "https://i.pravatar.cc/150?u=1", verified: true },
     location: "Château de Mer, Safi",
     time: "il y a 2h",
     image: "https://images.unsplash.com/photo-1580227974542-c51722880791?q=80&w=800",
@@ -22,7 +23,7 @@ const initialPosts = [
   },
   {
     id: 2,
-    author: { name: "Safi_Surf_Club", avatar: "https://i.pravatar.cc/150?u=2", verified: false },
+    author: { id: 2, name: "Safi_Surf_Club", avatar: "https://i.pravatar.cc/150?u=2", verified: false },
     location: "Plage Lalla Fatna",
     time: "il y a 5h",
     image: "https://images.unsplash.com/photo-1517983694060-32df9c9bd82c?q=80&w=800",
@@ -34,38 +35,48 @@ const initialPosts = [
 ];
 
 export default function SafiGram() {
-  // --- STATES (L-7ala dial l-page) ---
-  const [posts, setPosts] = useState(initialPosts);
-  const [loading, setLoading] = useState(false); // N-redouha true mnin n-khdmo b API
+  const [posts, setPosts] = useState(initialPosts); // غنردوها useState([]) ملي يخدم API
+  const [loading, setLoading] = useState(false);
   
-  // States l-formulaire
+  // States l-formulaire création
   const [isCreating, setIsCreating] = useState(false);
   const [caption, setCaption] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
-  // States l-Modal (Zoom 3la l-post)
-  const [activePost, setActivePost] = useState(null); // Post li m7loul f l-modal
+  // States l-Modal dial l-post (Affichage complet)
+  const [activePost, setActivePost] = useState(null); 
   const [commentText, setCommentText] = useState("");
   const [showHeartAnim, setShowHeartAnim] = useState(false);
+  const [isCommenting, setIsCommenting] = useState(false);
 
-  // --- FONCTIONS DIAL L-API (Wajdin l-men b3d) ---
-  /*
+  // States l-Modal dial Confirmation (Delete)
+  const [postToDelete, setPostToDelete] = useState(null);
+
+  // ==========================================
+  // 1. FETCH DATA (GET /api/posts)
+  // ==========================================
   useEffect(() => {
-    // getPosts();
+    fetchPosts();
   }, []);
-  
-  const getPosts = async () => {
+
+  const fetchPosts = async () => {
+    // setLoading(true);
     try {
-      const res = await axiosClient.get("/posts");
-      setPosts(res.data);
-    } catch (err) {
-      console.error(err);
+      // ✅ الكود الحقيقي للـ API:
+      // const response = await axiosClient.get("/posts");
+      // setPosts(response.data); 
+    } catch (error) {
+      console.error("Erreur récupération posts", error);
+    } finally {
+      // setLoading(false);
     }
   };
-  */
 
-  // --- FONCTIONS DIAL L-FORMULAIRE ---
+  // ==========================================
+  // 2. CREATE POST (POST /api/posts)
+  // ==========================================
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -87,32 +98,62 @@ export default function SafiGram() {
     setIsCreating(false);
   };
 
-  const publishPost = () => {
+  const publishPost = async () => {
     if (!caption && !selectedImage) return;
+    setIsPublishing(true);
 
-    const newPost = {
-      id: Date.now(),
-      author: { name: currentUser.name, avatar: currentUser.avatar, verified: false },
-      location: "Safi",
-      time: "À l'instant",
-      image: previewUrl || "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800",
-      likes: 0,
-      caption: caption,
-      liked: false,
-      comments: [],
-    };
+    try {
+      // ✅ الكود الحقيقي للـ API:
+      /*
+      const formData = new FormData();
+      formData.append("caption", caption);
+      if (selectedImage) formData.append("image", selectedImage);
+      // location تقدر تزيدها حتى هي
+      
+      const response = await axiosClient.post("/posts", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      
+      // نزيدو البوست الجديد فليست
+      setPosts([response.data.post, ...posts]);
+      */
 
-    setPosts([newPost, ...posts]);
-    cancelPost();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+      // محاكاة (Simulation) باش يبان ليك خدام دابا
+      const newPost = {
+        id: Date.now(),
+        author: { id: currentUser.id, name: currentUser.name, avatar: currentUser.avatar, verified: false },
+        location: "Safi",
+        time: "À l'instant",
+        image: previewUrl || "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800",
+        likes: 0,
+        caption: caption,
+        liked: false,
+        comments: [],
+      };
+      setPosts([newPost, ...posts]);
+      
+      cancelPost();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+    } catch (error) {
+      console.error("Erreur publication post", error);
+      // hna tqder tzid toast dial l'erreur
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
-  // --- FONCTIONS DIAL L-POST W L-MODAL ---
-  const toggleLike = (postId) => {
+  // ==========================================
+  // 3. LIKE POST (POST /api/posts/{id}/like)
+  // ==========================================
+  const toggleLike = async (postId) => {
+    // 1. Optimistic Update (نبدلو فالواجهة قبل ما يجاوب السيرفر باش تبان سريعة)
+    const isCurrentlyLiked = posts.find(p => p.id === postId)?.liked;
+    
     setPosts(posts.map(post => {
       if (post.id === postId) {
         const isLiked = !post.liked;
-        // Ila kan l-modal m7loul 3la had l-post, n-mettew 7ta howa a jour
+        // تحديث المودال إيلا كان محلول
         if (activePost && activePost.id === postId) {
           setActivePost({ ...activePost, liked: isLiked, likes: isLiked ? activePost.likes + 1 : activePost.likes - 1 });
         }
@@ -120,6 +161,16 @@ export default function SafiGram() {
       }
       return post;
     }));
+
+    // 2. API Call
+    try {
+      // ✅ الكود الحقيقي للـ API:
+      // await axiosClient.post(`/posts/${postId}/like`);
+    } catch (error) {
+      console.error("Erreur like", error);
+      // إيلا وقع موشكيل فالسيرفر، نرجعو البوست كيف كان
+      fetchPosts(); 
+    }
   };
 
   const handleModalDoubleClickLike = () => {
@@ -130,29 +181,69 @@ export default function SafiGram() {
     }
   };
 
-  const submitComment = () => {
-    if (commentText.trim() === "" || !activePost) return;
+  // ==========================================
+  // 4. ADD COMMENT (POST /api/posts/{id}/comments)
+  // ==========================================
+  const submitComment = async () => {
+    if (commentText.trim() === "" || !activePost || isCommenting) return;
+    setIsCommenting(true);
 
-    const newComment = {
-      id: Date.now(),
-      author: currentUser.name,
-      avatar: currentUser.avatar,
-      text: commentText,
-      time: "À l'instant",
-    };
+    try {
+      // ✅ الكود الحقيقي للـ API:
+      /*
+      const response = await axiosClient.post(`/posts/${activePost.id}/comments`, {
+        text: commentText
+      });
+      const newComment = response.data.comment;
+      */
 
-    // Mettre à jour l-Modal
-    const updatedActivePost = { ...activePost, comments: [...activePost.comments, newComment] };
-    setActivePost(updatedActivePost);
+      // محاكاة (Simulation)
+      const newComment = {
+        id: Date.now(),
+        author: currentUser.name,
+        avatar: currentUser.avatar,
+        text: commentText,
+        time: "À l'instant",
+      };
 
-    // Mettre à jour l-Feed
-    setPosts(posts.map(p => p.id === activePost.id ? updatedActivePost : p));
-    setCommentText("");
+      // تحديث المودال و الـ Feed
+      const updatedActivePost = { ...activePost, comments: [...activePost.comments, newComment] };
+      setActivePost(updatedActivePost);
+      setPosts(posts.map(p => p.id === activePost.id ? updatedActivePost : p));
+      setCommentText("");
+
+    } catch (error) {
+      console.error("Erreur commentaire", error);
+    } finally {
+      setIsCommenting(false);
+    }
   };
 
- return (
+  // ==========================================
+  // 5. DELETE POST (DELETE /api/posts/{id})
+  // ==========================================
+  const handleDeletePost = async () => {
+    if (!postToDelete) return;
+    
+    try {
+      // ✅ الكود الحقيقي للـ API:
+      // await axiosClient.delete(`/posts/${postToDelete.id}`);
+      
+      setPosts(posts.filter(p => p.id !== postToDelete.id));
+      setPostToDelete(null);
+      if(activePost && activePost.id === postToDelete.id) setActivePost(null);
+
+    } catch (error) {
+      console.error("Erreur suppression", error);
+    }
+  };
+
+
+  return (
     <>
+      {/* ---------------------------------------------------- */}
       {/* ZONE DE CRÉATION */}
+      {/* ---------------------------------------------------- */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 mb-8 shadow-sm transition-colors duration-300">
         <div className="flex items-start gap-3">
           <img src={currentUser.avatar} className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover" alt="Profile" />
@@ -193,10 +284,10 @@ export default function SafiGram() {
                   <button onClick={cancelPost} className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 px-3 py-2 transition-colors">Annuler</button>
                   <button
                     onClick={publishPost}
-                    disabled={!caption && !selectedImage}
-                    className={`bg-primary-500 text-white font-bold py-2 px-6 rounded-full transition-colors shadow-lg shadow-primary-500/30 ${(!caption && !selectedImage) ? "opacity-50 cursor-not-allowed" : "hover:bg-primary-600 active:scale-95"}`}
+                    disabled={(!caption && !selectedImage) || isPublishing}
+                    className={`bg-primary-500 text-white font-bold py-2 px-6 rounded-full transition-colors shadow-lg shadow-primary-500/30 ${(!caption && !selectedImage) || isPublishing ? "opacity-50 cursor-not-allowed" : "hover:bg-primary-600 active:scale-95"}`}
                   >
-                    Publier
+                    {isPublishing ? "Publication..." : "Publier"}
                   </button>
                 </div>
               </div>
@@ -205,62 +296,73 @@ export default function SafiGram() {
         </div>
       </div>
 
+      {/* ---------------------------------------------------- */}
       {/* FEED CONTAINER */}
-      <div className="space-y-6">
-        {posts.map((post) => (
-          <div key={post.id} className="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow  ">
-            
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <img src={post.author.avatar} className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover" alt="Avatar" />
-                <div>
-                  <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 flex items-center gap-1">
-                    {post.author.name}
-                  </h3>
-                  <p className="text-[11px] text-gray-500 dark:text-gray-400">{post.location} • {post.time}</p>
+      {/* ---------------------------------------------------- */}
+      {loading ? (
+        <div className="flex justify-center py-10">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {posts.map((post) => (
+            <div key={post.id} className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-md transition-shadow animate-fade-in">
+              
+              <div className="p-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <img src={post.author.avatar} className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover" alt="Avatar" />
+                  <div>
+                    <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100 flex items-center gap-1">
+                      {post.author.name} {post.author.verified && <span className="material-symbols-outlined text-secondary-500 text-[14px]">verified</span>}
+                    </h3>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">{post.location} • {post.time}</p>
+                  </div>
+                </div>
+                
+                {/* Menu (Options du post) */}
+                {post.author.id === currentUser.id && (
+                  <button onClick={() => setPostToDelete(post)} className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <span className="material-symbols-outlined text-[20px]">delete</span>
+                  </button>
+                )}
+              </div>
+
+              <div onClick={() => setActivePost(post)} className="w-full bg-gray-100 dark:bg-gray-900 border-y border-gray-200 dark:border-gray-700 relative group cursor-pointer aspect-video md:aspect-[4/3] overflow-hidden">
+                <img src={post.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Post" />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                  <span className="material-symbols-outlined text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md">fullscreen</span>
                 </div>
               </div>
-              <button className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"><span className="material-symbols-outlined">more_horiz</span></button>
-            </div>
 
-            <div onClick={() => setActivePost(post)} className="w-full bg-gray-100 dark:bg-gray-900 border-y border-gray-200 dark:border-gray-700 relative group cursor-pointer aspect-video md:aspect-[4/3] overflow-hidden">
-              <img src={post.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Post" />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                <span className="material-symbols-outlined text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md">fullscreen</span>
-              </div>
-            </div>
+              <div className="p-4">
+                <div className="flex items-center gap-4 mb-3">
+                  <button onClick={() => toggleLike(post.id)} className={`flex items-center gap-1.5 transition-colors active:scale-90 group ${post.liked ? "text-red-500" : "text-gray-500 dark:text-gray-400 hover:text-red-500"}`}>
+                    <span className={`material-symbols-outlined text-[26px] ${post.liked ? "" : "icon-outline"} group-hover:scale-110 transition-transform`}>favorite</span>
+                  </button>
+                  <button onClick={() => setActivePost(post)} className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 transition-colors active:scale-90 group">
+                    <span className="material-symbols-outlined text-[26px] icon-outline group-hover:scale-110 transition-transform">chat_bubble</span>
+                  </button>
+                </div>
+                
+                <p className="font-bold text-sm text-gray-900 dark:text-gray-100 mb-1">{post.likes} J'aime</p>
+                
+                <div className="text-sm text-gray-800 dark:text-gray-300 leading-relaxed line-clamp-2">
+                  <span className="font-bold text-gray-900 dark:text-gray-100 mr-2">{post.author.name}</span>
+                  {post.caption}
+                </div>
 
-            <div className="p-4">
-              <div className="flex items-center gap-4 mb-3">
-                <button onClick={() => toggleLike(post.id)} className={`flex items-center gap-1.5 transition-colors active:scale-90 group ${post.liked ? "text-red-500" : "text-gray-500 dark:text-gray-400 hover:text-red-500"}`}>
-<span
-  className="material-symbols-outlined text-[26px]"
-  style={{ fontVariationSettings: `'FILL' ${post.liked ? 1 : 0}` }}
->
-  thumb_up
-</span>
-                </button>
-                <button onClick={() => setActivePost(post)} className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 transition-colors active:scale-90 group">
-                  <span className="material-symbols-outlined text-[26px]  group-hover:scale-110 transition-transform">chat_bubble</span>
+                <button onClick={() => setActivePost(post)} className="text-sm text-gray-500 dark:text-gray-400 mt-2 hover:text-gray-700 dark:hover:text-gray-200 transition-colors font-medium">
+                  Afficher les {post.comments.length} commentaires
                 </button>
               </div>
-              
-              <p className="font-bold text-sm text-gray-900 dark:text-gray-100 mb-1">{post.likes} J'aime</p>
-              
-              <div className="text-sm text-gray-800 dark:text-gray-300 leading-relaxed line-clamp-2">
-                <span className="font-bold text-gray-900 dark:text-gray-100 mr-2">{post.author.name}</span>
-                {post.caption}
-              </div>
-
-              <button onClick={() => setActivePost(post)} className="text-sm text-gray-500 dark:text-gray-400 mt-2 hover:text-gray-700 dark:hover:text-gray-200 transition-colors font-medium">
-                Afficher les {post.comments.length} commentaires
-              </button>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
-      {/* MODAL (Instagram Style) */}
+      {/* ---------------------------------------------------- */}
+      {/* MODAL 1 : Affichage du POST COMPLET (Instagram Style) */}
+      {/* ---------------------------------------------------- */}
       {activePost && (
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm transition-opacity flex items-center justify-center p-0 md:p-6 fade-in">
           <button onClick={() => setActivePost(null)} className="absolute top-4 right-4 z-50 text-white hover:text-gray-300 bg-black/50 hover:bg-black/80 rounded-full p-2 transition-colors active:scale-90">
@@ -268,6 +370,7 @@ export default function SafiGram() {
           </button>
 
           <div className="bg-white dark:bg-gray-900 w-full h-full md:max-w-6xl md:h-[90vh] md:rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl zoom-in relative">
+            {/* Image (Gauche) */}
             <div onDoubleClick={handleModalDoubleClickLike} className="w-full md:w-[55%] lg:w-[65%] bg-black flex items-center justify-center h-72 md:h-full relative group select-none">
               <img src={activePost.image} className="max-w-full max-h-full object-contain" alt="Post full" />
               {showHeartAnim && (
@@ -277,7 +380,9 @@ export default function SafiGram() {
               )}
             </div>
 
+            {/* Commentaires et Infos (Droite) */}
             <div className="w-full md:w-[45%] lg:w-[35%] flex flex-col h-[calc(100vh-18rem)] md:h-full bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700">
+              {/* Header de l'auteur */}
               <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800 z-10">
                 <div className="flex items-center gap-3">
                   <img src={activePost.author.avatar} className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 object-cover" />
@@ -290,6 +395,7 @@ export default function SafiGram() {
                 </div>
               </div>
 
+              {/* Liste des commentaires */}
               <div className="flex-1 overflow-y-auto p-4 space-y-6 no-scrollbar bg-gray-50 dark:bg-gray-900">
                 <div className="flex gap-3">
                   <img src={activePost.author.avatar} className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex-shrink-0" />
@@ -315,24 +421,18 @@ export default function SafiGram() {
                         </p>
                         <div className="flex items-center gap-4 mt-1">
                           <span className="text-[11px] text-gray-500 dark:text-gray-400">{c.time}</span>
-                          <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium cursor-pointer hover:text-gray-800 dark:hover:text-gray-300">Répondre</span>
                         </div>
                       </div>
-                      <button className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all flex items-start pt-1">
-                        <span className="material-symbols-outlined text-sm icon-outline">favorite</span>
-                      </button>
                     </div>
                   ))}
                 </div>
               </div>
 
+              {/* Formulaire d'ajout de commentaire */}
               <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 z-10">
                 <div className="flex items-center gap-4 mb-2">
                   <button onClick={() => toggleLike(activePost.id)} className={`transition-colors active:scale-90 group ${activePost.liked ? "text-red-500" : "text-gray-600 dark:text-gray-400 hover:text-red-500"}`}>
                     <span className={`material-symbols-outlined text-3xl ${activePost.liked ? "" : "icon-outlined"} group-hover:scale-110 transition-transform`}>favorite</span>
-                  </button>
-                  <button onClick={() => document.getElementById("modal-comment-input").focus()} className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors active:scale-90 group">
-                    <span className="material-symbols-outlined text-3xl icon-outline group-hover:scale-110 transition-transform">chat_bubble</span>
                   </button>
                 </div>
                 
@@ -347,15 +447,46 @@ export default function SafiGram() {
                     onChange={(e) => setCommentText(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && submitComment()}
                     placeholder="Ajouter un commentaire..."
-                    className="flex-1 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2.5 focus:ring-1 focus:ring-primary-500 focus:outline-none placeholder-gray-500 dark:placeholder-gray-400 transition-all"
+                    disabled={isCommenting}
+                    className="flex-1 bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2.5 focus:ring-1 focus:ring-primary-500 focus:outline-none placeholder-gray-500 dark:placeholder-gray-400 transition-all disabled:opacity-50"
                   />
-                  <button onClick={submitComment} className="text-primary-600 dark:text-primary-500 font-bold text-sm px-2 hover:text-primary-700 transition-colors">Publier</button>
+                  <button onClick={submitComment} disabled={isCommenting} className="text-primary-600 dark:text-primary-500 font-bold text-sm px-2 hover:text-primary-700 transition-colors disabled:opacity-50">
+                    {isCommenting ? "..." : "Publier"}
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* ---------------------------------------------------- */}
+      {/* MODAL 2 : CONFIRMATION SUPPRESSION (Delete) */}
+      {/* ---------------------------------------------------- */}
+      {postToDelete && (
+        <div className="fixed inset-0 z-[110] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 fade-in">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl zoom-in">
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-500/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-3xl">delete</span>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Supprimer la publication ?</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Êtes-vous sûr de vouloir supprimer cette photo ? Cette action est irréversible.
+              </p>
+            </div>
+            <div className="flex border-t border-gray-200 dark:border-gray-700">
+              <button onClick={() => setPostToDelete(null)} className="flex-1 py-3 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-r border-gray-200 dark:border-gray-700">
+                Annuler
+              </button>
+              <button onClick={handleDeletePost} className="flex-1 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </>
   );
 }

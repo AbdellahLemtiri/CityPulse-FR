@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('location_lng', 11, 8)->nullable();
             $table->integer('xp_reward')->default(10);
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_approved')->default(false);
             $table->timestamps();
         });
     }

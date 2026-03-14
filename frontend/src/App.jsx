@@ -5,6 +5,9 @@ import Register from './Register';
 import Dashboard from './Dashboard';
 import SafiGram from './citoyen/SafiGram';
 import HomeFeed from './citoyen/HomeFeed';
+import Agenda from './citoyen/Agenda';
+import Signalements from './citoyen/Signalements';
+import Profil from './citoyen/Profil';
 import CitoyenLayout from './components/layouts/CitoyenLayout';
 
 function App() {
@@ -17,11 +20,12 @@ function App() {
        
       {/* Route de l'Espace Citoyen (Layout Parent) */}
      <Route  element={<CitoyenLayout />}>
-        
-        <Route path="/safigram" element={<SafiGram />} />
+         <Route path="/safigram" element={<SafiGram />} />
         
         <Route path="/homefeed" element={<HomeFeed />} />
-        {/* <Route path="/profil" element={<Profil />} /> */}
+        <Route path="/agenda" element={<Agenda />} />
+        <Route path="/signalements" element={<Signalements />} />
+        <Route path="/profil" element={<Profil />} /> 
       </Route>
 
     </Routes>
