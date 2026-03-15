@@ -65,7 +65,6 @@ class User extends Authenticatable
     public function sector(): BelongsTo { return $this->belongsTo(Sector::class); }
     public function incidents(): HasMany { return $this->hasMany(Incident::class); }
     public function posts(): HasMany { return $this->hasMany(Post::class); }
-    public function participations(): HasMany { return $this->hasMany(Participation::class); }
-    public function badges(): BelongsToMany { return $this->belongsToMany(Badge::class, 'user_badges')->withPivot('awarded_at'); }
+     public function badges(): BelongsToMany { return $this->belongsToMany(Badge::class, 'user_badges')->withPivot('awarded_at'); }
     public function strikes(): HasMany { return $this->hasMany(Strike::class); }
 }

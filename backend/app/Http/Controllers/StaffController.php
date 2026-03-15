@@ -8,6 +8,7 @@ use App\Http\Requests\StoreStaffRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+
 class StaffController extends Controller
 {
     /**
@@ -16,6 +17,9 @@ class StaffController extends Controller
     public function index()
     {
         //
+        $staffs = User::whereIn('role_id', [2, 4])->with('role')->get();
+
+        return response()->json($staffs);
     }
 
     /**
@@ -36,7 +40,8 @@ class StaffController extends Controller
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
         $data['uuid'] = Str::uuid();
-        $user = User::create($data);
+       User::create($data);
+        $user = User::where('email', $data['email'])->with('role')->firstOrFail();
         return response()->json(['message' => 'Staff créé avec succès', 'user' => $user], 201);
     }
 

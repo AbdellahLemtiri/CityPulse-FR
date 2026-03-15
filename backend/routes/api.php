@@ -30,4 +30,5 @@ Route::middleware('auth:sanctum')->group(function () {
     // ---------------------------------------------------------------------------
 
     Route::post('/admin/staff', [StaffController::class, 'store']);
+    Route::get('/admin/staff', [StaffController::class, 'index']);
 });

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import axiosClient from "../config/axios-client";
+import { useState, useEffect } from "react";import axiosClient from "../config/axios-client";
 // --- MOCK DATA ---
 const mockSectors = [
   { id: 1, name: "Quartier Plateau" },
@@ -17,7 +16,7 @@ const mockStaff = [
     role: "Manager",
     sector_id: 1,
     sector_name: "Quartier Plateau",
-    is_active: true,
+    is_banned: true,
   },
   {
     id: 2,
@@ -27,7 +26,7 @@ const mockStaff = [
     role: "Journaliste",
     sector_id: null,
     sector_name: "-",
-    is_active: true,
+    is_banned: true,
   },
   {
     id: 3,
@@ -37,13 +36,15 @@ const mockStaff = [
     role: "Manager",
     sector_id: 2,
     sector_name: "Ville Nouvelle",
-    is_active: false,
+    is_banned: false,
   },
 ];
 
-export default function AdminStaff() {
-  const [staffList, setStaffList] = useState(mockStaff);
 
+export default function AdminStaff() {
+    const [loading, setLoading] = useState(true);
+  const [staffList, setStaffList] = useState(mockStaff);
+const [loadingList, setLoadingList] = useState(false);
   // STATES DU FORMULAIRE ET MODAL
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -55,7 +56,7 @@ export default function AdminStaff() {
     last_name: "",
     email: "",
     password: "", // Utilisé uniquement à la création
-    role: "Manager", // Par défaut
+    role_id: 2, // Par défaut // Par défaut
     sector_id: "", // Obligatoire si Manager
   });
 
@@ -101,7 +102,11 @@ export default function AdminStaff() {
         const response = await axiosClient.post("/admin/staff", formData);
 
         // Étape 5 : Mise à jour de l-UI (Succès)
-        const sectorName =formData.role_id === "4"? mockSectors.find((s) => s.id === parseInt(formData.sector_id))?.name: "-";
+        const sectorName =
+          formData.role_id === "4"
+            ? mockSectors.find((s) => s.id === parseInt(formData.sector_id))
+                ?.name
+            : "-";
 
         // Hna f l-idéal, Laravel khass y-sift lik l-User l-jdid b ID dialo f response.data.user
         // Walakin bima anaka glti li rjje3ti ghir 'message', ghadi n-saybouh localement:
@@ -136,8 +141,30 @@ export default function AdminStaff() {
     }
   };
   // SOUMETTRE LE FORMULAIRE
-   
+const fetchStaff = async () => {
+  setLoadingList(true);  
+  try {
+    const response = await axiosClient.get("/admin/staff");
+    setLoading(false);
+    // L-7el s7i7: Kan-9elbou wesh l-tableau fih 0 éléments
+    if (response.data.length === 0) {
+      setStaffList(mockStaff); // L-Backend khawi -> N-khedmou b l-Mock Data
+    } else {
+      setStaffList(response.data); // L-Backend fih data -> N-khedmou biha
+    }
+  
+  } catch (error) {
+    setLoading(false);
+    console.error("Erreur lors de la récupération du staff:", error);
+    alert("Impossible de charger les données.");
+  } finally {
+    setLoadingList(false); 
+  }
+};
 
+useEffect(() => {
+    fetchStaff();
+  }, [])
   // ACTIVER / DÉSACTIVER UN COMPTE (Soft Ban)
   const toggleStatus = (id) => {
     if (
@@ -145,16 +172,19 @@ export default function AdminStaff() {
     ) {
       setStaffList(
         staffList.map((s) =>
-          s.id === id ? { ...s, is_active: !s.is_active } : s,
+          s.id === id ? { ...s, is_banned: !s.is_banned } : s,
         ),
       );
     }
   };
 
-  return (
+  return loading ? (
+        <div className="flex justify-center py-10">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+        </div>
+      ) :  (
     <div className="max-w-6xl mx-auto">
-      {/* HEADER DE LA PAGE */}
-      <div className="flex justify-between items-center mb-6">
+       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-wide">
             Gestion du Staff (RBAC)
@@ -191,10 +221,10 @@ export default function AdminStaff() {
             </tr>
           </thead>
           <tbody>
-            {staffList.map((staff) => (
+            {Array.isArray(staffList) &&staffList.map((staff) => (
               <tr
                 key={staff.id}
-                className={`border-b border-gray-200 text-sm ${!staff.is_active ? "bg-red-50/50" : "hover:bg-gray-50"}`}>
+                className={`border-b border-gray-200 text-sm ${!staff.is_banned ? "bg-red-50/50" : "hover:bg-gray-50"}`}>
                 <td className="p-3 border-r border-gray-200 font-bold text-gray-900">
                   {staff.first_name} {staff.last_name}
                 </td>
@@ -208,14 +238,14 @@ export default function AdminStaff() {
                         ? "bg-purple-100 text-purple-700 border-purple-300"
                         : "bg-indigo-100 text-indigo-700 border-indigo-300"
                     }`}>
-                    {staff.role}
+                    {staff.role.name}
                   </span>
                 </td>
                 <td className="p-3 border-r border-gray-200 font-bold text-gray-700">
                   {staff.sector_name}
                 </td>
                 <td className="p-3 border-r border-gray-200 text-center">
-                  {staff.is_active ? (
+                  {staff.is_banned === true ? (
                     <span className="text-green-600 font-bold uppercase text-[10px] bg-green-100 border border-green-300 px-2 py-1">
                       Actif
                     </span>
@@ -356,13 +386,14 @@ export default function AdminStaff() {
                     value={formData.role_id}
                     onChange={(e) => {
                       setFormData({
-                        ...formData,role_id: e.target.value,sector_id:e.target.value === "4" ? "": formData.sector_id,
+                        ...formData,
+                        role_id: e.target.value,
+                        sector_id:
+                          e.target.value === "4" ? "" : formData.sector_id,
                       });
                     }}
                     className="w-full border border-gray-300 p-2 text-sm bg-white focus:outline-none focus:border-blue-500">
-                    <option value="2">
-                      Manager (Opérateur de secteur)
-                    </option>
+                    <option value="2">Manager (Opérateur de secteur)</option>
                     <option value="4">Journaliste (Narrateur)</option>
                   </select>
                 </div>
@@ -389,7 +420,7 @@ export default function AdminStaff() {
                       </option>
                     ))}
                   </select>
-                  {formData.role_id=== "4" && (
+                  {formData.role_id === "4" && (
                     <p className="text-[10px] text-gray-500 mt-1 italic">
                       Un journaliste a un accès global à la ville.
                     </p>
