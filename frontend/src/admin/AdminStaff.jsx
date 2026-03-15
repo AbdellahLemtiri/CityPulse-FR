@@ -81,7 +81,7 @@ export default function AdminStaff() {
     e.preventDefault();
 
     // Validation front-end rapide
-    if (formData.role === "Manager" && !formData.sector_id) {
+    if (formData.role_id === "2" && !formData.sector_id) {
       alert("Veuillez assigner un secteur au Manager.");
       return;
     }
@@ -101,8 +101,7 @@ export default function AdminStaff() {
         const response = await axiosClient.post("/admin/staff", formData);
 
         // Étape 5 : Mise à jour de l-UI (Succès)
-        const sectorName =
-          formData.role === "Manager"? mockSectors.find((s) => s.id === parseInt(formData.sector_id))?.name: "-";
+        const sectorName =formData.role_id === "4"? mockSectors.find((s) => s.id === parseInt(formData.sector_id))?.name: "-";
 
         // Hna f l-idéal, Laravel khass y-sift lik l-User l-jdid b ID dialo f response.data.user
         // Walakin bima anaka glti li rjje3ti ghir 'message', ghadi n-saybouh localement:
@@ -205,7 +204,7 @@ export default function AdminStaff() {
                 <td className="p-3 border-r border-gray-200">
                   <span
                     className={`px-2 py-0.5 text-[10px] font-bold uppercase border ${
-                      staff.role === "Manager"
+                      staff.role_id === "4"
                         ? "bg-purple-100 text-purple-700 border-purple-300"
                         : "bg-indigo-100 text-indigo-700 border-indigo-300"
                     }`}>
@@ -354,37 +353,32 @@ export default function AdminStaff() {
                     Rôle Système *
                   </label>
                   <select
-                    value={formData.role}
+                    value={formData.role_id}
                     onChange={(e) => {
                       setFormData({
-                        ...formData,
-                        role: e.target.value,
-                        sector_id:
-                          e.target.value === "Journaliste"
-                            ? ""
-                            : formData.sector_id,
+                        ...formData,role_id: e.target.value,sector_id:e.target.value === "4" ? "": formData.sector_id,
                       });
                     }}
                     className="w-full border border-gray-300 p-2 text-sm bg-white focus:outline-none focus:border-blue-500">
-                    <option value="Manager">
+                    <option value="2">
                       Manager (Opérateur de secteur)
                     </option>
-                    <option value="Journaliste">Journaliste (Narrateur)</option>
+                    <option value="4">Journaliste (Narrateur)</option>
                   </select>
                 </div>
 
                 {/* Choix du Secteur (Scope Géographique) - Conditionnel */}
                 <div
-                  className={`transition-opacity ${formData.role === "Manager" ? "opacity-100" : "opacity-30 pointer-events-none"}`}>
+                  className={`transition-opacity ${formData.role_id === "2" ? "opacity-100" : "opacity-30 pointer-events-none"}`}>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">
-                    Secteur Assigné {formData.role === "Manager" && "*"}
+                    Secteur Assigné {formData.role_id === "2" && "*"}
                   </label>
                   <select
                     value={formData.sector_id}
                     onChange={(e) =>
                       setFormData({ ...formData, sector_id: e.target.value })
                     }
-                    disabled={formData.role !== "Manager"}
+                    disabled={formData.role_id !== "2"}
                     className="w-full border border-gray-300 p-2 text-sm bg-white focus:outline-none focus:border-blue-500">
                     <option value="">-- Sélectionner un secteur --</option>
                     {mockSectors.map((s) => (
@@ -395,7 +389,7 @@ export default function AdminStaff() {
                       </option>
                     ))}
                   </select>
-                  {formData.role === "Journaliste" && (
+                  {formData.role_id=== "4" && (
                     <p className="text-[10px] text-gray-500 mt-1 italic">
                       Un journaliste a un accès global à la ville.
                     </p>

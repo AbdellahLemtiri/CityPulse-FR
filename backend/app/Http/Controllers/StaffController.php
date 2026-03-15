@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreStaffRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 class StaffController extends Controller
 {
     /**
@@ -34,6 +35,7 @@ class StaffController extends Controller
 
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
+        $data['uuid'] = Str::uuid();
         $user = User::create($data);
         return response()->json(['message' => 'Staff créé avec succès', 'user' => $user], 201);
     }
