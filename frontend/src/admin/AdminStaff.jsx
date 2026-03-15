@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import axiosClient from "../../config/axios-client"; 
 // --- MOCK DATA ---
 const mockSectors = [
   { id: 1, name: "Quartier Plateau" },
@@ -21,7 +21,7 @@ export default function AdminStaff() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     id: null,
     first_name: "",
