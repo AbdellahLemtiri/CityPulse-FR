@@ -5,7 +5,8 @@ import axios from "axios";
 });
 
  axiosClient.interceptors.request.use((config) => {
-   const token = localStorage.getItem('ACCESS_TOKEN');
+  //  const token = localStorage.getItem('ACCESS_TOKEN');
+ const  token = "3|uI3mcJeIlhumneO0s9Wclyc61rwtKTeLnG07zFNAc4030d2e";
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
