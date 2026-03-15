@@ -70,7 +70,7 @@ export default function JournalisteEditor() {
               onClick={() => document.getElementById('cover-upload').click()}
               className="h-32 w-full border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 flex flex-col items-center justify-center cursor-pointer text-gray-500"
             >
-              <span className="material-symbols-rounded text-3xl mb-1">add_photo_alternate</span>
+              <span className="material-symbols-outlined text-3xl mb-1">add_photo_alternate</span>
               <span className="text-sm font-bold">Ajouter une image haute résolution</span>
             </div>
           )}

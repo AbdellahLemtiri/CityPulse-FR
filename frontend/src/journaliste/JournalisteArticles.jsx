@@ -68,7 +68,7 @@ export default function JournalisteArticles() {
           to="/journaliste/rediger"
           className="bg-secondary-600 hover:bg-secondary-700 text-white font-bold py-2 px-6 shadow-sm transition-colors flex items-center justify-center gap-2"
         >
-          <span className="material-symbols-rounded text-[20px]">edit_document</span>
+          <span className="material-symbols-outlined text-[20px]">edit_document</span>
           Nouvel Article
         </Link>
       </div>
@@ -103,7 +103,7 @@ export default function JournalisteArticles() {
                       <img src={article.image} alt="Cover" className="w-12 h-12 object-cover border border-gray-300 mx-auto" />
                     ) : (
                       <div className="w-12 h-12 bg-gray-200 border border-gray-300 flex items-center justify-center mx-auto text-gray-400">
-                        <span className="material-symbols-rounded text-xl">image</span>
+                        <span className="material-symbols-outlined text-xl">image</span>
                       </div>
                     )}
                   </td>
@@ -139,7 +139,7 @@ export default function JournalisteArticles() {
                       ? 'bg-green-50 text-green-700 border-green-300' 
                       : 'bg-gray-100 text-gray-600 border-gray-300'
                     }`}>
-                      <span className="material-symbols-rounded text-[14px]">
+                      <span className="material-symbols-outlined text-[14px]">
                         {article.status === 'published' ? 'public' : 'draft'}
                       </span>
                       {article.status === 'published' ? 'Publié' : 'Brouillon'}

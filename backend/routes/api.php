@@ -7,6 +7,8 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\StaffController;
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -22,4 +24,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/comments', [CommentController::class, 'store']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
     Route::post('/likes/toggle', [LikeController::class, 'toggle']);
+
+
+
+    // ---------------------------------------------------------------------------
+
+    Route::post('/admin/staff', [StaffController::class, 'store']);
 });

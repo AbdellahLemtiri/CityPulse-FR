@@ -14,7 +14,9 @@ import  ManagerLayout from './components/layouts/ManagerLayout';
 import ManagerIncidents  from './manager/ManagerIncidents';
 import ManagerEvents from './manager/ManagerEvents';import ManagerModeration from './manager/ManagerModeration';
 import ManagerAlerts from './manager/ManagerAlerts';
-import JournalisteArticles from './journaliste/JournalisteArticles';
+import JournalisteArticles from './journaliste/JournalisteArticles';import AdminLayout from './components/layouts/AdminLayout';
+import AdminMasterData from './admin/AdminMasterData';import AdminStaff from './admin/AdminStaff';import AdminBanMonitor from './admin/AdminBanMonitor';
+import AdminSystem from './admin/AdminSystem';
 function App() {
   return (
     <Routes>
@@ -48,7 +50,12 @@ function App() {
         <Route path="rediger" element={<JournalisteEditor />} />
         <Route path="articles" element={<JournalisteArticles />} />
         {/* <Route path="articles" element={<JournalisteArticles />} /> Hadi n-sayboha mn b3d */}
-      </Route>
+      </Route><Route path="/admin" element={<AdminLayout />}>
+  <Route index element={<Navigate to="masterdata" replace />} />
+  <Route path="masterdata" element={<AdminMasterData />} /><Route path="staff" element={<AdminStaff />} /><Route path="bans" element={<AdminBanMonitor />} />
+<Route path="systeme" element={<AdminSystem />} />
+  {/* <Route path="staff" element={<AdminStaff />} /> */}
+</Route>
      </Routes>
   );
 }
