@@ -1,8 +1,7 @@
 import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
-  // Hadi kat-ghenina 3la l-krtra dial l-code. Kat-3ti l-loun 3la 7sab l-page
-  const navClass = ({ isActive }) =>
+   const navClass = ({ isActive }) =>
     `nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium transition-all group ${
       isActive
         ? "bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-500 font-bold border border-primary-100 dark:border-primary-500/20 shadow-[inset_4px_0_0_0_#f97316]"
@@ -31,8 +30,8 @@ export default function Sidebar() {
         <NavLink to="/homefeed" className={navClass}>
           {({ isActive }) => (<><span className={iconClass({ isActive })}>feed</span> Fil d'actualité</>)}
         </NavLink>
-        <NavLink to="/agenda" className={navClass}>
-          {({ isActive }) => (<><span className={iconClass({ isActive })}>event</span> Agenda Solidaire</>)}
+        <NavLink to="/idees" className={navClass}>
+          {({ isActive }) => (<><span className={iconClass({ isActive })}>lightbulb</span>Idées Citoyennes</>)}
         </NavLink>
         <NavLink to="/safigram" className={navClass}>
           {({ isActive }) => (<><span className={iconClass({ isActive })}>photo_camera</span> SafiGram</>)}

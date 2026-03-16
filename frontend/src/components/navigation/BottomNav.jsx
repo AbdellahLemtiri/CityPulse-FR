@@ -12,8 +12,8 @@ export default function BottomNav() {
         <NavLink to="/homefeed" className={mobileNavClass}>
           {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>feed</span><span className="text-[10px] font-medium">Fil</span></>)}
         </NavLink>
-        <NavLink to="/agenda" className={mobileNavClass}>
-          {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>event</span><span className="text-[10px] font-medium">Agenda</span></>)}
+        <NavLink to="/idees" className={mobileNavClass}>
+          {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>lightbulb</span><span className="text-[10px] font-medium">Idées Citoyennes</span></>)}
         </NavLink>
         <NavLink to="/safigram" className={mobileNavClass}>
           {({ isActive }) => (

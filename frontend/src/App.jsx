@@ -5,7 +5,7 @@ import Register from './Register';
 import Dashboard from './Dashboard';
 import SafiGram from './citoyen/SafiGram';
 import HomeFeed from './citoyen/HomeFeed';
-import Agenda from './citoyen/Agenda';
+import Proposals from './citoyen/Proposals';
 import Signalements from './citoyen/Signalements';
 import Profil from './citoyen/Profil';import JournalisteLayout from './components/layouts/JournalisteLayout';
 import JournalisteEditor from './journaliste/JournalisteEditor';
@@ -30,7 +30,7 @@ function App() {
          <Route path="/safigram" element={<SafiGram />} />
         
         <Route path="/homefeed" element={<HomeFeed />} />
-        <Route path="/agenda" element={<Agenda />} />
+        <Route path="/idees" element={<Proposals />} />
         <Route path="/signalements" element={<Signalements />} />
         <Route path="/profil" element={<Profil />} /> 
       </Route>
