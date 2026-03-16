@@ -2,17 +2,13 @@ import { Outlet, NavLink } from "react-router-dom";
 
 export default function AdminLayout() {
   const navLinkStyle = ({ isActive }) =>
-    `block px-4 py-3 mb-1 text-sm font-bold border-l-4 transition-colors ${
-      isActive
-        ? "border-blue-500 bg-gray-800 text-white" 
-        : "border-transparent text-gray-400 hover:bg-gray-800 hover:text-gray-200"
+    `block px-4 py-3 mb-1 text-sm font-bold border-l-4 transition-colors ${isActive? "border-blue-500 bg-gray-800 text-white" : "border-transparent text-gray-400 hover:bg-gray-800 hover:text-gray-200"
     }`;
 
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
       
-      {/* SIDEBAR ADMIN (K7el/Dark theme bach y-ferz 3la l-Manager) */}
-      <aside className="w-64 bg-gray-900 flex flex-col shadow-xl z-10">
+       <aside className="w-64 bg-gray-900 flex flex-col shadow-xl z-10">
         <div className="p-5 border-b border-gray-800 bg-gray-950">
           <h1 className="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <span className="material-symbols-outlined text-blue-500">admin_panel_settings</span>

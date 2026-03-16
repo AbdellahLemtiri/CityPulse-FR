@@ -256,7 +256,7 @@ export default function Proposals() {
                     </div>
                   )}
 
-                  <div className="hidden flex justify-between items-start gap-4"><div className="w-40 h-40 rounded-md overflow-hidden shrink-0 hidden sm:block">
+                  <div className=" flex justify-between items-start gap-4"><div className="w-40 h-40 rounded-md overflow-hidden shrink-0 hidden sm:block">
                       <img 
                         src={proposal.image}
                         alt="Projet"

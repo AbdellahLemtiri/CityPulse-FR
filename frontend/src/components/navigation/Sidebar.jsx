@@ -31,7 +31,7 @@ export default function Sidebar() {
           {({ isActive }) => (<><span className={iconClass({ isActive })}>feed</span> Fil d'actualité</>)}
         </NavLink>
         <NavLink to="/idees" className={navClass}>
-          {({ isActive }) => (<><span className={iconClass({ isActive })}>lightbulb</span>Idées Citoyennes</>)}
+          {({ isActive }) => (<><span className={iconClass({ isActive })}>lightbulb</span>Idées </>)}
         </NavLink>
         <NavLink to="/safigram" className={navClass}>
           {({ isActive }) => (<><span className={iconClass({ isActive })}>photo_camera</span> SafiGram</>)}

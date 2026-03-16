@@ -80,8 +80,6 @@ export default function ManagerIncidents() {
 
   // US.53 : Générer PDF (Bon d'Intervention)
   const handleGeneratePDF = (refNum) => {
-    // F l-bessa7 ghadi t-dir appel l-API (DomPDF) w y-rj3 lik fichier
-    // axiosClient.get(`/manager/incidents/${id}/pdf`, { responseType: 'blob' })
     alert(`Génération du PDF pour le ticket ${refNum} (Simulation DOMPDF)`);
     window.print(); // Simulation rapide f front-end
   };

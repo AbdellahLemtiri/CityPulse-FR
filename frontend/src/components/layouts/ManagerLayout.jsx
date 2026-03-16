@@ -2,10 +2,7 @@ import { Outlet, NavLink } from "react-router-dom";
 
 export default function ManagerLayout() {
    const navLinkStyle = ({ isActive }) =>
-    `block px-4 py-3 mb-2 text-sm font-bold border-l-4 ${
-      isActive
-        ? "border-primary-600 bg-gray-200 text-gray-900"
-        : "border-transparent text-gray-600 bg-transparent"
+    `block px-4 py-3 mb-2 text-sm font-bold   ${isActive? "  bg-gray-200 text-primary-600": "border-transparent text-gray-600 bg-transparent"
     }`;
 
   return (
