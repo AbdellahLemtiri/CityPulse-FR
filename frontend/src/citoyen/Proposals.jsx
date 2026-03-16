@@ -257,7 +257,7 @@ export default function Proposals() {
                   )}
 
                   <div className="hidden flex justify-between items-start gap-4"><div className="w-40 h-40 rounded-md overflow-hidden shrink-0 hidden sm:block">
-                      <img
+                      <img 
                         src={proposal.image}
                         alt="Projet"
                         className="w-full h-full object-cover"
