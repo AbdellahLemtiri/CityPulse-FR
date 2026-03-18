@@ -1,11 +1,11 @@
-import { useState, useRef } from 'react';
-import axiosClient from "../config/axios-client";
+import { useState, useRef,useEffect } from 'react';
+import axiosClient from '../config/axios-client';
 export default function ManagerAlerts() {
   // ==========================================
   // STATES
   // ==========================================
   const [activeTab, setActiveTab] = useState('list');
-  const [articles, setArticles] = useState([{ id: 1, title: "Coupure d'eau", scope: 'local', status: 'published', created_at: '2026-03-12' }]);
+  const [articles, setArticles] = useState([]);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -18,7 +18,7 @@ export default function ManagerAlerts() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-   const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // ==========================================
   // HANDLERS (Formulaire)
@@ -40,50 +40,57 @@ export default function ManagerAlerts() {
     setCoverImage(null);
     setPreviewUrl(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';  
+      fileInputRef.current.value = '';
     }
   };
-const handleSubmit = async (e) => {  
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-     const dataToSubmit = new FormData();
+    const dataToSubmit = new FormData();
     dataToSubmit.append('title', formData.title);
     dataToSubmit.append('content', formData.content);
     dataToSubmit.append('scope', formData.scope);
     dataToSubmit.append('status', formData.status);
-    
-     if (coverImage) {
+
+    if (coverImage) {
       dataToSubmit.append('image', coverImage);
     }
 
     try {
-       const response = await axiosClient.post("/articles", dataToSubmit, {
-        headers: { "Content-Type": "multipart/form-data" }
+      const response = await axiosClient.post('/articles', dataToSubmit, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-   
-      const newArticle = response.data.article || response.data; 
+      const newArticle = response.data.article || response.data;
 
       setArticles([newArticle, ...articles]);
 
-       setFormData({ title: '', content: '', scope: 'local', status: 'published' });
+      setFormData({ title: '', content: '', scope: 'local', status: 'published' });
       handleRemoveImage();
-      
+
       alert('Alerte/Article créé avec succès !');
       setActiveTab('list');
-
     } catch (error) {
-       console.error("Erreur Backend :", error);
+      console.error('Erreur Backend :', error);
       alert("Une erreur s'est produite lors de la création de l'article.");
     } finally {
-      setIsSubmitting(false); // Hadi dima kat-khdem f l-lekher (naja7 awla fachal)
+      setIsSubmitting(false);
     }
   };
 
-  // ==========================================
-  // HANDLERS (Gestion)
-  // ==========================================
+  const fetchArticles = async () => {
+    try {
+      const respanse = await axiosClient.get('/articles/editor');
+      setArticles(respanse.data.data);
+    } catch (error) {
+      console.error('Erreur Backend :', error);
+      alert("Une erreur s'est produite lors de la récupération des articles.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleDelete = (id) => {
     if (window.confirm('Voulez-vous vraiment supprimer cet article ?')) {
       setArticles(articles.filter((art) => art.id !== id));
@@ -93,8 +100,10 @@ const handleSubmit = async (e) => {
   const handlePublish = (id) => {
     setArticles(articles.map((art) => (art.id === id ? { ...art, status: 'published' } : art)));
   };
-
-  return (
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+   return (
     <div className="max-w-5xl mx-auto pb-10">
       {/* HEADER */}
       <div className="mb-6">
@@ -191,7 +200,7 @@ const handleSubmit = async (e) => {
                   <span className="text-sm font-bold">Ajouter une image haute résolution</span>
                 </div>
               )}
-               <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={handleImageChange} />
+              <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={handleImageChange} />
             </div>
 
             {/* Titre et Slug */}
@@ -200,7 +209,6 @@ const handleSubmit = async (e) => {
                 <label className="block text-sm font-bold text-gray-700 mb-1">Titre de l'alerte *</label>
                 <input type="text" required value={formData.title} onChange={handleTitleChange} className="w-full border  p-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-primary-500 rounded-md" placeholder="Ex: Travaux sur l'avenue..." />
               </div>
-             
             </div>
 
             {/* Contenu */}
@@ -236,7 +244,6 @@ const handleSubmit = async (e) => {
 
             {/* Boutons */}
             <div className="pt-4 border-t border-gray-200 grid cols-1   gap-3 mt-6">
-              
               <button type="submit" disabled={isSubmitting} className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2.5 px-6 uppercase text-sm rounded-md transition-colors disabled:opacity-50">
                 {isSubmitting ? 'Publication...' : "Publier l'Alerte"}
               </button>

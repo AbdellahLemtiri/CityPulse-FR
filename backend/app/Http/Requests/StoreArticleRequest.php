@@ -23,11 +23,10 @@ class StoreArticleRequest extends FormRequest
     {
         return [
             'title'     => 'required|string|max:255',
-            'slug'      => 'required|string|max:255|unique:articles,slug',
             'content'   => 'required|string',
-            'scope'     => 'required|in:global,local', 
+            'scope'     => 'required|in:global,local',
             'sector_id' => 'nullable|exists:sectors,id',
-            'status'    => 'required|in:draft,published', 
+            'status'    => 'required|in:draft,published',
         ];
     }
 }

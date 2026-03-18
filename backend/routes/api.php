@@ -19,8 +19,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    Route::resource('articles',ArticleController::class);
-    Route::apiResource('posts', PostController::class);
+     Route::get('/articles/editor',[ArticleController::class,'getArticleByEditor']);
+    Route::resource('/articles',ArticleController::class)->only(['index','store','show','update','destroy']);
+   
+    Route::apiResource('/posts', PostController::class);
     Route::post('/comments', [CommentController::class, 'store']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
     Route::post('/likes/toggle', [LikeController::class, 'toggle']);

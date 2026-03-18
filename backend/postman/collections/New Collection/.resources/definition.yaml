@@ -2,3 +2,4 @@ $kind: collection
 name: New Collection
 variables:
   token: ""
+  tokk: ""

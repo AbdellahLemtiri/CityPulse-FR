@@ -19,7 +19,6 @@ class ArticleController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-
         $query = Article::with(['media', 'user', 'sector'])
             ->withCount(['likes', 'comments'])
             ->latest();
@@ -44,17 +43,15 @@ class ArticleController extends Controller
     {
         $user = Auth::user();
         $data = $request->validated();
-
         $data['user_id'] = $user->id;
-
         if (!isset($data['slug'])) {
             $data['slug'] = Str::slug($data['title']);
         }
 
         $article = Article::create($data);
 
-        if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('articles', 'public');
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('articles', 'public');
             $article->media()->create([
                 'file_path' => $path,
                 'file_type' => 'image',
@@ -66,6 +63,13 @@ class ArticleController extends Controller
             'message' => 'Article créé avec succès',
             'article' => $article->load('media')
         ], 201);
+    }
+
+    public function getArticleByEditor()
+    {
+        $user = Auth::user();
+        $articles = Article::with(['media'])-> where('user_id', $user->id)->latest()->paginate(10);
+        return response()->json($articles, 200);
     }
 
     /**
