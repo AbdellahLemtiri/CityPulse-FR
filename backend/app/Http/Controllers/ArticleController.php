@@ -112,7 +112,12 @@ $articles = DB::table('articles')
         if (isset($data['title']) && $data['title'] !== $article->title) {
             $data['slug'] = Str::slug($data['title']);
         }
-
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('articles', 'public');
+            $article->media()->update([
+                'file_path' => $path,
+            ]);
+        }
         $article->update($data);
         return response()->json(['message' => 'Article modifié avec succès', 'article' => $article], 200);
     }

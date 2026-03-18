@@ -122,7 +122,18 @@ const [editId, setEditId] = useState(null);
   const fetchArticles = async () => {
     try {
       const respanse = await axiosClient.get('/manager/articles/');
-      setArticles(respanse.data.data);
+const imageUrl = `http://127.0.0.1:8000/storage/${response.data.data.file_path}`;
+
+      let data = [{
+        id: respanse.data.data.id,
+        title: respanse.data.data.title,
+        content: respanse.data.data.content,
+        scope: respanse.data.data.scope,
+        status: respanse.data.data.status,
+        image: imageUrl
+      }]
+      }
+      setArticles(data);
     } catch (error) {
       console.error('Erreur Backend :', error);
       alert("Une erreur s'est produite lors de la récupération des articles.");
