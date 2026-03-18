@@ -23,7 +23,6 @@ return new class extends Migration
             $table->text('rejection_reason')->nullable();
             $table->timestamp('resolved_at')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained();
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->foreignId('partner_id')->nullable()->constrained('partners')->onDelete('set null');
             $table->softDeletes();

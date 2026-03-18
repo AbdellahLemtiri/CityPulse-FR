@@ -12,6 +12,9 @@ class Incident extends Model
 {
     //
 
+    protected $fillable = [
+        'title', 'description', 'latitude', 'longitude', 'category_id', 'sector_id', 'partner_id','user_id', 'status','address', 'rejection_reason', 'resolved_at'
+    ];
     use HasFactory, SoftDeletes;
     
     protected $guarded = ['id'];
@@ -20,7 +23,10 @@ class Incident extends Model
     public function user(): BelongsTo { return $this->belongsTo(User::class); }
     public function category(): BelongsTo { return $this->belongsTo(Category::class); }
     public function sector(): BelongsTo { return $this->belongsTo(Sector::class); }
-    public function partner(): BelongsTo { return $this->belongsTo(Partner::class); }
+    public function partner(): BelongsTo
+    { 
+        return $this->belongsTo(Partner::class); 
+    }
  
     public function media(): MorphMany { return $this->morphMany(Media::class, 'model'); }
     public function comments(): MorphMany { return $this->morphMany(Comment::class, 'commentable'); }
