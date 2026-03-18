@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use Illuminate\Support\Facades\Gate;
-
+use Illuminate\Support\Facades\DB;
 class ArticleController extends Controller
 {
     /**
@@ -68,8 +68,17 @@ class ArticleController extends Controller
     public function getArticleByEditor()
     {
         $user = Auth::user();
-        $articles = Article::with(['media'])-> where('user_id', $user->id)->latest()->paginate(10);
-        return response()->json($articles, 200);
+
+$articles = DB::table('articles')
+     ->leftJoin('media', function($join) {
+        $join->on('articles.id', '=', 'media.model_id') 
+             ->where('media.model_type', '=', 'App\Models\Article'); 
+    })
+     ->select('articles.id', 'articles.title', 'articles.content', 'articles.status', 'media.file_path')
+    ->where('articles.user_id', $user->id)
+    ->latest('articles.created_at') 
+    ->paginate(10);        
+    return response()->json($articles, 200);
     }
 
     /**
@@ -80,6 +89,10 @@ class ArticleController extends Controller
         return response()->json($article->load(['media', 'user', 'sector', 'comments.user']), 200);
     }
 
+    public function showEditor(Article $article)
+    {
+        return response()->json(['article' => $article->load(['media', 'user', 'sector'])], 200);
+    }
     /**
      * Update the specified resource in storage.
      */
@@ -97,6 +110,17 @@ class ArticleController extends Controller
         return response()->json(['message' => 'Article modifié avec succès', 'article' => $article], 200);
     }
 
+    public function updateStatus(Request $request, Article $article)
+    {
+        Gate::authorize('update', $article);
+        $data = $request->validated(
+            [
+                'status' => 'required|in:draft,published'
+            ]
+        );
+        $article->update($data);
+        return response()->json(['message' => 'Status modifié avec succès', 'article' => $article], 200);
+    }
     /**
      * Remove the specified resource from storage.
      */

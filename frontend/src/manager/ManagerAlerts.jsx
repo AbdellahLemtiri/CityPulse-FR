@@ -81,7 +81,7 @@ export default function ManagerAlerts() {
 
   const fetchArticles = async () => {
     try {
-      const respanse = await axiosClient.get('/articles/editor');
+      const respanse = await axiosClient.get('/manager/articles/');
       setArticles(respanse.data.data);
     } catch (error) {
       console.error('Erreur Backend :', error);
@@ -103,16 +103,47 @@ export default function ManagerAlerts() {
   useEffect(() => {
     fetchArticles();
   }, []);
+
+// ================================================================
+
+
+const handleEdit = async (id) => {
+     setActiveTab('create');  
+    setEditingId(id);
+    
+     // setIsLoading(true);
+
+    try {
+       const response = await axiosClient.get(`/manager/articles/${id}`);
+      const fullArticle = response.data.article || response.data; 
+      setFormData({
+        title: fullArticle.title,
+        slug: fullArticle.slug,
+        content: fullArticle.content,
+        scope: fullArticle.scope,
+        status: fullArticle.status,
+      });
+
+    
+      if (fullArticle.image_url) {
+        setPreviewUrl(fullArticle.image_url);
+      }
+
+    } catch (error) {
+      console.error("Erreur de récupération :", error);
+      alert("Impossible de charger l'article.");
+      setActiveTab('list'); // N-rj3ouh l-liste ila w9e3 mochkil
+    }
+  }
+
    return (
     <div className="max-w-5xl mx-auto pb-10">
-      {/* HEADER */}
-      <div className="mb-6">
+       <div className="mb-6">
         <h2 className="text-xl font-bold text-gray-800 uppercase tracking-wide">Gestion des Alertes & Articles</h2>
         <p className="text-sm text-gray-600 mt-1">Publiez des informations officielles pour les citoyens de votre secteur.</p>
       </div>
 
-      {/* TABS (ONGLETS) */}
-      <div className="flex border-b  mb-6 bg-white shadow-sm">
+       <div className="flex border-b  mb-6 bg-white shadow-sm">
         <button
           onClick={() => setActiveTab('list')}
           className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors flex justify-center items-center gap-2 ${activeTab === 'list' ? 'border-b-4 border-primary-600 text-primary-700 bg-primary-50' : 'text-gray-600 hover:bg-gray-50'}`}>
@@ -126,58 +157,47 @@ export default function ManagerAlerts() {
           Rédiger un Article
         </button>
       </div>
-
-      {/* ========================================== */}
-      {/* VUE 1 : GESTION DES ARTICLES (Liste) */}
-      {/* ========================================== */}
+ 
       {activeTab === 'list' && (
-        <div className="bg-white border  shadow-sm p-5 fade-in">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-100 border-b  text-sm text-gray-700 uppercase">
-                <th className="p-3 border-r border-gray-200">Date</th>
-                <th className="p-3 border-r border-gray-200">Titre</th>
-                <th className="p-3 border-r border-gray-200">Scope</th>
-                <th className="p-3 border-r border-gray-200">Statut</th>
-                <th className="p-3 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {articles.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="p-6 text-center text-gray-500 font-bold">
-                    Aucun article publié pour le moment.
-                  </td>
-                </tr>
-              ) : (
-                articles.map((art) => (
-                  <tr key={art.id} className="border-b border-gray-200 text-sm text-gray-800 hover:bg-gray-50">
-                    <td className="p-3 border-r border-gray-200">{art.created_at}</td>
-                    <td className="p-3 border-r border-gray-200 font-bold">{art.title}</td>
-                    <td className="p-3 border-r border-gray-200">
-                      <span className={`px-2 py-0.5 text-[10px] font-bold uppercase border ${art.scope === 'global' ? 'bg-purple-100 text-purple-700 border-purple-300' : 'bg-blue-100 text-blue-700 border-blue-300'}`}>{art.scope}</span>
-                    </td>
-                    <td className="p-3 border-r border-gray-200">
-                      <span className={`px-2 py-0.5 text-[10px] font-bold uppercase border ${art.status === 'published' ? 'bg-green-100 text-green-700 border-green-300' : 'bg-gray-100 text-gray-700 '}`}>{art.status}</span>
-                    </td>
-                    <td className="p-3 flex justify-center gap-2">
-                      {art.status === 'draft' && (
-                        <button onClick={() => handlePublish(art.id)} className="text-green-600 hover:text-green-800 font-bold text-xs uppercase">
-                          Publier
-                        </button>
-                      )}
-                      <button onClick={() => handleDelete(art.id)} className="text-red-600 hover:text-red-800 font-bold text-xs uppercase">
-                        Supprimer
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+        <div className="bg-white border border-gray-200 shadow-sm rounded-md p-5 fade-in">
+          {articles.length === 0 ? (
+            <div className="p-8 text-center text-gray-500 font-bold bg-gray-50 rounded-md border border-dashed border-gray-300">
+              <span className="material-symbols-outlined text-4xl mb-2 text-gray-400 block">article</span>
+              Aucun article publié pour le moment.
+            </div>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {articles.map((art) => (
+                <li key={art.id} className="py-3 flex items-center justify-between hover:bg-gray-50 px-3 transition-colors rounded-md group">
+                  
+                  {/* L-Titre dial l-Article */}
+                  <div className="flex items-center gap-3">
+                    {art.image_url =! null && (
+                      <img src={art.image_url} alt={art.title} className="w-12 h-12 object-cover rounded-md" />
+                    ):(<span className="material-symbols-outlined text-gray-400 group-hover:text-primary-500 transition-colors">
+                      description
+                    </span>)}
+                    
+                    <span className="font-bold text-gray-800 text-sm">{art.title}</span>
+                  </div>
 
+                  {/* Bouton Éditer */}
+                  <button 
+                    onClick={() => handleEdit(art)} 
+                    className="bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-600 px-4 py-2 rounded-md font-bold text-xs uppercase flex items-center gap-2 transition-colors border border-gray-200 hover:border-primary-200"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">edit</span>
+                    Éditer
+                  </button>
+                  
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>)}
+
+ 
+      
       {/* ========================================== */}
       {/* VUE 2 : CRÉATION D'UN ARTICLE (Formulaire) */}
       {/* ========================================== */}
