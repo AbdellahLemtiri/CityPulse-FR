@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('workflows', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->unique()->constrained('categories')->onDelete('cascade');
+            $table->foreignId('category_incident_id')->unique()->constrained('categories_incidents')->onDelete('cascade');
             $table->foreignId('partner_id')->constrained('partners')->onDelete('cascade');
             $table->timestamps();
         });
