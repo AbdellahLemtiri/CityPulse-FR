@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";import axiosClient from "../config/axios-client";
+import { useState, useEffect } from "react";
+import axiosClient from "../config/axios-client";
 // --- MOCK DATA ---
 const mockSectors = [
   { id: 1, name: "Quartier Plateau" },

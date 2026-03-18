@@ -5,11 +5,11 @@ export default function JournalisteEditor() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    category: 'Culture', // US.59
-    scope: 'global', // US.57
-    sector_id: '', // Ila kan local
-    status: 'draft', // US.58
-  });
+    category: 'Culture',
+    scope: 'global',
+    sector_id: '',
+    status: 'draft', 
+    });
 
   const [coverImage, setCoverImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null); 
