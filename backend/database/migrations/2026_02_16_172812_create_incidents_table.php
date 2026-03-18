@@ -24,8 +24,8 @@ return new class extends Migration
             $table->timestamp('resolved_at')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('category_id')->constrained();
-            $table->foreignId('sector_id')->nullable()->constrained();
-            $table->foreignId('partner_id')->nullable()->constrained();
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->foreignId('partner_id')->nullable()->constrained('partners')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
         });

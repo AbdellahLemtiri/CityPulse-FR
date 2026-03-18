@@ -11,6 +11,7 @@ use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
+
 class ArticleController extends Controller
 {
     /**
@@ -69,18 +70,25 @@ class ArticleController extends Controller
     {
         $user = Auth::user();
 
-$articles = DB::table('articles')
-     ->leftJoin('media', function($join) {
-        $join->on('articles.id', '=', 'media.model_id') 
-             ->where('media.model_type', '=', 'App\Models\Article'); 
-    })
-     ->select('articles.id', 'articles.title', 'articles.content', 'articles.status', 'media.file_path','articles.created_at')
-    ->where('articles.user_id', $user->id)
-    ->latest('articles.created_at') 
-    ->paginate(10);        
-    return response()->json($articles, 200);
+        $articles = Article::with(['media' => function ($query) {
+            $query->latest();
+        }])
+            ->select('id', 'title', 'content', 'scope', 'status', 'created_at', 'user_id') // Darouri n-selectiw user_id bach Eloquent y-fhem
+            ->where('user_id', $user->id)
+            ->latest()
+            ->paginate(10);
+
+        $articles->getCollection()->transform(function ($article) {
+            $article->file_path = $article->media->first() ? $article->media->first()->file_path : null;
+            unset($article->media);
+            unset($article->user_id);
+            return $article;
+        });
+
+        return response()->json($articles, 200);
     }
 
+    
     /**
      * Display the specified resource.
      */
@@ -89,15 +97,15 @@ $articles = DB::table('articles')
         return response()->json($article->load(['media', 'user', 'sector', 'comments.user']), 200);
     }
 
-    public function showEditor( $id)
+    public function showEditor($id)
     {
-        $article = DB::table('articles')->leftJoin('media', function($join) {
-            $join->on('articles.id', '=', 'media.model_id') 
-                 ->where('media.model_type', '=', 'App\Models\Article'); 
-        })->select('articles.id', 'articles.title', 'articles.content','articles.scope', 'articles.status', 'media.file_path')
-    ->where('articles.id', $id)
-    ->first();
-        
+        $article = DB::table('articles')->leftJoin('media', function ($join) {
+            $join->on('articles.id', '=', 'media.model_id')
+                ->where('media.model_type', '=', 'App\Models\Article');
+        })->select('articles.id', 'articles.title', 'articles.content', 'articles.scope', 'articles.status', 'media.file_path')
+            ->where('articles.id', $id)
+            ->first();
+
         return response()->json($article, 200);
     }
     /**
