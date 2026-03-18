@@ -8,7 +8,7 @@ export default function ManagerLayout() {
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
       
-       <aside className="w-64 bg-white border-r border-gray-300 flex flex-col">
+       <aside className=" w-64 bg-white border-r border-gray-300 flex flex-col">
          <div className="p-4 border-b border-gray-300 bg-gray-50">
           <h1 className="text-lg font-bold text-gray-900 uppercase tracking-wider">
             SafiPulse Admin

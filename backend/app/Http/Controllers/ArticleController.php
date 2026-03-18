@@ -74,7 +74,7 @@ $articles = DB::table('articles')
         $join->on('articles.id', '=', 'media.model_id') 
              ->where('media.model_type', '=', 'App\Models\Article'); 
     })
-     ->select('articles.id', 'articles.title', 'articles.content', 'articles.status', 'media.file_path')
+     ->select('articles.id', 'articles.title', 'articles.content', 'articles.status', 'media.file_path','articles.created_at')
     ->where('articles.user_id', $user->id)
     ->latest('articles.created_at') 
     ->paginate(10);        

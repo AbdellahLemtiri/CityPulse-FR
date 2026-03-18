@@ -119,28 +119,32 @@ const [editId, setEditId] = useState(null);
     }
   };
 
-  const fetchArticles = async () => {
-    try {
-      const respanse = await axiosClient.get('/manager/articles/');
-const imageUrl = `http://127.0.0.1:8000/storage/${response.data.data.file_path}`;
+const fetchArticles = async () => {
+  try {
+    const response = await axiosClient.get('/manager/articles');
+    
+     const rawArticles = response.data.data;
 
-      let data = [{
-        id: respanse.data.data.id,
-        title: respanse.data.data.title,
-        content: respanse.data.data.content,
-        scope: respanse.data.data.scope,
-        status: respanse.data.data.status,
-        image: imageUrl
-      }]
-      }
-      setArticles(data);
-    } catch (error) {
-      console.error('Erreur Backend :', error);
-      alert("Une erreur s'est produite lors de la récupération des articles.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+     const formattedData = rawArticles.map(art => ({
+      id: art.id,
+      title: art.title,
+      content: art.content,
+      scope: art.scope,
+      status: art.status,
+       image: `http://127.0.0.1:8000/storage/${art.file_path}`,
+      created_at: art.created_at
+
+    }));
+
+    setArticles(formattedData);
+
+  } catch (error) {
+    console.error('Erreur Backend :', error);
+    alert("Impossible de charger l'historique.");
+  } finally {
+    // setIsSubmitting(false); // Ghaliban hna khass t-kon setIsLoading(false)
+  }
+};
 
   const handleDelete = (id) => {
     if (window.confirm('Voulez-vous vraiment supprimer cet article ?')) {
@@ -218,9 +222,11 @@ const imageUrl = `http://127.0.0.1:8000/storage/${response.data.data.file_path}`
               {articles.map((art) => (
                 <li key={art.id} className="py-3 flex items-center justify-between hover:bg-gray-50 px-3 transition-colors rounded-md group">
                   <div className="flex items-center gap-3">
-                    {art.image !== null ? <img src={art.image} alt={art.title} className="w-12 h-12 object-cover rounded-md" /> : <span className="material-symbols-outlined text-gray-400 group-hover:text-primary-500 transition-colors">description</span>}
+                    {<img src={art.image} alt={art.title} className="w-12 h-12 object-cover rounded-md" /> }
 
                     <span className="font-bold text-gray-800 text-sm">{art.title}</span>
+                     <span className={`text-xs text-gray-800  border-l border-gray-200 px-2 py-1 ${art.status === 'published' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}`}>{art.status}</span>
+                     <span className="text-xs text-gray-800">cree il ya {moment(art.created_at).fromNow()} </span>
                   </div>
 
                   {/* Bouton Éditer */}
