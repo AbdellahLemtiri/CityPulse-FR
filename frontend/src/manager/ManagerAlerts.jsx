@@ -1,4 +1,4 @@
-import { useState, useRef,useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axiosClient from '../config/axios-client';
 export default function ManagerAlerts() {
   // ==========================================
@@ -12,8 +12,11 @@ export default function ManagerAlerts() {
     content: '',
     scope: 'local',
     status: 'published',
+    image: null,
   });
-
+const [isEditing, setIsEditing] = useState(false);
+const [isLoading, setIsLoading] = useState(false);
+const [editId, setEditId] = useState(null);
   const [coverImage, setCoverImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,6 +35,7 @@ export default function ManagerAlerts() {
     const file = e.target.files[0];
     if (file) {
       setCoverImage(file);
+      setFormData({ ...formData, image: file });
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
@@ -43,6 +47,42 @@ export default function ManagerAlerts() {
       fileInputRef.current.value = '';
     }
   };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setIsSubmitting(true);
+
+  //   const dataToSubmit = new FormData();
+  //   dataToSubmit.append('title', formData.title);
+  //   dataToSubmit.append('content', formData.content);
+  //   dataToSubmit.append('scope', formData.scope);
+  //   dataToSubmit.append('status', formData.status);
+
+  //   if (coverImage) {
+  //     dataToSubmit.append('image', coverImage);
+  //   }
+
+  //   try {
+  //     const response = await axiosClient.post('/articles', dataToSubmit, {
+  //       headers: { 'Content-Type': 'multipart/form-data' },
+  //     });
+
+  //     const newArticle = response.data.article || response.data;
+
+  //     setArticles([newArticle, ...articles]);
+
+  //     setFormData({ title: '', content: '', scope: 'local', status: 'published' });
+  //     handleRemoveImage();
+
+  //     alert('Alerte/Article créé avec succès !');
+  //     setActiveTab('list');
+  //   } catch (error) {
+  //     console.error('Erreur Backend :', error);
+  //     alert("Une erreur s'est produite lors de la création de l'article.");
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -52,28 +92,28 @@ export default function ManagerAlerts() {
     dataToSubmit.append('content', formData.content);
     dataToSubmit.append('scope', formData.scope);
     dataToSubmit.append('status', formData.status);
+    dataToSubmit.append('image', formData.image);
 
-    if (coverImage) {
-      dataToSubmit.append('image', coverImage);
+
+     if (isEditing) {
+      dataToSubmit.append('_method', 'PUT');
     }
 
     try {
-      const response = await axiosClient.post('/articles', dataToSubmit, {
+      const url = isEditing ? `/manager/articles/${editId}` : '/manager/articles';
+
+       const response = await axiosClient.post(url, dataToSubmit, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+ 
+      alert("Article mis à jour avec succès !");
+      alert(isEditing ? 'Modifié avec succès !' : 'Créé avec succès !');
 
-      const newArticle = response.data.article || response.data;
-
-      setArticles([newArticle, ...articles]);
-
-      setFormData({ title: '', content: '', scope: 'local', status: 'published' });
-      handleRemoveImage();
-
-      alert('Alerte/Article créé avec succès !');
+       setIsEditing(false);
+      setEditId(null);
       setActiveTab('list');
-    } catch (error) {
-      console.error('Erreur Backend :', error);
-      alert("Une erreur s'est produite lors de la création de l'article.");
+     } catch (error) {
+      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -104,18 +144,21 @@ export default function ManagerAlerts() {
     fetchArticles();
   }, []);
 
-// ================================================================
+  // ================================================================
 
-
-const handleEdit = async (id) => {
-     setActiveTab('create');  
-    setEditingId(id);
-    
-     // setIsLoading(true);
+  const handleEdit = async (id) => {
+    setActiveTab('create');
+    setIsLoading(true);
+    setIsEditing(true);
+    setEditId(id);
+    console.log('bdal lll edit');
 
     try {
-       const response = await axiosClient.get(`/manager/articles/${id}`);
-      const fullArticle = response.data.article || response.data; 
+      const response = await axiosClient.get(`/manager/articles/${id}`);
+      const fullArticle = response.data;
+      const imageUrl = `http://127.0.0.1:8000/storage/${response.data.file_path}`;
+      setPreviewUrl(imageUrl);
+
       setFormData({
         title: fullArticle.title,
         slug: fullArticle.slug,
@@ -123,27 +166,21 @@ const handleEdit = async (id) => {
         scope: fullArticle.scope,
         status: fullArticle.status,
       });
-
-    
-      if (fullArticle.image_url) {
-        setPreviewUrl(fullArticle.image_url);
-      }
-
     } catch (error) {
-      console.error("Erreur de récupération :", error);
+      console.error('Erreur de récupération :', error);
       alert("Impossible de charger l'article.");
-      setActiveTab('list'); // N-rj3ouh l-liste ila w9e3 mochkil
+      setActiveTab('list');
     }
-  }
+  };
 
-   return (
+  return (
     <div className="max-w-5xl mx-auto pb-10">
-       <div className="mb-6">
+      <div className="mb-6">
         <h2 className="text-xl font-bold text-gray-800 uppercase tracking-wide">Gestion des Alertes & Articles</h2>
         <p className="text-sm text-gray-600 mt-1">Publiez des informations officielles pour les citoyens de votre secteur.</p>
       </div>
 
-       <div className="flex border-b  mb-6 bg-white shadow-sm">
+      <div className="flex border-b  mb-6 bg-white shadow-sm">
         <button
           onClick={() => setActiveTab('list')}
           className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors flex justify-center items-center gap-2 ${activeTab === 'list' ? 'border-b-4 border-primary-600 text-primary-700 bg-primary-50' : 'text-gray-600 hover:bg-gray-50'}`}>
@@ -157,7 +194,7 @@ const handleEdit = async (id) => {
           Rédiger un Article
         </button>
       </div>
- 
+
       {activeTab === 'list' && (
         <div className="bg-white border border-gray-200 shadow-sm rounded-md p-5 fade-in">
           {articles.length === 0 ? (
@@ -169,35 +206,24 @@ const handleEdit = async (id) => {
             <ul className="divide-y divide-gray-100">
               {articles.map((art) => (
                 <li key={art.id} className="py-3 flex items-center justify-between hover:bg-gray-50 px-3 transition-colors rounded-md group">
-                  
-                  {/* L-Titre dial l-Article */}
                   <div className="flex items-center gap-3">
-                    {art.image_url =! null && (
-                      <img src={art.image_url} alt={art.title} className="w-12 h-12 object-cover rounded-md" />
-                    ):(<span className="material-symbols-outlined text-gray-400 group-hover:text-primary-500 transition-colors">
-                      description
-                    </span>)}
-                    
+                    {art.image !== null ? <img src={art.image} alt={art.title} className="w-12 h-12 object-cover rounded-md" /> : <span className="material-symbols-outlined text-gray-400 group-hover:text-primary-500 transition-colors">description</span>}
+
                     <span className="font-bold text-gray-800 text-sm">{art.title}</span>
                   </div>
 
                   {/* Bouton Éditer */}
-                  <button 
-                    onClick={() => handleEdit(art)} 
-                    className="bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-600 px-4 py-2 rounded-md font-bold text-xs uppercase flex items-center gap-2 transition-colors border border-gray-200 hover:border-primary-200"
-                  >
+                  <button onClick={() => handleEdit(art.id)} className="bg-gray-100 text-gray-600 hover:bg-primary-50 hover:text-primary-600 px-4 py-2 rounded-md font-bold text-xs uppercase flex items-center gap-2 transition-colors border border-gray-200 hover:border-primary-200">
                     <span className="material-symbols-outlined text-[16px]">edit</span>
                     Éditer
                   </button>
-                  
                 </li>
               ))}
             </ul>
           )}
-        </div>)}
+        </div>
+      )}
 
- 
-      
       {/* ========================================== */}
       {/* VUE 2 : CRÉATION D'UN ARTICLE (Formulaire) */}
       {/* ========================================== */}
@@ -209,6 +235,7 @@ const handleEdit = async (id) => {
               <label className=" text-sm font-bold text-gray-700 mb-2">Image de Couverture (Optionnelle)</label>
               {previewUrl ? (
                 <div className="relative   bg-gray-100   rounded-md overflow-hidden">
+                  <span className="text-xs text-gray-400">{previewUrl}</span>
                   <img src={previewUrl} alt="Cover" className="w-full h-full object-cover" />
                   <button type="button" onClick={handleRemoveImage} className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-xs font-bold rounded shadow-md">
                     Retirer
@@ -218,6 +245,7 @@ const handleEdit = async (id) => {
                 <div onClick={() => fileInputRef.current.click()} className="h-32 w-full -2 border-dashed  bg-gray-50 hover:bg-gray-100 flex flex-col items-center justify-center cursor-pointer text-gray-500 transition-colors rounded-md">
                   <span className="material-symbols-outlined text-3xl mb-1 text-gray-400">add_photo_alternate</span>
                   <span className="text-sm font-bold">Ajouter une image haute résolution</span>
+                  <span className="text-xs text-gray-400">{previewUrl}</span>
                 </div>
               )}
               <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={handleImageChange} />
@@ -264,8 +292,8 @@ const handleEdit = async (id) => {
 
             {/* Boutons */}
             <div className="pt-4 border-t border-gray-200 grid cols-1   gap-3 mt-6">
-              <button type="submit" disabled={isSubmitting} className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2.5 px-6 uppercase text-sm rounded-md transition-colors disabled:opacity-50">
-                {isSubmitting ? 'Publication...' : "Publier l'Alerte"}
+              <button type="submit" disabled={isSubmitting} className="...">
+                {isSubmitting ? 'Traitement...' : isEditing ? 'Enregistrer les modifications' : "Publier l'Alerte"}
               </button>
             </div>
           </form>

@@ -89,9 +89,16 @@ $articles = DB::table('articles')
         return response()->json($article->load(['media', 'user', 'sector', 'comments.user']), 200);
     }
 
-    public function showEditor(Article $article)
+    public function showEditor( $id)
     {
-        return response()->json(['article' => $article->load(['media', 'user', 'sector'])], 200);
+        $article = DB::table('articles')->leftJoin('media', function($join) {
+            $join->on('articles.id', '=', 'media.model_id') 
+                 ->where('media.model_type', '=', 'App\Models\Article'); 
+        })->select('articles.id', 'articles.title', 'articles.content','articles.scope', 'articles.status', 'media.file_path')
+    ->where('articles.id', $id)
+    ->first();
+        
+        return response()->json($article, 200);
     }
     /**
      * Update the specified resource in storage.

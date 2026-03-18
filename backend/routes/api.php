@@ -37,7 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
      Route::get('/manager/articles/', [ArticleController::class, 'getArticleByEditor']);
     Route::put('/manager/articles/{article}', [ArticleController::class, 'update']);
-    Route::get('/manager/articles/{article}', [ArticleController::class, 'showEditor']);
+    Route::get('/manager/articles/{id}', [ArticleController::class, 'showEditor']);
     Route::patch('/manager/articles/status/{article}', [ArticleController::class, 'update']);
 
 });
