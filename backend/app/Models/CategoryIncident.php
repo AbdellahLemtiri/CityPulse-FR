@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+ 
 
 class CategoryIncident extends Model
 {
@@ -17,20 +18,8 @@ class CategoryIncident extends Model
         return $this->hasMany(Incident::class, 'category_id');
     }
 
-    public function workflow(): HasOne
+    public function partner(): BelongsTo
     {
-        return $this->hasOne(Workflow::class, 'category_incident_id');
-    }
-
-    public function partner(): HasOneThrough
-    {
-        return $this->hasOneThrough(
-            Partner::class,
-            Workflow::class,
-            'category_incident_id',
-            'id',
-            'id',
-            'partner_id'
-        );
+        return $this->belongsTo(Partner::class);
     }
 }

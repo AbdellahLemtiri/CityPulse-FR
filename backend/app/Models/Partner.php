@@ -9,24 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Partner extends Model
 {
-     protected $fillable = ['name', 'email', 'phone_fix', 'whatsapp', 'sla_hours'];
+    protected $fillable = ['name', 'email', 'phone_fix', 'whatsapp', 'sla_hours'];
 
-     public function categories(): BelongsToMany
+    public function categories(): HasMany
     {
-        return $this->belongsToMany(
-            CategoryIncident::class, 
-            'workflows', 
-            'partner_id', 
-            'category_incident_id'
+        return $this->hasMany(
+            CategoryIncident::class
         );
     }
 
-     public function workflows(): HasMany
-    {
-        return $this->hasMany(Workflow::class, 'partner_id');
-    }
 
-     public function incidents(): HasMany
+
+    public function incidents(): HasMany
     {
         return $this->hasMany(Incident::class, 'partner_id');
     }

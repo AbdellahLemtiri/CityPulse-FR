@@ -18,11 +18,11 @@ class Incident extends Model
 
 
     public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function category(): BelongsTo { return $this->belongsTo(Category::class); }
+    public function category(): BelongsTo { return $this->belongsTo(CategoryIncident::class, 'category_id'); }
     public function sector(): BelongsTo { return $this->belongsTo(Sector::class); }
     public function partner(): BelongsTo
     { 
-        return $this->belongsTo(Partner::class); 
+        return $this->belongsTo(Partner::class, 'partner_id'); 
     }
  
     public function media(): MorphMany { return $this->morphMany(Media::class, 'model'); }
