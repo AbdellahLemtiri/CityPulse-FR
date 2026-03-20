@@ -3,8 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  // Kan-choufou wesh l'user deja khtar dark wla light
-  const [isDarkMode, setIsDarkMode] = useState(() => {
+   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("color-theme") === "dark";
   });
 
@@ -13,7 +12,8 @@ export const ThemeProvider = ({ children }) => {
     if (isDarkMode) {
       root.classList.add("dark");
       localStorage.setItem("color-theme", "dark");
-    } else {
+    } 
+    else {
       root.classList.remove("dark");
       localStorage.setItem("color-theme", "light");
     }

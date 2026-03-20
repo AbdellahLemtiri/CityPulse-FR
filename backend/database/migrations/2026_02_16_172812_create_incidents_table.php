@@ -1,19 +1,15 @@
-<?php
-
+<?php 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
-            $table->string('ref_num')->unique();
+            $table->string('ref_num')->unique();  
             $table->string('title');
             $table->text('description');
             $table->enum('status', ['pending', 'validated', 'rejected', 'resolved'])->default('pending');
@@ -22,7 +18,8 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->timestamp('resolved_at')->nullable();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');  
+            $table->foreignId('sector_id')->constrained()->onDelete('cascade'); 
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->foreignId('partner_id')->nullable()->constrained('partners')->onDelete('set null');
             $table->softDeletes();
@@ -30,9 +27,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('incidents');

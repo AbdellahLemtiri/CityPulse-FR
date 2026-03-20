@@ -25,8 +25,7 @@ class Partner extends Model
         return $this->hasMany(Incident::class, 'partner_id');
     }
 
-    // 5. L-Logo (Media)
-    public function logo(): MorphOne
+     public function logo(): MorphOne
     {
         return $this->morphOne(Media::class, 'model');
     }

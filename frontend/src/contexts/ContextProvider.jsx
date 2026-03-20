@@ -1,6 +1,5 @@
 import { createContext, useContext, useState } from "react";
 
-// كانصاوبو الـ Context الخاوي فالأول
 const StateContext = createContext({
     user: null,
     token: null,

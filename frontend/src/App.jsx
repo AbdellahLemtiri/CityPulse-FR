@@ -36,12 +36,10 @@ function App() {
       </Route>
 
      <Route path="/manager" element={<ManagerLayout />}>
-        {/* Redirect nishan l-incidents ila dkhl l /manager */}
-        <Route index element={<Navigate to="incidents" replace />} />
+         <Route index element={<Navigate to="incidents" replace />} />
         <Route path="evenements" element={<ManagerEvents />} />
 <Route path="alertes" element={<ManagerAlerts />} /><Route path="moderation" element={<ManagerModeration />} />
-        {/* Hna ghadi n-zidou les pages dial l-manager whda b whda */}
-        <Route path="incidents" element={<ManagerIncidents />} />
+         <Route path="incidents" element={<ManagerIncidents />} />
       </Route>
 
 
@@ -49,12 +47,12 @@ function App() {
         <Route index element={<Navigate to="rediger" replace />} />
         <Route path="rediger" element={<JournalisteEditor />} />
         <Route path="articles" element={<JournalisteArticles />} />
-        {/* <Route path="articles" element={<JournalisteArticles />} /> Hadi n-sayboha mn b3d */}
       </Route><Route path="/admin" element={<AdminLayout />}>
   <Route index element={<Navigate to="masterdata" replace />} />
-  <Route path="masterdata" element={<AdminMasterData />} /><Route path="staff" element={<AdminStaff />} /><Route path="bans" element={<AdminBanMonitor />} />
+  <Route path="masterdata" element={<AdminMasterData />} />
+  <Route path="staff" element={<AdminStaff />} />
+  <Route path="bans" element={<AdminBanMonitor />} />
 <Route path="systeme" element={<AdminSystem />} />
-  {/* <Route path="staff" element={<AdminStaff />} /> */}
 </Route>
      </Routes>
   );

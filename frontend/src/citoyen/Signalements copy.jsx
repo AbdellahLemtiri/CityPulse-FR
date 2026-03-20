@@ -61,11 +61,11 @@ export default function Signalements() {
   const [description, setDescription] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
-  const [tab, setTab] = useState("mesSignalements");
-  const [address, setAddress] = useState("");
-  const [location, setLocation] = useState(null); 
   
-  const [images, setImages] = useState([]);  
+  const [address, setAddress] = useState("");
+  const [location, setLocation] = useState(null); // { lat, lng }
+  
+  const [images, setImages] = useState([]); // Tableau dial tsawer (Max 4)
 
   // ==========================================
   // 1. API: GET /incidents
@@ -138,7 +138,8 @@ export default function Signalements() {
       /* ✅ KOD L-API L-7A9I9I (M3a Polymorphic Photos w Audio):
       const formData = new FormData();
       formData.append('title', title);
-       formData.append('description', description);
+      formData.append('category_id', categoryId);
+      formData.append('description', description);
       if (location) {
         formData.append('latitude', location.lat);
         formData.append('longitude', location.lng);
@@ -209,9 +210,10 @@ export default function Signalements() {
     return new Date(dateString).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
-return (
- <div className="max-w-4xl mx-auto p-4 md:p-0 pb-24 md:pb-8">
-       {tab === "mesSignalements" && (<>
+  return (
+    <>
+      <div className="max-w-4xl mx-auto p-4 md:p-0 pb-24 md:pb-8">
+        
         {/* HEADER */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 mt-4">
           <div>
@@ -219,8 +221,9 @@ return (
             <p className="text-sm text-gray-500 dark:text-gray-400">Aidez-nous à améliorer Safi en signalant les anomalies.</p>
           </div>
           <button 
-            onClick={() => setTab("crationTab")}
-            className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 active:scale-95">
+            onClick={() => setIsModalOpen(true)}
+            className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 active:scale-95"
+          >
             <span className="material-symbols-outlined">campaign</span>
             Nouveau Signalement
           </button>
@@ -281,12 +284,13 @@ return (
             );
           })}
         </div>
-      
-           </>   )}
+      </div>
 
-  {tab === "crationTab" && (
-<>
-       <div className="  flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm fade-in">
+      {/* ========================================== */}
+      {/* MODAL CRÉATION SIGNALEMENT */}
+      {/* ========================================== */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm fade-in">
           <div className="bg-white dark:bg-gray-800 w-full max-w-2xl rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden zoom-in flex flex-col max-h-[90vh]">
             
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50 shrink-0">
@@ -458,19 +462,8 @@ return (
 
           </div>
         </div>
+      )}
 
-
-  </>  )
-  }
-</div>
-  );}
-   
-     
-      {/* ========================================== */}
-      {/* MODAL CRÉATION SIGNALEMENT */}
-      {/* ========================================== */}
-      
-
-    
-  
-
+    </>
+  );
+}
