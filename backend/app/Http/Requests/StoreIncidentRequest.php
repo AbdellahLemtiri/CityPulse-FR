@@ -7,7 +7,7 @@ class StoreIncidentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-         return true;
+         return false;
     }
 
     public function rules(): array
@@ -18,7 +18,6 @@ class StoreIncidentRequest extends FormRequest
             'latitude'    => 'required|numeric|between:-90,90',
             'longitude'   => 'required|numeric|between:-180,180',
             'address'     => 'nullable|string|max:255',
-            'sector_id'   => 'required|exists:sectors,id',
              'images'      => 'required|array|min:1|max:4',
             'images.*'    => 'required|image|mimes:jpeg,png,webp|max:5120',  
              'audio'       => 'nullable|file|mimes:mp3,wav,m4a,ogg|max:10240',  
@@ -36,7 +35,6 @@ class StoreIncidentRequest extends FormRequest
             'images.*.max'      => 'Chaque image ne doit pas dépasser 5 Mo.',
             'audio.mimes'       => 'Le format audio n\'est pas supporté.',
             'audio.max'         => 'La note vocale ne doit pas dépasser 10 Mo.',
-            'sector_id.exists'  => 'Le secteur sélectionné est invalide.',
-        ];
+         ];
     }
 }

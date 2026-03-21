@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreIncidentRequest;
 use Illuminate\Http\Request;
 use App\Models\Incident;
-
+use Illuminate\Support\Facades\Auth;
 class IncidentController extends Controller
 {
     /**
@@ -33,7 +33,11 @@ class IncidentController extends Controller
     public function store(StoreIncidentRequest $request)
     {
         //
+        $user = Auth::user();
         $data = $request->validated();
+        
+        $data['sector_id'] = $user->sector_id;
+        $data['user_id'] = $user->id;
         Incident::create($data);
         return response()->json(['message' => 'Incident créé avec succès'], 201);
     }

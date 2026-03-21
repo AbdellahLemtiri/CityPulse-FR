@@ -4,8 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\CommentController;
+ use App\Http\Controllers\CommentController;
+use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\StaffController;
 
@@ -21,10 +21,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::resource('/articles', ArticleController::class)->only(['index', 'store','destroy']);
 
-    Route::apiResource('/posts', PostController::class);
-    Route::post('/comments', [CommentController::class, 'store']);
+     Route::post('/comments', [CommentController::class, 'store']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
     Route::post('/likes/toggle', [LikeController::class, 'toggle']);
+    Route::post('/incidents', IncidentController::class,'store');
 
 
 
