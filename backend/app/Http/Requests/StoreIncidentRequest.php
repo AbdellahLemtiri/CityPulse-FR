@@ -7,7 +7,7 @@ class StoreIncidentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-         return false;
+         return true;
     }
 
     public function rules(): array
@@ -20,7 +20,7 @@ class StoreIncidentRequest extends FormRequest
             'address'     => 'nullable|string|max:255',
              'images'      => 'required|array|min:1|max:4',
             'images.*'    => 'required|image|mimes:jpeg,png,webp|max:5120',  
-             'audio'       => 'nullable|file|mimes:mp3,wav,m4a,ogg|max:10240',  
+            //  'audio'       => 'nullable|file|mimes:mp3,wav,m4a,ogg|max:10240',  
         ];
     }
 
@@ -33,8 +33,8 @@ class StoreIncidentRequest extends FormRequest
             'images.*.image'    => 'Le fichier fourni n\'est pas une image valide.',
             'images.*.mimes'    => 'Seuls les formats JPEG, PNG et WEBP sont acceptés.',
             'images.*.max'      => 'Chaque image ne doit pas dépasser 5 Mo.',
-            'audio.mimes'       => 'Le format audio n\'est pas supporté.',
-            'audio.max'         => 'La note vocale ne doit pas dépasser 10 Mo.',
+            // 'audio.mimes'       => 'Le format audio n\'est pas supporté.',
+            // 'audio.max'         => 'La note vocale ne doit pas dépasser 10 Mo.',
          ];
     }
 }

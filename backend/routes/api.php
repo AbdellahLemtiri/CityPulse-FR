@@ -24,12 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
      Route::post('/comments', [CommentController::class, 'store']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
     Route::post('/likes/toggle', [LikeController::class, 'toggle']);
-    Route::post('/incidents', IncidentController::class,'store');
+    Route::post('/incidents', [IncidentController::class,'store']);
 
 
 
-    // ---------------------------------------------------------------------------
-
+ 
     Route::post('/admin/staff', [StaffController::class, 'store']);
     Route::get('/admin/staff', [StaffController::class, 'index']);
 });
