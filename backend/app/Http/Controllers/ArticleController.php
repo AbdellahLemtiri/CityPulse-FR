@@ -45,12 +45,8 @@ class ArticleController extends Controller
         $user = Auth::user();
         $data = $request->validated();
         $data['user_id'] = $user->id;
-        if (!isset($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }
-
+        $data['slug'] = Str::slug($data['title']);
         $article = Article::create($data);
-
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('articles', 'public');
             $article->media()->create([
@@ -88,7 +84,7 @@ class ArticleController extends Controller
         return response()->json($articles, 200);
     }
 
-    
+
     /**
      * Display the specified resource.
      */

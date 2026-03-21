@@ -7,8 +7,20 @@ use App\Http\Requests\StoreIncidentRequest;
 use Illuminate\Http\Request;
 use App\Models\Incident;
 use Illuminate\Support\Facades\Auth;
+use App\Services\IncidentService;
+
 class IncidentController extends Controller
 {
+
+
+
+    protected $incidentService;
+
+    // Injection de dépendance (DI) dial l-Service
+    public function __construct(IncidentService $incidentService)
+    {
+        $this->incidentService = $incidentService;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -32,14 +44,20 @@ class IncidentController extends Controller
      */
     public function store(StoreIncidentRequest $request)
     {
-        //
         $user = Auth::user();
         $data = $request->validated();
-        
-        $data['sector_id'] = $user->sector_id;
-        $data['user_id'] = $user->id;
-        Incident::create($data);
-        return response()->json(['message' => 'Incident créé avec succès'], 201);
+
+        // N-frezou les fichiers 3la d-data
+        $images = $request->file('images', []);
+        $audio = $request->file('audio');
+
+        // N-ssiftou kolchi l-Service y-t-kellef
+        $incident = $this->incidentService->createIncident($data, $user, $images, $audio);
+
+        return response()->json([
+            'message' => 'Incident signalé avec succès',
+            'data'    => $incident->load('media') // Kan-rj3ou l-incident m3a tsawer dialo l-React bach y-t2afficha nishan
+        ], 201);
     }
 
     /**
