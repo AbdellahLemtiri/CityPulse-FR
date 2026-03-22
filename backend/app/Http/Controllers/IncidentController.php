@@ -46,17 +46,12 @@ class IncidentController extends Controller
     {
         $user = Auth::user();
         $data = $request->validated();
-
-        // N-frezou les fichiers 3la d-data
         $images = $request->file('images', []);
         $audio = $request->file('audio');
-
-        // N-ssiftou kolchi l-Service y-t-kellef
         $incident = $this->incidentService->createIncident($data, $user, $images, $audio);
-
         return response()->json([
             'message' => 'Incident signalé avec succès',
-            'data'    => $incident->load('media') // Kan-rj3ou l-incident m3a tsawer dialo l-React bach y-t2afficha nishan
+            'data'    => $incident->load('media')  
         ], 201);
     }
 

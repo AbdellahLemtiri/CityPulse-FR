@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import axiosClient from '../config/axios-client';
 import moment from 'moment';
-import 'moment/locale/fr'; // Optionnel: bach y-3tik l-we9t b l-francais (ex: "il y a 2 jours")
-
+import 'moment/locale/fr'; 
+import toast, { Toaster } from 'react-hot-toast';
 export default function ManagerAlerts() {
   // ==========================================
   // STATES
@@ -27,9 +27,7 @@ export default function ManagerAlerts() {
 
   const fileInputRef = useRef(null);
 
-  // ==========================================
-  // HANDLERS (Formulaire)
-  // ==========================================
+ 
   const handleTitleChange = (e) => {
     setFormData({ ...formData, title: e.target.value });
   };
@@ -96,7 +94,7 @@ export default function ManagerAlerts() {
       alert(isEditing ? 'Article modifié avec succès !' : 'Article créé avec succès !');
 
       videFormEditing();
-      fetchArticles(); // N-jib l-data jdida
+      fetchArticles();  
     } catch (error) {
       console.error(error);
       alert("Erreur lors de l'enregistrement.");
