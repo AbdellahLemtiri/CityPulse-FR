@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class CategoryIncident extends Model
 {
     protected $table = 'category_incidents';
-    protected $fillable = ['name', 'sla_hours', 'is_active'];
+    protected $fillable = ['name', 'sla_hours', 'is_active','description','partner_id'];
 
     public function incidents(): HasMany
     {
@@ -22,4 +22,5 @@ class CategoryIncident extends Model
     {
         return $this->belongsTo(Partner::class);
     }
+
 }

@@ -1,17 +1,8 @@
 import { useState } from 'react';
 import axiosClient from '../config/axios-client';
 import toast, { Toaster } from 'react-hot-toast';
-
-// --- MOCK DATA (Mo2aqatan) ---
-const mockCategories = [
-  { id: 1, name: 'Éclairage Public', icon: 'lightbulb' },
-  { id: 2, name: 'Voirie & Routes', icon: 'edit_road' },
-  { id: 3, name: 'Propreté & Déchets', icon: 'delete' },
-  { id: 4, name: 'Espaces Verts', icon: 'park' },
-  { id: 5, name: 'Eau & Assainissement', icon: 'water_drop' },
-];
-
-const mockSectors = [
+import { useReactMediaRecorder } from "react-media-recorder"; 
+ const mockSectors = [
   { id: 1, name: 'Quartier Plateau' },
   { id: 2, name: 'Ville Nouvelle' },
   { id: 3, name: 'Sidi Bouzid' },
@@ -49,22 +40,22 @@ export default function Signalements() {
   const [etapForm, setEtapForm] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // --- FORM STATES ---
   const [title, setTitle] = useState('');
-  const [categoryId, setCategoryId] = useState(1);
-   const [description, setDescription] = useState('');
+  const [sectorId, setSectorId] = useState(1);
+  const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
   const [location, setLocation] = useState(null);
   const [images, setImages] = useState([]);
 
-  const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [audioBlob, setAudioBlob] = useState(null);
-  const [audioUrl, setAudioUrl] = useState(null);
+  // --- AUDIO HOOK (B-l-Bibliothèque) ---
+  const { status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } = 
+    useReactMediaRecorder({ audio: true });
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     if (images.length + files.length > 4) {
-      alert('Vous ne pouvez télécharger que 4 images maximum.');
+      toast.error('Vous ne pouvez télécharger que 4 images maximum.');
       return;
     }
     const newImages = files.map((file) => ({
@@ -89,53 +80,13 @@ export default function Signalements() {
             lng: position.coords.longitude,
           });
           setAddress('Position GPS détectée ✓');
+          toast.success('Position GPS récupérée !');
         },
         (error) => {
-          alert("Erreur de géolocalisation. Veuillez écrire l'adresse.");
+          toast.error("Erreur de géolocalisation. Veuillez écrire l'adresse.");
         },
       );
     }
-  };
-
-  // ==========================================
-  // GESTION DE L'ENREGISTREMENT AUDIO
-  // ==========================================
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      let chunks = [];
-
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunks.push(e.data);
-      };
-
-      recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        setAudioBlob(blob);
-        setAudioUrl(URL.createObjectURL(blob));
-      };
-
-      recorder.start();
-      setMediaRecorder(recorder);
-      setIsRecording(true);
-    } catch (err) {
-      alert("Erreur: Le navigateur n'a pas accès au microphone.");
-      console.error(err);
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-      mediaRecorder.stop();
-      mediaRecorder.stream.getTracks().forEach((track) => track.stop());
-      setIsRecording(false);
-    }
-  };
-
-  const deleteAudio = () => {
-    setAudioBlob(null);
-    setAudioUrl(null);
   };
 
   // ==========================================
@@ -146,22 +97,29 @@ export default function Signalements() {
     setIsSubmitting(true);
 
     try {
+      /* KOD L-API L-7A9I9I
        const formData = new FormData();
-      formData.append('title', title);
-        formData.append('description', description);
-      if (location) {
-        formData.append('latitude', location.lat);
-        formData.append('longitude', location.lng);
-      }
-      formData.append('address', address);
-      images.forEach((img, index) => formData.append(`images[${index}]`, img.file));
-      if (audioBlob) formData.append('audio', audioBlob, 'record.webm');
+       formData.append('title', title);
+       formData.append('sector_id', sectorId);
+       formData.append('description', description);
+       if (location) {
+         formData.append('latitude', location.lat);
+         formData.append('longitude', location.lng);
+       }
+       formData.append('address', address);
+       images.forEach((img, index) => formData.append(`images[${index}]`, img.file));
+       
+       if (mediaBlobUrl) {
+         const audioBlob = await fetch(mediaBlobUrl).then(r => r.blob());
+         formData.append('audio', audioBlob, 'record.webm');
+       }
 
-      await axiosClient.post('/incidents', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      
+       await axiosClient.post('/incidents', formData, {
+         headers: { 'Content-Type': 'multipart/form-data' }
+       });
+      */
 
+      // Simulation
        const newIncident = {
         id: Date.now(),
         ref_num: `SAF-2026-00${incidents.length + 1}`,
@@ -170,15 +128,20 @@ export default function Signalements() {
         status: 'pending',
         address: address || 'Position Inconnue',
         created_at: new Date().toISOString(),
-        category: mockCategories.find((c) => c.id === Number(categoryId)),
+        category: null, // L-Manager hwa li ghadi y-3tiha Catégorie
         images: images.length > 0 ? [images[0].url] : [],
       };
 
       setIncidents([newIncident, ...incidents]);
       resetForm();
       setTab('mesSignalements');
+      
+      // Notification d-Najah
+      toast.success('Incident signalé avec succès !');
+
     } catch (error) {
       console.error(error);
+      toast.error('Erreur lors de l\'envoi du signalement.');
     } finally {
       setIsSubmitting(false);
     }
@@ -186,27 +149,22 @@ export default function Signalements() {
 
   const resetForm = () => {
     setTitle('');
+    setSectorId(1);
     setDescription('');
     setImages([]);
     setAddress('');
     setLocation(null);
-    setAudioBlob(null);
-    setAudioUrl(null);
+    clearBlobUrl();  
     setEtapForm(1);
   };
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'pending':
-        return { color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-500', icon: 'schedule', text: 'En attente' };
-      case 'validated':
-        return { color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-500', icon: 'settings', text: 'En cours' };
-      case 'resolved':
-        return { color: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-500', icon: 'check_circle', text: 'Résolu' };
-      case 'rejected':
-        return { color: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-500', icon: 'cancel', text: 'Rejeté' };
-      default:
-        return { color: 'bg-gray-100 text-gray-700', icon: 'info', text: status };
+      case 'pending': return { color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-500', icon: 'schedule', text: 'En attente' };
+      case 'validated': return { color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-500', icon: 'settings', text: 'En cours' };
+      case 'resolved': return { color: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-500', icon: 'check_circle', text: 'Résolu' };
+      case 'rejected': return { color: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-500', icon: 'cancel', text: 'Rejeté' };
+      default: return { color: 'bg-gray-100 text-gray-700', icon: 'info', text: status };
     }
   };
 
@@ -216,6 +174,9 @@ export default function Signalements() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-0 pb-24 md:pb-8">
+      {/* Composant li kay-affichi les Toasts */}
+      <Toaster position="top-center" reverseOrder={false} />
+
       {/* HEADER */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{tab === 'mesSignalements' ? 'Mes Signalements' : 'Signaler un problème'}</h2>
@@ -267,9 +228,13 @@ export default function Signalements() {
                       </p>
                       <div className="mt-auto flex justify-between items-center border-t border-gray-100 dark:border-gray-700 pt-3">
                         <span className="text-[11px] text-gray-500 dark:text-gray-400">Le {formatDate(incident.created_at)}</span>
-                        <button className="text-primary-600 dark:text-primary-500 text-xs font-bold hover:border-primary-600 dark:hover:border-primary-500 flex items-center gap-1">
-                          Détails <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                        </button>
+                        
+                        {incident.category ? (
+                           <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-1 rounded-md">{incident.category.name}</span>
+                        ) : (
+                           <span className="text-[10px] italic text-gray-400">Catégorie en attente</span>
+                        )}
+
                       </div>
                     </div>
                   </div>
@@ -298,13 +263,22 @@ export default function Signalements() {
           <div className="flex items-center justify-center p-4">
             <div className="bg-white dark:bg-gray-900 w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden zoom-in flex flex-col">
               <div className="p-6 overflow-y-auto no-scrollbar flex-1 space-y-6">
-                {/* --- ETAPE 1 --- */}
-                {etapForm === 1 && (
+                
+                 {etapForm === 1 && (
                   <>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="md:col-span-2">
                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Que se passe-t-il ? *</label>
                         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" placeholder="Ex: Fuite d'eau, nid de poule..." />
+                      </div>
+                      
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Secteur / Quartier *</label>
+                        <select value={sectorId} onChange={(e) => setSectorId(e.target.value)} className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none">
+                          {mockSectors.map(s => (
+                            <option key={s.id} value={s.id}>{s.name}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
 
@@ -313,17 +287,21 @@ export default function Signalements() {
                       <textarea rows="3" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none resize-none mb-3" placeholder="Détaillez le problème ici..."></textarea>
 
                       <div className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 flex flex-col items-center justify-center gap-3">
-                        {!audioUrl ? (
+                        {!mediaBlobUrl ? (
                           <>
-                            <button type="button" onClick={isRecording ? stopRecording : startRecording} className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${isRecording ? 'bg-red-100 text-red-500 animate-pulse' : 'bg-primary-100 text-primary-500 hover:bg-primary-200'}`}>
-                              <span className="material-symbols-outlined text-3xl">{isRecording ? 'stop' : 'mic'}</span>
+                            <button 
+                              type="button" 
+                              onClick={status === "recording" ? stopRecording : startRecording} 
+                              className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${status === "recording" ? 'bg-red-100 text-red-500 animate-pulse' : 'bg-primary-100 text-primary-500 hover:bg-primary-200'}`}
+                            >
+                              <span className="material-symbols-outlined text-3xl">{status === "recording" ? 'stop' : 'mic'}</span>
                             </button>
-                            <p className="text-sm text-gray-500">{isRecording ? 'Enregistrement en cours...' : 'Cliquez pour enregistrer une note vocale'}</p>
+                            <p className="text-sm text-gray-500">{status === "recording" ? 'Enregistrement en cours...' : 'Cliquez pour enregistrer une note vocale'}</p>
                           </>
                         ) : (
                           <div className="w-full flex items-center gap-3 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                            <audio controls src={audioUrl} className="h-10 w-full" />
-                            <button type="button" onClick={deleteAudio} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-500/20 p-2 rounded-md">
+                            <audio controls src={mediaBlobUrl} className="h-10 w-full" />
+                            <button type="button" onClick={clearBlobUrl} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-500/20 p-2 rounded-md">
                               <span className="material-symbols-outlined">delete</span>
                             </button>
                           </div>
@@ -332,7 +310,7 @@ export default function Signalements() {
                     </div>
 
                     <div className="border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-end">
-                      <button type="button" disabled={!title || (!description && !audioUrl)} onClick={() => setEtapForm(2)} className="px-6 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold transition-colors disabled:opacity-50">
+                      <button type="button" disabled={!title || (!description && !mediaBlobUrl)} onClick={() => setEtapForm(2)} className="px-6 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-500 text-white font-bold transition-colors disabled:opacity-50">
                         Suivant
                       </button>
                     </div>
@@ -387,7 +365,7 @@ export default function Signalements() {
                       <button type="button" onClick={() => setEtapForm(1)} className="px-6 py-2.5 rounded-xl font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                         Précédent
                       </button>
-                      <button type="button" onClick={handleSubmit} disabled={images.length === 0 || !title || (!description && !audioUrl) || (!address && !location) || isSubmitting} className="px-6 py-2.5 rounded-xl font-bold bg-primary-600 hover:bg-primary-500 text-white shadow-md transition-colors disabled:opacity-50 flex items-center gap-2">
+                      <button type="button" onClick={handleSubmit} disabled={images.length === 0 || !title || (!description && !mediaBlobUrl) || (!address && !location) || isSubmitting} className="px-6 py-2.5 rounded-xl font-bold bg-primary-600 hover:bg-primary-500 text-white shadow-md transition-colors disabled:opacity-50 flex items-center gap-2">
                         {isSubmitting ? 'Envoi...' : 'Envoyer le signalement'}
                         {!isSubmitting && <span className="material-symbols-outlined text-[20px]">send</span>}
                       </button>
@@ -401,4 +379,4 @@ export default function Signalements() {
       )}
     </div>
   );
-}
+}   

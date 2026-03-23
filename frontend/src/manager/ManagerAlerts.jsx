@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import axiosClient from '../config/axios-client';
 import moment from 'moment';
 import 'moment/locale/fr'; 
+// import toast, { Toaster } from 'react-hot-toast';
 import toast, { Toaster } from 'react-hot-toast';
 export default function ManagerAlerts() {
   // ==========================================
@@ -97,7 +98,7 @@ export default function ManagerAlerts() {
       fetchArticles();  
     } catch (error) {
       console.error(error);
-      alert("Erreur lors de l'enregistrement.");
+      toast.error("Erreur lors de l'enregistrement.");
     } finally {
       setIsSubmitting(false);
     }
@@ -206,7 +207,7 @@ export default function ManagerAlerts() {
           {isEditing ? "Modifier l'Article" : "Rédiger un Article"}
         </button>
       </div>
-
+<Toaster />
    
       {isLoading ? (
             <div className="flex justify-center py-10">
