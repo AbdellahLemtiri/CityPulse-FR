@@ -44,7 +44,7 @@ export default function AdminMasterData() {
     if (type === 'category') {
       setCategoryData(isEdit ? { name: data.name, icon: data.icon || '' } : { name: '', icon: '' });
     } else if (type === 'sector') {
-      setSectorData(isEdit ? { name: data.name, logo: null } : { name: '', logo: null,city: 'Safi' });
+      setSectorData(isEdit ? { name: data.name, logo: null , city: 'Safi'} : { name: '', logo: null,city: 'Safi' });
     } else if (type === 'partner') {
       setPartnerData(
         isEdit
@@ -63,8 +63,7 @@ export default function AdminMasterData() {
 
   const closeModal = () => setModalConfig({ isOpen: false, type: '', isEdit: false, id: null });
 
-  // --- SOUMISSION DES FORMULAIRES (CREATE / UPDATE) ---
-  const handleFormSubmit = async (e) => {
+    const handleFormSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     const { type, isEdit, id } = modalConfig;
@@ -118,8 +117,7 @@ export default function AdminMasterData() {
     toast.error("Fonctionnalité de désactivation à relier à l'API");
   };
 
-  // --- RENDER LOADING STATE ---
-  if (loading) {
+   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
@@ -149,8 +147,7 @@ export default function AdminMasterData() {
         </button>
       </div>
 
-      {/* TAB 1 : Secteurs et Catégories */}
-      {activeTab === 'mdm' && (
+       {activeTab === 'mdm' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Catégories */}
           <div className="bg-white border border-gray-300 shadow-sm">
@@ -190,8 +187,7 @@ export default function AdminMasterData() {
             </table>
           </div>
 
-          {/* Secteurs */}
-          <div className="bg-white border border-gray-300 shadow-sm">
+           <div className="bg-white border border-gray-300 shadow-sm">
             <div className="p-4 bg-gray-50 border-b border-gray-300 flex justify-between items-center">
               <h3 className="font-bold uppercase text-sm">Secteurs (Moqata3at)</h3>
               <button onClick={() => openModal('sector')} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 font-bold uppercase transition-colors">
@@ -210,7 +206,8 @@ export default function AdminMasterData() {
                   sectors.map((sec) => (
                     <tr key={sec.id} className="border-b border-gray-200 hover:bg-gray-50">
                       <td className="p-3 font-bold text-gray-800 flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center overflow-hidden">{sec.logo ? <img src={`http://localhost:8000/storage/${sec.logo.file_path}`} alt="logo" className="w-full h-full object-cover" /> : <span className="material-symbols-outlined text-gray-400 text-sm">image</span>}</div>
+                        <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center overflow-hidden">{
+                        sec.logo ? <img src={`http://localhost:8000/storage/${sec.logo.file_path}`} alt={`${sec.name}.logo`} className="w-full h-full object-cover" /> : <span className="material-symbols-outlined text-gray-400 text-sm">image</span>}</div>
                         {sec.name}
                       </td>
                       <td className="p-3 text-right">
@@ -227,8 +224,7 @@ export default function AdminMasterData() {
         </div>
       )}
 
-      {/* TAB 2 : Partenaires */}
-      {activeTab === 'partners' && (
+       {activeTab === 'partners' && (
         <div className="bg-white border border-gray-300 shadow-sm overflow-x-auto">
           <div className="p-4 bg-gray-50 border-b border-gray-300 flex justify-between items-center min-w-[600px]">
             <h3 className="font-bold uppercase text-sm">Répertoire des Prestataires</h3>
@@ -280,8 +276,7 @@ export default function AdminMasterData() {
         </div>
       )}
 
-      {/* TAB 3 : Workflow Automatique */}
-      {activeTab === 'workflow' && (
+       {activeTab === 'workflow' && (
         <div className="flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-1/3">
             <div className="bg-white border border-gray-300 shadow-sm p-4">
@@ -366,8 +361,7 @@ export default function AdminMasterData() {
             </div>
 
             <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
-              {/* --- FORMULAIRE CATÉGORIE --- */}
-              {modalConfig.type === 'category' && (
+               {modalConfig.type === 'category' && (
                 <>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nom de la catégorie *</label>
@@ -380,8 +374,7 @@ export default function AdminMasterData() {
                 </>
               )}
 
-              {/* --- FORMULAIRE SECTEUR --- */}
-              {modalConfig.type === 'sector' && (
+               {modalConfig.type === 'sector' && (
                 <>
                 <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">City de sectuer *</label>
@@ -430,8 +423,7 @@ export default function AdminMasterData() {
                 </>
               )}
 
-              {/* Boutons */}
-              <div className="flex gap-3 pt-4 mt-2 border-t border-gray-200">
+               <div className="flex gap-3 pt-4 mt-2 border-t border-gray-200">
                 <button type="button" onClick={closeModal} className="flex-1 border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 uppercase text-sm">
                   Annuler
                 </button>
