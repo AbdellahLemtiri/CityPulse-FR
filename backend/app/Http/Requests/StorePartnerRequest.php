@@ -28,7 +28,7 @@ class StorePartnerRequest extends FormRequest
             'phone_fix' => 'nullable|string',
             'whatsapp' => 'nullable|string',
             'sla_hours' => 'nullable|integer',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048000',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 }

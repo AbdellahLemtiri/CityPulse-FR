@@ -30,7 +30,6 @@ class PartnerController extends Controller
 
             $logoFile = $request->file('logo');
             unset($data['logo']);
-
             $partner = Partner::create($data);
 
             if ($logoFile) {

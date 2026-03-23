@@ -11,7 +11,7 @@ class StoreSectorRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class StoreSectorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255|min:3',
+            'description' => 'nullable|string',
+            'city' => 'required|string',
+            'boundaries' => 'nullable|json',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 }
