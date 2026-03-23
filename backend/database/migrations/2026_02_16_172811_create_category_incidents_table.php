@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->foreignId('partner_id')->constrained('partners')->onDelete('set null');
+            $table->foreignId('partner_id') ->nullable()->constrained('partners')->onDelete('set null');
             $table->boolean('is_active')->default(true);
             $table->integer('sla_hours')->default(24);
             $table->timestamps();

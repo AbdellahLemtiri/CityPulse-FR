@@ -11,7 +11,7 @@ class stroeCatgoryIncident extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,6 +23,9 @@ class stroeCatgoryIncident extends FormRequest
     {
         return [
             //
+            'name' => 'required|string|max:255|min:3',
+            'description' => 'nullable|string',
+            'sla_hours' => 'nullable|integer',
         ];
     }
 }

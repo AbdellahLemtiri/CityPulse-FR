@@ -14,6 +14,8 @@ class CategoryIncidentController extends Controller
     public function index()
     {
         //
+        $categories = CategoryIncident::all();
+        return response()->json($categories, 200);
     }
 
     /**
