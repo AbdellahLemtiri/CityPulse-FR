@@ -69,7 +69,7 @@ class ArticleController extends Controller
         $articles = Article::with(['media' => function ($query) {
             $query->latest();
         }])
-            ->select('id', 'title', 'content', 'scope', 'status', 'created_at', 'user_id') // Darouri n-selectiw user_id bach Eloquent y-fhem
+            ->select('id', 'title', 'content', 'scope', 'status', 'created_at', 'user_id') 
             ->where('user_id', $user->id)
             ->latest()
             ->paginate(10);

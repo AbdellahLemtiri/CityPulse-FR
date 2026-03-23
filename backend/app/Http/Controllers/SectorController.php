@@ -16,6 +16,11 @@ class SectorController extends Controller
     public function index()
     {
         //
+        $sectors = Sector::with('logo')->get();
+        return response()->json([
+            'message' => 'Secteurs récupérés avec succès',
+            'sectors' => $sectors
+        ], 200);
     }
 
     /**
