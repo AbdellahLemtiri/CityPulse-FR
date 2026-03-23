@@ -8,7 +8,9 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\StaffController;
-
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SectorController;
+use App\Http\Controllers\PartnerController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -44,4 +46,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::prefix('admin')->group(function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('sectors', SectorController::class);
+    Route::apiResource('partners', PartnerController::class);
 });
