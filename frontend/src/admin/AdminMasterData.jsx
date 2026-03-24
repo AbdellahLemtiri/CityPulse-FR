@@ -14,8 +14,8 @@ export default function AdminMasterData() {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [categoryData, setCategoryData] = useState({ name: '', icon: '',description : '' });
-  const [sectorData, setSectorData] = useState({ name: '', logo: null });
+  const [categoryData, setCategoryData] = useState({ name: '', icon: '', description: '' });
+  const [sectorData, setSectorData] = useState({ name: '', logo: null, city: 'Safi', description: '', boundaries: '' });
   const [partnerData, setPartnerData] = useState({ name: '', email: '', phone_fix: '', whatsapp: '', sla_hours: '', logo: null });
 
   useEffect(() => {
@@ -358,7 +358,7 @@ export default function AdminMasterData() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Description de la catégorie </label>
-                    <input type="text"  value={categoryData.name} onChange={(e) => setCategoryData({ ...categoryData, description : e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
+                    <input type="text" value={categoryData.name} onChange={(e) => setCategoryData({ ...categoryData, description: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Icône (Nom Material Symbols)</label>
@@ -377,7 +377,10 @@ export default function AdminMasterData() {
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nom du Secteur *</label>
                     <input type="text" required value={sectorData.name} onChange={(e) => setSectorData({ ...sectorData, name: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
                   </div>
-
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Description du secteur </label>
+                    <input type="text" value={sectorData.description} onChange={(e) => setSectorData({ ...sectorData, description: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
+                  </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Image de couverture (Logo)</label>
                     <input type="file" accept="image/*" onChange={(e) => setSectorData({ ...sectorData, logo: e.target.files[0] })} className="w-full border border-gray-300 p-1 text-sm bg-white" />
