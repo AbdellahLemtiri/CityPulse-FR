@@ -14,7 +14,7 @@ export default function AdminMasterData() {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [categoryData, setCategoryData] = useState({ name: '', icon: '' });
+  const [categoryData, setCategoryData] = useState({ name: '', icon: '',description : '' });
   const [sectorData, setSectorData] = useState({ name: '', logo: null });
   const [partnerData, setPartnerData] = useState({ name: '', email: '', phone_fix: '', whatsapp: '', sla_hours: '', logo: null });
 
@@ -44,26 +44,15 @@ export default function AdminMasterData() {
     if (type === 'category') {
       setCategoryData(isEdit ? { name: data.name, icon: data.icon || '' } : { name: '', icon: '' });
     } else if (type === 'sector') {
-      setSectorData(isEdit ? { name: data.name, logo: null , city: 'Safi'} : { name: '', logo: null,city: 'Safi' });
+      setSectorData(isEdit ? { name: data.name, logo: null, city: 'Safi' } : { name: '', logo: null, city: 'Safi' });
     } else if (type === 'partner') {
-      setPartnerData(
-        isEdit
-          ? {
-              name: data.name,
-              email: data.email,
-              phone_fix: data.phone_fix || '',
-              whatsapp: data.whatsapp || '',
-              sla_hours: data.sla_hours || '',
-              logo: null,
-            }
-          : { name: '', email: '', phone_fix: '', whatsapp: '', sla_hours: '', logo: null },
-      );
+      setPartnerData(isEdit ? { name: data.name, email: data.email, phone_fix: data.phone_fix || '', whatsapp: data.whatsapp || '', sla_hours: data.sla_hours || '', logo: null } : { name: '', email: '', phone_fix: '', whatsapp: '', sla_hours: '', logo: null });
     }
   };
 
   const closeModal = () => setModalConfig({ isOpen: false, type: '', isEdit: false, id: null });
 
-    const handleFormSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     const { type, isEdit, id } = modalConfig;
@@ -72,7 +61,7 @@ export default function AdminMasterData() {
       const formData = new FormData();
 
       if (isEdit) {
-        formData.append('_method', 'PUT'); 
+        formData.append('_method', 'PUT');
       }
 
       let endpoint = '';
@@ -81,6 +70,7 @@ export default function AdminMasterData() {
         endpoint = isEdit ? `/admin/categories/${id}` : '/admin/categories';
         formData.append('name', categoryData.name);
         if (categoryData.icon) formData.append('icon', categoryData.icon);
+        if (categoryData.description) formData.append('description', categoryData.description);
       } else if (type === 'sector') {
         endpoint = isEdit ? `/admin/sectors/${id}` : '/admin/sectors';
         formData.append('name', sectorData.name);
@@ -117,7 +107,7 @@ export default function AdminMasterData() {
     toast.error("Fonctionnalité de désactivation à relier à l'API");
   };
 
-   if (loading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
@@ -147,7 +137,7 @@ export default function AdminMasterData() {
         </button>
       </div>
 
-       {activeTab === 'mdm' && (
+      {activeTab === 'mdm' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Catégories */}
           <div className="bg-white border border-gray-300 shadow-sm">
@@ -187,7 +177,7 @@ export default function AdminMasterData() {
             </table>
           </div>
 
-           <div className="bg-white border border-gray-300 shadow-sm">
+          <div className="bg-white border border-gray-300 shadow-sm">
             <div className="p-4 bg-gray-50 border-b border-gray-300 flex justify-between items-center">
               <h3 className="font-bold uppercase text-sm">Secteurs (Moqata3at)</h3>
               <button onClick={() => openModal('sector')} className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 font-bold uppercase transition-colors">
@@ -206,8 +196,7 @@ export default function AdminMasterData() {
                   sectors.map((sec) => (
                     <tr key={sec.id} className="border-b border-gray-200 hover:bg-gray-50">
                       <td className="p-3 font-bold text-gray-800 flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center overflow-hidden">{
-                        sec.logo ? <img src={`http://localhost:8000/storage/${sec.logo.file_path}`} alt={`${sec.name}.logo`} className="w-full h-full object-cover" /> : <span className="material-symbols-outlined text-gray-400 text-sm">image</span>}</div>
+                        <div className="w-8 h-8 bg-gray-200 rounded flex items-center justify-center overflow-hidden">{sec.logo ? <img src={`http://localhost:8000/storage/${sec.logo.file_path}`} alt={`${sec.name}.logo`} className="w-full h-full object-cover" /> : <span className="material-symbols-outlined text-gray-400 text-sm">image</span>}</div>
                         {sec.name}
                       </td>
                       <td className="p-3 text-right">
@@ -224,7 +213,7 @@ export default function AdminMasterData() {
         </div>
       )}
 
-       {activeTab === 'partners' && (
+      {activeTab === 'partners' && (
         <div className="bg-white border border-gray-300 shadow-sm overflow-x-auto">
           <div className="p-4 bg-gray-50 border-b border-gray-300 flex justify-between items-center min-w-[600px]">
             <h3 className="font-bold uppercase text-sm">Répertoire des Prestataires</h3>
@@ -276,7 +265,7 @@ export default function AdminMasterData() {
         </div>
       )}
 
-       {activeTab === 'workflow' && (
+      {activeTab === 'workflow' && (
         <div className="flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-1/3">
             <div className="bg-white border border-gray-300 shadow-sm p-4">
@@ -361,11 +350,15 @@ export default function AdminMasterData() {
             </div>
 
             <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
-               {modalConfig.type === 'category' && (
+              {modalConfig.type === 'category' && (
                 <>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nom de la catégorie *</label>
                     <input type="text" required value={categoryData.name} onChange={(e) => setCategoryData({ ...categoryData, name: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Description de la catégorie </label>
+                    <input type="text"  value={categoryData.name} onChange={(e) => setCategoryData({ ...categoryData, description : e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Icône (Nom Material Symbols)</label>
@@ -374,17 +367,17 @@ export default function AdminMasterData() {
                 </>
               )}
 
-               {modalConfig.type === 'sector' && (
+              {modalConfig.type === 'sector' && (
                 <>
-                <div>
+                  <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">City de sectuer *</label>
-                    <input type="text" disabled  value={sectorData.city} onChange={(e) => setSectorData({ ...sectorData, city: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
+                    <input type="text" disabled value={sectorData.city} onChange={(e) => setSectorData({ ...sectorData, city: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Nom du Secteur *</label>
                     <input type="text" required value={sectorData.name} onChange={(e) => setSectorData({ ...sectorData, name: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
                   </div>
-                  
+
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Image de couverture (Logo)</label>
                     <input type="file" accept="image/*" onChange={(e) => setSectorData({ ...sectorData, logo: e.target.files[0] })} className="w-full border border-gray-300 p-1 text-sm bg-white" />
@@ -423,7 +416,7 @@ export default function AdminMasterData() {
                 </>
               )}
 
-               <div className="flex gap-3 pt-4 mt-2 border-t border-gray-200">
+              <div className="flex gap-3 pt-4 mt-2 border-t border-gray-200">
                 <button type="button" onClick={closeModal} className="flex-1 border border-gray-300 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 uppercase text-sm">
                   Annuler
                 </button>
