@@ -103,8 +103,7 @@ export default function AdminMasterData() {
   };
 
   const toggleCategoryStatus = async (id) => {
-    //  await axiosClient.delete(`/admin/categories/${id}`);
-    toast.error("Fonctionnalité de désactivation à relier à l'API");
+      // await axiosClient.delete(`/admin/categories/${id}`);
   };
 
   if (loading) {
@@ -279,7 +278,7 @@ export default function AdminMasterData() {
           <div className="w-full md:w-1/3">
             <div className="bg-white border border-gray-300 shadow-sm p-4">
               <h3 className="font-bold uppercase text-sm mb-4 border-b border-gray-200 pb-2">Nouvelle Règle</h3>
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={handleFormSubmit} >
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Si Catégorie :</label>
                   <select className="w-full border border-gray-300 p-2 text-sm bg-gray-50 outline-none focus:border-blue-500">
@@ -295,13 +294,13 @@ export default function AdminMasterData() {
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Partenaire :</label>
                   <select className="w-full border border-gray-300 p-2 text-sm bg-gray-50 outline-none focus:border-blue-500">
                     {partners.map((p) => (
-                      <option key={p.id} value={p.id}>
+                      <option key={p.id}  value={p.id}>
                         {p.name}
                       </option>
                     ))}
                   </select>
                 </div>
-                <button type="button" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase text-xs py-2 mt-2 transition-colors">
+                <button type="button" onClick={handleAddRule} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold uppercase text-xs py-2 mt-2 transition-colors">
                   Sauvegarder la Règle
                 </button>
               </form>
