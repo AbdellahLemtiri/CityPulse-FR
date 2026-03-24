@@ -110,9 +110,7 @@ export default function AdminMasterData() {
   };
 
 
-  useEffect(() => {
-    if (partners.length > 0) {
-  })
+ 
 useEffect(() => {
     if (categories.length > 0 && partners.length > 0) {
       const catAvecPartners = categories.filter((cat) => cat.partner_id !== null).map((cat) => {
