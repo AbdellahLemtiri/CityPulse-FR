@@ -8,7 +8,7 @@ export default function AdminLayout() {
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
       
-       <aside className="w-64 bg-gray-900 flex flex-col shadow-xl z-10">
+       <aside className="w-64  bg-black flex flex-col shadow-xl z-10">
         <div className="p-5 border-b border-gray-800 bg-gray-950">
           <h1 className="text-lg font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <span className="material-symbols-outlined text-blue-500">admin_panel_settings</span>

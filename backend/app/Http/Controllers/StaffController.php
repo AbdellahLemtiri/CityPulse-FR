@@ -35,12 +35,12 @@ class StaffController extends Controller
      */
     public function store(StoreStaffRequest $request)
     {
-        //
+        //  
 
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
         $data['uuid'] = Str::uuid();
-       User::create($data);
+        User::create($data);
         $user = User::where('email', $data['email'])->with('role')->firstOrFail();
         return response()->json(['message' => 'Staff créé avec succès', 'user' => $user], 201);
     }

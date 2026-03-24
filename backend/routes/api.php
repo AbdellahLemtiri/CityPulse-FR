@@ -31,8 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
  
-    Route::post('/admin/staff', [StaffController::class, 'store']);
-    Route::get('/admin/staff', [StaffController::class, 'index']);
+   
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -44,6 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 Route::prefix('admin')->group(function () {
+     Route::post('/admin/staff', [StaffController::class, 'store']);
+    Route::get('/admin/staff', [StaffController::class, 'index']);
     Route::apiResource('/categories', CategoryIncidentController::class);
     Route::apiResource('/sectors', SectorController::class);
     Route::apiResource('/partners', PartnerController::class);
