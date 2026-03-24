@@ -11,7 +11,7 @@ class storeWorkflowRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,6 +23,8 @@ class storeWorkflowRequest extends FormRequest
     {
         return [
             //
+            'category_id'=> 'required|exists:category_incidents,id',
+            'partner_id'=> 'required|exists:partners,id',
         ];
     }
 }

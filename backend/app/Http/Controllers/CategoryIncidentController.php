@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
  use App\Models\CategoryIncident;
 use App\Http\Requests\stroeCatgoryIncident;
+use App\Http\Requests\storeWorkflowRequest;
 class CategoryIncidentController extends Controller
 {
     /**
@@ -33,10 +34,12 @@ class CategoryIncidentController extends Controller
     }
 
 
-    public function storeWorkflows(storeWorkflow $request)
+    public function storeWorkflows(storeWorkflowRequest $request)
     {
         //
         $data = $request->validated();
+       $cat = CategoryIncident::findOrFail($data['category_id']);
+       $cat->update(['parent_id' => $data['parent_id']]);
          return response()->json([
             'message' => 'le workflow a bien été créee',
         ], 201 );
