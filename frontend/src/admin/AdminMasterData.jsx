@@ -13,11 +13,14 @@ export default function AdminMasterData() {
   const [modalConfig, setModalConfig] = useState({ isOpen: false, type: '', isEdit: false, id: null });
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCategoryIdWorkflow, setSelectedCategoryIdWorkflow] = useState('');
+  const [selectedPartnerIdWorkflow, setSelectedPartnerIdWorkflow] = useState('');
 
-  const [categoryData, setCategoryData] = useState({ name: '', icon: '', description: '' });
+  const [categoryData, setCategoryData] = useState({ name: '', icon: '', description: '', partner_id: null });
   const [sectorData, setSectorData] = useState({ name: '', logo: null, city: 'Safi', description: '', boundaries: '' });
   const [partnerData, setPartnerData] = useState({ name: '', email: '', phone_fix: '', whatsapp: '', sla_hours: '', logo: null });
-
+  const [aviableCategories, setAviableCategories] = useState([]);
+  const [aviablePartners, setAviablePartners] = useState([]);
   useEffect(() => {
     fetchMasterData();
   }, []);
@@ -103,14 +106,36 @@ export default function AdminMasterData() {
   };
 
   const toggleCategoryStatus = async (id) => {
-      // await axiosClient.delete(`/admin/categories/${id}`);
+    // await axiosClient.delete(`/admin/categories/${id}`);
   };
+
+
+  useEffect(() => {
+    if (partners.length > 0) {
+  })
+useEffect(() => {
+    if (categories.length > 0 && partners.length > 0) {
+      const catAvecPartners = categories.filter((cat) => cat.partner_id !== null).map((cat) => {
+          const pat = partners.find((partner) => partner.id === cat.partner_id);
+
+          return {
+            id: cat.id,  
+            category_id: cat.id,
+            partner_id: cat.partner_id,
+            category_name: cat.name,
+             partner_name: pat?.name || 'Partenaire inconnu', 
+          };
+        });
+
+      setWorkflows(catAvecPartners);
+    }
+  }, [categories, partners]);
 
   const handleAddRule = async () => {
     try {
       const response = await axiosClient.post('/admin/workflows', {
-        category_id: selectedCategoryId,
-        partner_id: selectedPartnerId,
+        category_id: selectedCategoryIdWorkflow,
+        partner_id: selectedPartnerIdWorkflow,
       });
       toast.success(response.data.message || 'Opération réussie');
       fetchMasterData();
@@ -120,6 +145,8 @@ export default function AdminMasterData() {
       toast.error(error.response?.data?.message || 'Erreur lors de la sauvegarde');
     }
   };
+
+  
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -198,7 +225,7 @@ export default function AdminMasterData() {
       {activeTab === 'sectors' && (
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           {/* Catégories */}
-     
+
           <div className="bg-white border border-gray-300 shadow-sm">
             <div className="p-4 bg-gray-50 border-b border-gray-300 flex justify-between items-center">
               <h3 className="font-bold uppercase text-sm">Secteurs (Moqata3at)</h3>
@@ -292,10 +319,10 @@ export default function AdminMasterData() {
           <div className="w-full md:w-1/3">
             <div className="bg-white border border-gray-300 shadow-sm p-4">
               <h3 className="font-bold uppercase text-sm mb-4 border-b border-gray-200 pb-2">Nouvelle Règle</h3>
-              <form className="space-y-4" onSubmit={handleFormSubmit} >
+              <form className="space-y-4" onSubmit={handleFormSubmit}>
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Si Catégorie :</label>
-                  <select className="w-full border border-gray-300 p-2 text-sm bg-gray-50 outline-none focus:border-blue-500">
+                  <select value={selectedCategoryIdWorkflow} onChange={(e) => setSelectedCategoryIdWorkflow(e.target.value)} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 outline-none focus:border-blue-500">
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -306,9 +333,9 @@ export default function AdminMasterData() {
                 <div className="text-center font-bold text-gray-400">ALORS ASSIGNER À</div>
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Partenaire :</label>
-                  <select className="w-full border border-gray-300 p-2 text-sm bg-gray-50 outline-none focus:border-blue-500">
+                  <select value={selectedPartnerIdWorkflow} onChange={(e) => setSelectedPartnerIdWorkflow(e.target.value)} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 outline-none focus:border-blue-500">
                     {partners.map((p) => (
-                      <option key={p.id}  value={p.id}>
+                      <option key={p.id} value={p.id}>
                         {p.name}
                       </option>
                     ))}
