@@ -106,6 +106,20 @@ export default function AdminMasterData() {
       // await axiosClient.delete(`/admin/categories/${id}`);
   };
 
+  const handleAddRule = async () => {
+    try {
+      const response = await axiosClient.post('/admin/workflows', {
+        category_id: selectedCategoryId,
+        partner_id: selectedPartnerId,
+      });
+      toast.success(response.data.message || 'Opération réussie');
+      fetchMasterData();
+      closeModal();
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'Erreur lors de la sauvegarde');
+    }
+  };
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">

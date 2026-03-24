@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\CategoryIncident;
+ use App\Models\CategoryIncident;
 use App\Http\Requests\stroeCatgoryIncident;
 class CategoryIncidentController extends Controller
 {
@@ -29,6 +28,17 @@ class CategoryIncidentController extends Controller
         return response()->json([
             'message' => 'Catégorie créée avec succès',
             'category' => $category
+        ], 201 );
+
+    }
+
+
+    public function storeWorkflows(storeWorkflow $request)
+    {
+        //
+        $data = $request->validated();
+         return response()->json([
+            'message' => 'le workflow a bien été créee',
         ], 201 );
 
     }

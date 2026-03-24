@@ -44,7 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 Route::prefix('admin')->group(function () {
-    Route::apiResource('categories', CategoryIncidentController::class);
-    Route::apiResource('sectors', SectorController::class);
-    Route::apiResource('partners', PartnerController::class);
+    Route::apiResource('/categories', CategoryIncidentController::class);
+    Route::apiResource('/sectors', SectorController::class);
+    Route::apiResource('/partners', PartnerController::class);
+    Route::post('/workflows', [CategoryIncidentController::class, 'storeWorkflows']);
 });
