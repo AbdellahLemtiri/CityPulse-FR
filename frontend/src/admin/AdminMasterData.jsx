@@ -3,7 +3,7 @@ import axiosClient from '../config/axios-client';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function AdminMasterData() {
-  const [activeTab, setActiveTab] = useState('mdm');
+  const [activeTab, setActiveTab] = useState('categories');
 
   const [categories, setCategories] = useState([]);
   const [sectors, setSectors] = useState([]);
@@ -42,9 +42,9 @@ export default function AdminMasterData() {
     setModalConfig({ isOpen: true, type, isEdit, id: data ? data.id : null });
 
     if (type === 'category') {
-      setCategoryData(isEdit ? { name: data.name, icon: data.icon || '' } : { name: '', icon: '' });
+      setCategoryData(isEdit ? { name: data.name, icon: data.icon, description: data.description || '' } : { name: '', icon: '', description: '' });
     } else if (type === 'sector') {
-      setSectorData(isEdit ? { name: data.name, logo: null, city: 'Safi' } : { name: '', logo: null, city: 'Safi' });
+      setSectorData(isEdit ? { name: data.name, logo: null, city: 'Safi', description: data.description || '', boundaries: data.boundaries || '' } : { name: '', logo: null, city: 'Safi' });
     } else if (type === 'partner') {
       setPartnerData(isEdit ? { name: data.name, email: data.email, phone_fix: data.phone_fix || '', whatsapp: data.whatsapp || '', sla_hours: data.sla_hours || '', logo: null } : { name: '', email: '', phone_fix: '', whatsapp: '', sla_hours: '', logo: null });
     }
@@ -126,8 +126,11 @@ export default function AdminMasterData() {
 
       {/* TABS NAVIGATION */}
       <div className="flex overflow-x-auto border-b border-gray-300 mb-6 no-scrollbar">
-        <button onClick={() => setActiveTab('mdm')} className={`px-6 py-3 text-sm font-bold uppercase whitespace-nowrap ${activeTab === 'mdm' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-800'}`}>
-          Données de Référence
+        <button onClick={() => setActiveTab('categories')} className={`px-6 py-3 text-sm font-bold uppercase whitespace-nowrap ${activeTab === 'categories' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-800'}`}>
+          catégories
+        </button>
+        <button onClick={() => setActiveTab('sectors')} className={`px-6 py-3 text-sm font-bold uppercase whitespace-nowrap ${activeTab === 'sectors' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-800'}`}>
+          Sectors
         </button>
         <button onClick={() => setActiveTab('partners')} className={`px-6 py-3 text-sm font-bold uppercase whitespace-nowrap ${activeTab === 'partners' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-800'}`}>
           Partenaires & Prestataires
@@ -137,8 +140,8 @@ export default function AdminMasterData() {
         </button>
       </div>
 
-      {activeTab === 'mdm' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {activeTab === 'categories' && (
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
           {/* Catégories */}
           <div className="bg-white border border-gray-300 shadow-sm">
             <div className="p-4 bg-gray-50 border-b border-gray-300 flex justify-between items-center">
@@ -176,7 +179,13 @@ export default function AdminMasterData() {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
 
+      {activeTab === 'sectors' && (
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+          {/* Catégories */}
+     
           <div className="bg-white border border-gray-300 shadow-sm">
             <div className="p-4 bg-gray-50 border-b border-gray-300 flex justify-between items-center">
               <h3 className="font-bold uppercase text-sm">Secteurs (Moqata3at)</h3>
@@ -358,7 +367,7 @@ export default function AdminMasterData() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Description de la catégorie </label>
-                    <input type="text" value={categoryData.name} onChange={(e) => setCategoryData({ ...categoryData, description: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
+                    <textarea rows="3" value={categoryData.description} onChange={(e) => setCategoryData({ ...categoryData, description: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Icône (Nom Material Symbols)</label>
@@ -379,7 +388,7 @@ export default function AdminMasterData() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Description du secteur </label>
-                    <input type="text" value={sectorData.description} onChange={(e) => setSectorData({ ...sectorData, description: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
+                    <textarea rows="3" type="text" value={sectorData.description} onChange={(e) => setSectorData({ ...sectorData, description: e.target.value })} className="w-full border border-gray-300 p-2 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-blue-500" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Image de couverture (Logo)</label>

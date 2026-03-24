@@ -17,6 +17,8 @@ class PartnerController extends Controller
     public function index()
     {
         //
+        $partners = Partner::with('logo')->get();
+        return response()->json($partners, 200);
     }
 
     /**
