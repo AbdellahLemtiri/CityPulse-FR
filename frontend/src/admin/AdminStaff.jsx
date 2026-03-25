@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 import axiosClient from "../config/axios-client";
 // --- MOCK DATA ---
-const mockSectors = [
-  { id: 1, name: "Quartier Plateau" },
-  { id: 2, name: "Ville Nouvelle" },
-  { id: 3, name: "Hay Salam" },
-  { id: 4, name: "Sidi Bouzid" },
-];
+ 
  
 
 export default function AdminStaff() {
@@ -18,6 +13,7 @@ const [loadingList, setLoadingList] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [LoadingCategories, setLoadingCategories] = useState(false);
   const [errors, setErrors] = useState({});
+  const [sectors , setSectors] = useState([]);
   const [formData, setFormData] = useState({
     id: null,
     first_name: "",
@@ -45,12 +41,13 @@ const [loadingList, setLoadingList] = useState(false);
    
 
  
-  const fetchCategories  = async () => {
+  const fetchSectors  = async () => {
     setLoadingCategories(true);
     try {
-      const response = await axiosClient.get("/admin/categories");
+      const response = await axiosClient.get("/admin/sectors");
       setLoadingCategories(false);
-      setCategories(response.data);
+      setSectors(response.data);
+      console.log(response.data);
     } catch (error) {
       setLoadingCategories(false);
       console.log(error);
@@ -79,7 +76,7 @@ const [loadingList, setLoadingList] = useState(false);
 
          const sectorName =
           formData.role_id === "4"
-            ? mockSectors.find((s) => s.id === parseInt(formData.sector_id))
+            ? sectors.find((s) => s.id === parseInt(formData.sector_id))
                 ?.name
             : "-";
 
@@ -133,8 +130,8 @@ useEffect(() => {
     fetchStaff();
   }, [])
   useEffect(() => {
-    fetchStaff();
-  })
+    fetchSectors();
+  }, []);
    const toggleStatus = (id) => {
     if (
       window.confirm("Voulez-vous vraiment modifier le statut de cet accès ?")
@@ -146,6 +143,7 @@ useEffect(() => {
       );
     }
   };
+ console.log(sectors);
 
   return loading ? (
         <div className="flex justify-center py-10">
@@ -381,7 +379,7 @@ useEffect(() => {
                     disabled={formData.role_id !== "2"}
                     className="w-full border border-gray-300 p-2 text-sm bg-white focus:outline-none focus:border-blue-500">
                     <option value="">-- Sélectionner un secteur --</option>
-                    {mockSectors.map((s) => (
+                    {sectors.map((s) => (
                       <option
                         key={s.id}
                         value={s.id}>
@@ -417,4 +415,5 @@ useEffect(() => {
         </div>
       )}
     </div>
-  );
+  );
+}
