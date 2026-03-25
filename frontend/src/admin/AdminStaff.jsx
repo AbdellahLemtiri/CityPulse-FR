@@ -7,62 +7,28 @@ const mockSectors = [
   { id: 3, name: "Hay Salam" },
   { id: 4, name: "Sidi Bouzid" },
 ];
-
-const mockStaff = [
-  {
-    id: 1,
-    first_name: "Hassan",
-    last_name: "Alami",
-    email: "hassan.manager@safipulse.ma",
-    role: "Manager",
-    sector_id: 1,
-    sector_name: "Quartier Plateau",
-    is_banned: true,
-  },
-  {
-    id: 2,
-    first_name: "Kamal",
-    last_name: "Radi",
-    email: "kamal.presse@safipulse.ma",
-    role: "Journaliste",
-    sector_id: null,
-    sector_name: "-",
-    is_banned: true,
-  },
-  {
-    id: 3,
-    first_name: "Nadia",
-    last_name: "Fathi",
-    email: "nadia.manager@safipulse.ma",
-    role: "Manager",
-    sector_id: 2,
-    sector_name: "Ville Nouvelle",
-    is_banned: false,
-  },
-];
-
+ 
 
 export default function AdminStaff() {
     const [loading, setLoading] = useState(true);
-  const [staffList, setStaffList] = useState(mockStaff);
+  const [staffList, setStaffList] = useState([]);
 const [loadingList, setLoadingList] = useState(false);
-  // STATES DU FORMULAIRE ET MODAL
-  const [isModalOpen, setIsModalOpen] = useState(false);
+   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [LoadingCategories, setLoadingCategories] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     id: null,
     first_name: "",
     last_name: "",
     email: "",
-    password: "", // Utilisé uniquement à la création
-    role_id: 2, // Par défaut // Par défaut
-    sector_id: "", // Obligatoire si Manager
+    password: "", 
+    role_id: "",  
+    sector_id: "",  
   });
 
-  // OUVIR MODAL (Création)
-  const handleOpenCreate = () => {
+   const handleOpenCreate = () => {
     setFormData({
       id: null,
       first_name: "",
@@ -76,50 +42,56 @@ const [loadingList, setLoadingList] = useState(false);
     setIsModalOpen(true);
   };
 
-  // OUVRIR MODAL (Modification)
-  // SOUMETTRE LE FORMULAIRE
-  const handleSubmit = async (e) => {
-    // Étape 1 : async
-    e.preventDefault();
+   
 
-    // Validation front-end rapide
-    if (formData.role_id === "2" && !formData.sector_id) {
+ 
+  const fetchCategories  = async () => {
+    setLoadingCategories(true);
+    try {
+      const response = await axiosClient.get("/admin/categories");
+      setLoadingCategories(false);
+      setCategories(response.data);
+    } catch (error) {
+      setLoadingCategories(false);
+      console.log(error);
+      alert("Impossible de charger les données.");
+    } finally {
+      setLoadingCategories(false);
+    }
+  };
+  const handleSubmit = async (e) => {
+     e.preventDefault();
+
+     if (formData.role_id === "2" && !formData.sector_id) {
       alert("Veuillez assigner un secteur au Manager.");
       return;
     }
 
-    // Étape 2 : Préparation
-    setIsSubmitting(true);
-    setErrors({}); // Kan-ms7ou l-erreurs l-9dam
-
-    // Étape 3 : try / catch
+     setIsSubmitting(true);
+    setErrors({});  
+ 
     try {
       if (isEditing) {
-        // Logic dial l-Modification (PUT) n-kheliwha mn be3d
-        alert("Modification en cours de dev...");
+         alert("Modification en cours de dev...");
       } else {
-        // Étape 4 : L-Appel API (POST)
-        // Kan-tsennaw Laravel y-jawebna b response
+      
         const response = await axiosClient.post("/admin/staff", formData);
 
-        // Étape 5 : Mise à jour de l-UI (Succès)
-        const sectorName =
+         const sectorName =
           formData.role_id === "4"
             ? mockSectors.find((s) => s.id === parseInt(formData.sector_id))
                 ?.name
             : "-";
 
-        // Hna f l-idéal, Laravel khass y-sift lik l-User l-jdid b ID dialo f response.data.user
-        // Walakin bima anaka glti li rjje3ti ghir 'message', ghadi n-saybouh localement:
+       
         const newStaff = response.data.user;
 
-        setStaffList([newStaff, ...staffList]); // N-zidouh f tableau
-        alert(response.data.message); // L-message li ja mn Laravel
+        setStaffList([newStaff, ...staffList]); 
+        alert(response.data.message);  
       }
 
-      setIsModalOpen(false); // N-sddou l-modal
-      // N-khewiw l-formulaire
-      setFormData({
+      setIsModalOpen(false);  
+       setFormData({
         id: null,
         first_name: "",
         last_name: "",
@@ -129,30 +101,24 @@ const [loadingList, setLoadingList] = useState(false);
         sector_id: "",
       });
     } catch (error) {
-      // Étape 6 : Gestion des Erreurs
-      if (error.response && error.response.status === 422) {
-        // 422 Unprocessable Entity = Erreurs de validation Laravel
-        setErrors(error.response.data.errors);
+       if (error.response && error.response.status === 422) {
+         setErrors(error.response.data.errors);
       } else {
         console.log(error);
         alert("Erreur Serveur: Impossible de contacter le Backend.");
       }
     } finally {
-      setIsSubmitting(false); // Kan-7iydou l-Loading f ga3 l-7alat
+      setIsSubmitting(false);  
     }
   };
-  // SOUMETTRE LE FORMULAIRE
-const fetchStaff = async () => {
+ const fetchStaff = async () => {
   setLoadingList(true);  
   try {
     const response = await axiosClient.get("/admin/staff");
     setLoading(false);
-    // L-7el s7i7: Kan-9elbou wesh l-tableau fih 0 éléments
-    if (response.data.length === 0) {
-      setStaffList(mockStaff); // L-Backend khawi -> N-khedmou b l-Mock Data
-    } else {
-      setStaffList(response.data); // L-Backend fih data -> N-khedmou biha
-    }
+     
+      setStaffList(response.data);  
+  
   
   } catch (error) {
     setLoading(false);
@@ -166,8 +132,10 @@ const fetchStaff = async () => {
 useEffect(() => {
     fetchStaff();
   }, [])
-  // ACTIVER / DÉSACTIVER UN COMPTE (Soft Ban)
-  const toggleStatus = (id) => {
+  useEffect(() => {
+    fetchStaff();
+  })
+   const toggleStatus = (id) => {
     if (
       window.confirm("Voulez-vous vraiment modifier le statut de cet accès ?")
     ) {
@@ -449,5 +417,4 @@ useEffect(() => {
         </div>
       )}
     </div>
-  );
-}
+  );
