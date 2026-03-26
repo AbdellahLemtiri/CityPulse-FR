@@ -1,60 +1,62 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Welcome from './Welcome';  
+import Welcome from './Welcome';
 import Login from './Login';
-import Register from './Register'; 
+import Register from './Register';
 import Dashboard from './Dashboard';
-import SafiGram from './citoyen/SafiGram';
 import HomeFeed from './citoyen/HomeFeed';
 import Proposals from './citoyen/Proposals';
 import Signalements from './citoyen/Signalements';
-import Profil from './citoyen/Profil';import JournalisteLayout from './components/layouts/JournalisteLayout';
+import Profil from './citoyen/Profil';
+import JournalisteLayout from './components/layouts/JournalisteLayout';
 import JournalisteEditor from './journaliste/JournalisteEditor';
 import CitoyenLayout from './components/layouts/CitoyenLayout';
-import  ManagerLayout from './components/layouts/ManagerLayout';
-import ManagerIncidents  from './manager/ManagerIncidents';
-import ManagerEvents from './manager/ManagerEvents';import ManagerModeration from './manager/ManagerModeration';
+import ManagerLayout from './components/layouts/ManagerLayout';
+import ManagerIncidents from './manager/ManagerIncidents';
+import ManagerEvents from './manager/ManagerEvents';
+import ManagerModeration from './manager/ManagerModeration';
 import ManagerAlerts from './manager/ManagerAlerts';
-import JournalisteArticles from './journaliste/JournalisteArticles';import AdminLayout from './components/layouts/AdminLayout';
-import AdminMasterData from './admin/AdminMasterData';import AdminStaff from './admin/AdminStaff';import AdminBanMonitor from './admin/AdminBanMonitor';
+import JournalisteArticles from './journaliste/JournalisteArticles';
+import AdminLayout from './components/layouts/AdminLayout';
+import AdminMasterData from './admin/AdminMasterData';
+import AdminStaff from './admin/AdminStaff';
+import AdminBanMonitor from './admin/AdminBanMonitor';
 import AdminSystem from './admin/AdminSystem';
 function App() {
   return (
     <Routes>
-      {/* Routes Publiques */}
-      <Route path="/" element={<Welcome />} />  
+       <Route path="/" element={<Welcome />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} /> 
-       
-      {/* Route de l'Espace Citoyen (Layout Parent) */}
-     <Route  element={<CitoyenLayout />}>
-         <Route path="/safigram" element={<SafiGram />} />
-        
+      <Route path="/register" element={<Register />} />
+
+       <Route element={<CitoyenLayout />}>
+        <Route index element={<Navigate to="/homefeed" replace />} />
         <Route path="/homefeed" element={<HomeFeed />} />
         <Route path="/idees" element={<Proposals />} />
         <Route path="/signalements" element={<Signalements />} />
-        <Route path="/profil" element={<Profil />} /> 
+        <Route path="/profil" element={<Profil />} />
       </Route>
 
-     <Route path="/manager" element={<ManagerLayout />}>
-         <Route index element={<Navigate to="incidents" replace />} />
+      <Route path="/manager" element={<ManagerLayout />}>
+        <Route index element={<Navigate to="incidents" replace />} />
         <Route path="evenements" element={<ManagerEvents />} />
-<Route path="alertes" element={<ManagerAlerts />} /><Route path="moderation" element={<ManagerModeration />} />
-         <Route path="incidents" element={<ManagerIncidents />} />
+        <Route path="alertes" element={<ManagerAlerts />} />
+        <Route path="moderation" element={<ManagerModeration />} />
+        <Route path="incidents" element={<ManagerIncidents />} />
       </Route>
-
 
       <Route path="/journaliste" element={<JournalisteLayout />}>
         <Route index element={<Navigate to="rediger" replace />} />
         <Route path="rediger" element={<JournalisteEditor />} />
         <Route path="articles" element={<JournalisteArticles />} />
-      </Route><Route path="/admin" element={<AdminLayout />}>
-  <Route index element={<Navigate to="masterdata" replace />} />
-  <Route path="masterdata" element={<AdminMasterData />} />
-  <Route path="staff" element={<AdminStaff />} />
-  <Route path="bans" element={<AdminBanMonitor />} />
-<Route path="systeme" element={<AdminSystem />} />
-</Route>
-     </Routes>
+      </Route>
+      <Route path="/admin" element={<AdminLayout />}>
+        <Route index element={<Navigate to="masterdata" replace />} />
+        <Route path="masterdata" element={<AdminMasterData />} />
+        <Route path="staff" element={<AdminStaff />} />
+        <Route path="bans" element={<AdminBanMonitor />} />
+        <Route path="systeme" element={<AdminSystem />} />
+      </Route>
+    </Routes>
   );
 }
 
