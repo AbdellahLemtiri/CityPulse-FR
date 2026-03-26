@@ -37,6 +37,7 @@ class AuthController extends Controller
        
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        $user =$user->load('role')->load('sector')->get();    
         return response()->json([
             'message' => 'Compte créé avec succès',
             'access_token' => $token,
@@ -55,6 +56,7 @@ class AuthController extends Controller
         $user = User::where('email', $data['email'])->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken;
 
+      $user->load('role')->load('sector')->get();
         return response()->json([
             'message' => 'Connexion réussie',
             'access_token' => $token,
