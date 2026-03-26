@@ -2,9 +2,9 @@
 export default function TopHeader() {
 
   return (
-    <header className="sticky top-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl px-4 md:px-8 py-3 md:py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center shadow-sm transition-colors duration-300">
+    <header className="sticky top-0 z-40 bg-white/90 overflow-hidden relative overflow-none dark:bg-gray-900 px-4 md:px-8 py-3 md:py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center ">
       
-       <div className="flex items-center gap-2">
+       <div className="flex  items-center gap-2">
         <div className="md:hidden w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-sm">
           <span className="material-symbols-outlined text-white text-[18px]">favorite</span>
         </div>
