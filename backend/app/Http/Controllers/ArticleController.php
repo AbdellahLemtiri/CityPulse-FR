@@ -45,6 +45,13 @@ class ArticleController extends Controller
         $user = Auth::user();
         $data = $request->validated();
         $data['user_id'] = $user->id;
+        if ($user->role_id === 2) {
+            $data['sector_id'] = $user->sector_id;
+            if ($data['scope'] === 'global') {
+                $data['sector_id'] = null;
+            }
+        }
+
         $data['slug'] = Str::slug($data['title']);
         $article = Article::create($data);
         if ($request->hasFile('image')) {
@@ -57,8 +64,7 @@ class ArticleController extends Controller
         }
 
         return response()->json([
-            'message' => 'Article créé avec succès',
-            'article' => $article->load('media')
+            'message' => 'Article créé avec succès','article'=> $article->load('media')
         ], 201);
     }
 
@@ -69,7 +75,7 @@ class ArticleController extends Controller
         $articles = Article::with(['media' => function ($query) {
             $query->latest();
         }])
-            ->select('id', 'title', 'content', 'scope', 'status', 'created_at', 'user_id') 
+            ->select('id', 'title', 'content', 'scope', 'status', 'created_at', 'user_id')
             ->where('user_id', $user->id)
             ->latest()
             ->paginate(10);
@@ -111,10 +117,16 @@ class ArticleController extends Controller
     {
         Gate::authorize('update', $article);
 
+        $user = Auth::user();
         $data = $request->validated();
 
         if (isset($data['title']) && $data['title'] !== $article->title) {
             $data['slug'] = Str::slug($data['title']);
+        }
+        if($user->role_id === 2 && $data['scope'] === 'local') {
+            $data['sector_id'] = $user->sector_id;
+        }else {
+            $data['sector_id'] = null;
         }
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('articles', 'public');

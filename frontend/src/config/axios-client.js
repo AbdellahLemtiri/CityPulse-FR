@@ -6,7 +6,7 @@ import axios from "axios";
 
  axiosClient.interceptors.request.use((config) => {
   //  const token = localStorage.getItem('ACCESS_TOKEN');
- const  token = "1|132LLii7SGifldpJqf5YcJh2t0BRwk1eGyAz0h6sfbb1aef1";
+ const  token = "15|4a2DQiqLbcUxWwixrUM4ti2tGlkbExsfHse0xYiI093511f1";
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

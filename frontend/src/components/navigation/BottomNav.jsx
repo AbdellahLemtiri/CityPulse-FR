@@ -15,15 +15,7 @@ export default function BottomNav() {
         <NavLink to="/idees" className={mobileNavClass}>
           {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>lightbulb</span><span className="text-[10px] font-medium">Idées Citoyennes</span></>)}
         </NavLink>
-        <NavLink to="/safigram" className={mobileNavClass}>
-          {({ isActive }) => (
-            <>
-              {isActive && <div className="absolute top-0 w-8 h-1 bg-primary-500 rounded-b-full shadow-[0_2px_8px_#f97316]"></div>}
-              <span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>photo_camera</span>
-              <span className={`text-[10px] ${isActive ? 'font-extrabold' : 'font-medium'}`}>Photos</span>
-            </>
-          )}
-        </NavLink>
+       
         <NavLink to="/signalements" className={mobileNavClass}>
           {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>assignment</span><span className="text-[10px] font-medium">Suivi</span></>)}
         </NavLink>

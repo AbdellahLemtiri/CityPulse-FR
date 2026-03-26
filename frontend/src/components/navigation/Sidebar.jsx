@@ -15,7 +15,7 @@ export default function Sidebar() {
 
   return (
     <aside className="hidden md:flex flex-col w-72  dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50  border-r border-gray-200 dark:border-gray-800 h-full fixed left-0 top-0 z-50 transition-colors duration-300">
-      {/* Logo */}
+
       <div className="p-6 flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/20">
           <span className="material-symbols-outlined text-white">favorite</span>
@@ -25,17 +25,14 @@ export default function Sidebar() {
         </span>
       </div>
 
-      {/* Liens */}
-      <nav className="flex-1 px-4 space-y-2 mt-4">
+       <nav className="flex-1 px-4 space-y-2 mt-4">
         <NavLink to="/homefeed" className={navClass}>
           {({ isActive }) => (<><span className={iconClass({ isActive })}>feed</span> Fil d'actualité</>)}
         </NavLink>
         <NavLink to="/idees" className={navClass}>
           {({ isActive }) => (<><span className={iconClass({ isActive })}>lightbulb</span>Idées </>)}
         </NavLink>
-        <NavLink to="/safigram" className={navClass}>
-          {({ isActive }) => (<><span className={iconClass({ isActive })}>photo_camera</span> SafiGram</>)}
-        </NavLink>
+    
         <NavLink to="/signalements" className={navClass}>
           {({ isActive }) => (<><span className={iconClass({ isActive })}>assignment</span> Mes Signalements</>)}
         </NavLink>
@@ -44,8 +41,7 @@ export default function Sidebar() {
         </NavLink>
       </nav>
 
-      {/* Profil te7t */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+       <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
         <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition-colors">
           <img src="https://i.pravatar.cc/150?u=abdellah" className="w-10 h-10 rounded-full border-2 border-primary-500 object-cover" alt="Profile" />
           <div className="flex-1 overflow-hidden">

@@ -16,8 +16,7 @@ export default function ManagerLayout() {
           <p className="text-xs text-gray-600 mt-1">Espace Manager</p>
         </div>
 
-        {/* Menu de Navigation */}
-        <nav className="flex-1 p-4 overflow-y-auto">
+         <nav className="flex-1 p-4 overflow-y-auto">
           <p className="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest">
             Opérations
           </p>

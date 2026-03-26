@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import axiosClient from '../config/axios-client';
 import moment from 'moment';
-import 'moment/locale/fr'; 
+import 'moment/locale/fr';
 // import toast, { Toaster } from 'react-hot-toast';
 import toast, { Toaster } from 'react-hot-toast';
 export default function ManagerAlerts() {
@@ -18,7 +18,7 @@ export default function ManagerAlerts() {
     status: 'published',
     image: null,
   });
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [editId, setEditId] = useState(null);
@@ -28,7 +28,6 @@ export default function ManagerAlerts() {
 
   const fileInputRef = useRef(null);
 
- 
   const handleTitleChange = (e) => {
     setFormData({ ...formData, title: e.target.value });
   };
@@ -76,7 +75,7 @@ export default function ManagerAlerts() {
     dataToSubmit.append('content', formData.content);
     dataToSubmit.append('scope', formData.scope);
     dataToSubmit.append('status', formData.status);
-    
+
     if (formData.image) {
       dataToSubmit.append('image', formData.image);
     }
@@ -88,16 +87,31 @@ export default function ManagerAlerts() {
     try {
       const url = isEditing ? `/manager/articles/${editId}` : '/manager/articles';
 
-      await axiosClient.post(url, dataToSubmit, {
+      const response = await axiosClient.post(url, dataToSubmit, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      alert(isEditing ? 'Article modifié avec succès !' : 'Article créé avec succès !');
+      toast.success(isEditing ? 'Article modifié avec succès !' : 'Article créé avec succès !');
 
       videFormEditing();
-      fetchArticles();  
+      if (!isEditing) {
+        const art = response.data.article;
+        const formattedData = {
+          id: art.id,
+          title: art.title,
+          content: art.content,
+          scope: art.scope,
+          status: art.status,
+          image: art.media[0].file_path ? `http://127.0.0.1:8000/storage/${art.file_path}` : null,
+          created_at: art.created_at,
+        };
+        setArticles((prev) => [formattedData, ...prev]);
+        console.log(articles);
+        console.log(formattedData);
+        console.log('=====================================================');
+      }
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast.error("Erreur lors de l'enregistrement.");
     } finally {
       setIsSubmitting(false);
@@ -134,7 +148,7 @@ export default function ManagerAlerts() {
         setArticles(articles.filter((art) => art.id !== id));
       } catch (error) {
         console.error(error);
-        alert("Erreur lors de la suppression.");
+        alert('Erreur lors de la suppression.');
       }
     }
   };
@@ -163,8 +177,7 @@ export default function ManagerAlerts() {
     try {
       const response = await axiosClient.get(`/manager/articles/${id}`);
       const fullArticle = response.data; // wla response.data.article
-      
-      // ✅ Fix: Handle null image path gracefully
+
       if (fullArticle.file_path) {
         setPreviewUrl(`http://127.0.0.1:8000/storage/${fullArticle.file_path}`);
       } else {
@@ -189,7 +202,6 @@ export default function ManagerAlerts() {
 
   return (
     <div className="max-w-5xl mx-auto pb-10">
-      
       {/* HEADER */}
       <div className="mb-6">
         <h2 className="text-xl font-bold text-gray-800 uppercase tracking-wide">Gestion des Alertes & Articles</h2>
@@ -198,70 +210,72 @@ export default function ManagerAlerts() {
 
       {/* TABS (ONGLETS) */}
       <div className="flex border-b border-gray-300 mb-6 bg-white shadow-sm">
-        <button onClick={() => { setActiveTab('list'); videFormEditing(); }} className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors flex justify-center items-center gap-2 ${activeTab === 'list' ? 'border-b-4 border-primary-600 text-primary-700 bg-primary-50' : 'text-gray-600 hover:bg-gray-50'}`}>
+        <button
+          onClick={() => {
+            setActiveTab('list');
+            videFormEditing();
+          }}
+          className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors flex justify-center items-center gap-2 ${activeTab === 'list' ? 'border-b-4 border-primary-600 text-primary-700 bg-primary-50' : 'text-gray-600 hover:bg-gray-50'}`}>
           <span className="material-symbols-outlined text-[18px]">format_list_bulleted</span>
           Gérer les Articles
         </button>
         <button onClick={() => setActiveTab('create')} className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors flex justify-center items-center gap-2 ${activeTab === 'create' ? 'border-b-4 border-primary-600 text-primary-700 bg-primary-50' : 'text-gray-600 hover:bg-gray-50'}`}>
           <span className="material-symbols-outlined text-[18px]">{isEditing ? 'edit_note' : 'edit_document'}</span>
-          {isEditing ? "Modifier l'Article" : "Rédiger un Article"}
+          {isEditing ? "Modifier l'Article" : 'Rédiger un Article'}
         </button>
       </div>
-<Toaster />
-   
+      <Toaster />
+
       {isLoading ? (
-            <div className="flex justify-center py-10">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-            </div>
-          ) :activeTab === 'list' &&  (
-        <div className="bg-white border border-gray-200 shadow-sm rounded-md p-5 fade-in">
-          {articles.length === 0 ? (
-            <div className="p-8 text-center text-gray-500 font-bold bg-gray-50 rounded-md border border-dashed border-gray-300">
-              <span className="material-symbols-outlined text-4xl mb-2 text-gray-400 block">article</span>
-              Aucun article publié pour le moment.
-            </div>
-          ) : (
-            <ul className="divide-y divide-gray-100">
-              {articles.map((art) => (
-                <li key={art.id} className="py-3 flex items-center justify-between hover:bg-gray-50 px-3 transition-colors rounded-md group">
-                  
-                   <div className="flex items-center gap-4">
-                    {art.image ? (
-                      <img src={art.image} alt={art.title} className="w-12 h-12 object-cover rounded-md border border-gray-200" />
-                    ) : (
-                      <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center border border-gray-200">
-                        <span className="material-symbols-outlined text-gray-400">description</span>
-                      </div>
-                    )}
-                    <div className="border-l-2 border-primary-500 pl-3 py-1">
-                      <span className="font-bold text-gray-800 text-sm block">{art.title}</span>
-                    </div>
-                  </div>
-
-                   <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-3 border rounded-md border-gray-400 pr-4">
-                      <span className={`px-2 py-1 text-[10px]   font-bold uppercase rounded-sm border ${art.status === 'published' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-yellow-100 text-yellow-700 border-yellow-200'}`}>
-                        {art.status}
-                      </span>
-                      <span className="text-xs text-gray-500 font-medium">
-                        {moment(art.created_at).fromNow()}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 border border-gray-400 rounded-md">
-                      <button onClick={() => handleEdit(art.id)} className="bg-white text-gray-600 hover:bg-primary-50 hover:text-primary-600 px-3 py-1.5 rounded-md font-bold text-xs uppercase flex items-center gap-1 transition-colors border border-gray-200 hover:border-primary-200 shadow-sm">
-                        <span className="material-symbols-outlined text-[16px]">edit</span>
-                      </button>
-                      <button onClick={() => handleDelete(art.id)} className="bg-white text-red-500 hover:bg-red-50 hover:text-red-700 px-3 py-1.5 rounded-md font-bold text-xs uppercase flex items-center gap-1 transition-colors border border-gray-200 hover:border-red-200 shadow-sm">
-                        <span className="material-symbols-outlined text-[16px]">delete</span>
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+        <div className="flex justify-center py-10">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
         </div>
+      ) : (
+        activeTab === 'list' && (
+          <div className="bg-white border border-gray-200 shadow-sm rounded-md p-5 fade-in">
+            {articles.length === 0 ? (
+              <div className="p-8 text-center text-gray-500 font-bold bg-gray-50 rounded-md border border-dashed border-gray-300">
+                <span className="material-symbols-outlined text-4xl mb-2 text-gray-400 block">article</span>
+                Aucun article publié pour le moment.
+              </div>
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {articles.map((art) => (
+                  <li key={art.id} className="py-3 flex items-center justify-between hover:bg-gray-50 px-3 transition-colors rounded-md group">
+                    <div className="flex items-center gap-4">
+                      {art.image ? (
+                        <img src={art.image} alt={art.title} className="w-12 h-12 object-cover rounded-md border border-gray-200" />
+                      ) : (
+                        <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center border border-gray-200">
+                          <span className="material-symbols-outlined text-gray-400">description</span>
+                        </div>
+                      )}
+                      <div className="border-l-2 border-primary-500 pl-3 py-1">
+                        <span className="font-bold text-gray-800 text-sm block">{art.title}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3 border rounded-md border-gray-400 pr-4">
+                        <span className={`px-2 py-1 text-[10px]   font-bold uppercase rounded-sm border ${art.status === 'published' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-yellow-100 text-yellow-700 border-yellow-200'}`}>{art.status}</span>
+                        <span className="text-xs text-gray-500 font-medium">{moment(art.created_at).fromNow()}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 border border-gray-400 rounded-md">
+                        <button onClick={() => handleEdit(art.id)} className="bg-white text-gray-600 hover:bg-primary-50 hover:text-primary-600 px-3 py-1.5 rounded-md font-bold text-xs uppercase flex items-center gap-1 transition-colors border border-gray-200 hover:border-primary-200 shadow-sm">
+                          <span className="material-symbols-outlined text-[16px]">edit</span>
+                        </button>
+                        <button onClick={() => handleDelete(art.id)} className="bg-white text-red-500 hover:bg-red-50 hover:text-red-700 px-3 py-1.5 rounded-md font-bold text-xs uppercase flex items-center gap-1 transition-colors border border-gray-200 hover:border-red-200 shadow-sm">
+                          <span className="material-symbols-outlined text-[16px]">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )
       )}
 
       {/* ========================================== */}
@@ -275,8 +289,7 @@ export default function ManagerAlerts() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
-              
-               <div>
+              <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">Image de Couverture (Optionnelle)</label>
                 {previewUrl ? (
                   <div className="relative   bg-gray-100 rounded-md overflow-hidden border border-gray-300">
@@ -294,17 +307,17 @@ export default function ManagerAlerts() {
                 <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={handleImageChange} />
               </div>
 
-               <div>
+              <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1">Titre de l'alerte *</label>
                 <input type="text" required value={formData.title} onChange={handleTitleChange} className="w-full border border-gray-300 p-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-primary-500 rounded-md transition-colors" placeholder="Ex: Travaux sur l'avenue..." />
               </div>
- 
+
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1">Contenu (Description) *</label>
                 <textarea required rows="6" value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full border border-gray-300 p-3 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-primary-500 resize-y rounded-md transition-colors" placeholder="Rédigez les détails de l'alerte ici..."></textarea>
               </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">Portée (Scope) *</label>
                   <select value={formData.scope} onChange={(e) => setFormData({ ...formData, scope: e.target.value })} className="w-full border border-gray-300 p-2.5 text-sm bg-white focus:outline-none focus:border-primary-500 rounded-md">

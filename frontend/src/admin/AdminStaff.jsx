@@ -183,9 +183,7 @@ export default function AdminStaff() {
         </table>
       </div>
 
-      {/* ========================================== */}
-      {/* MODAL DU FORMULAIRE COMPLET (Création / Edition) */}
-      {/* ========================================== */}
+   
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white border border-gray-400 w-full max-w-2xl flex flex-col shadow-2xl">
@@ -258,8 +256,9 @@ export default function AdminStaff() {
                       
                     }}
                     className="w-full border border-gray-300 p-2 text-sm bg-white focus:outline-none focus:border-blue-500">
-                    <option value="2">Manager (Opérateur de secteur)</option>
-                    <option value="4">Journaliste (Narrateur)</option>
+                     <option value="4">Journaliste (Narrateur)</option>
+                     <option value="2">Manager (Opérateur de secteur)</option> 
+                
                   </select>
                 </div>
 
