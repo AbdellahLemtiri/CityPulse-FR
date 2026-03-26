@@ -8,14 +8,13 @@ export default function BottomNav() {
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 w-full glass-nav pb-safe z-40 transition-colors duration-300">
-      <div className="grid grid-cols-5 h-[68px]">
+      <div className="grid grid-cols-4 h-[68px]">
         <NavLink to="/homefeed" className={mobileNavClass}>
           {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>feed</span><span className="text-[10px] font-medium">Fil</span></>)}
         </NavLink>
         <NavLink to="/idees" className={mobileNavClass}>
-          {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>lightbulb</span><span className="text-[10px] font-medium">Idées Citoyennes</span></>)}
+          {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>lightbulb</span><span className="text-[10px] font-medium">Idées</span></>)}
         </NavLink>
-       
         <NavLink to="/signalements" className={mobileNavClass}>
           {({ isActive }) => (<><span className={`material-symbols-outlined text-[26px] mb-0.5 ${isActive ? '' : 'icon-outline'}`}>assignment</span><span className="text-[10px] font-medium">Suivi</span></>)}
         </NavLink>
