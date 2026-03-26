@@ -5,8 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 export default function Login() {
   const navigate = useNavigate();
 
-  // State variables
-  const [email, setEmail] = useState('');
+   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: '', password: '', global: '' });
@@ -41,14 +40,12 @@ export default function Login() {
     }
   };
 
-  // Form submission
-  const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = { email: '', password: '', global: '' };
     let isValid = true;
 
-    // Email validation
-    if (!email.trim()) {
+     if (!email.trim()) {
       newErrors.email = 'Veuillez entrer votre email';
       isValid = false;
     } else if (!validateEmail(email)) {
@@ -123,8 +120,7 @@ export default function Login() {
           </div>
         )}
 
-        {/* Login form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email field */}
           <div className="space-y-1">
             <label className="text-xs font-bold text-gray-500 dark:text-gray-400 ml-1 uppercase">
@@ -208,19 +204,7 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Animation styles (copied from original) */}
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+       
     </div>
   );
 }
