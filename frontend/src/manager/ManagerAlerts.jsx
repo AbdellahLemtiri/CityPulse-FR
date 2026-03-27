@@ -202,14 +202,12 @@ export default function ManagerAlerts() {
 
   return (
     <div className="max-w-5xl mx-auto pb-10">
-      {/* HEADER */}
-      <div className="mb-6">
+       <div className="mb-6">
         <h2 className="text-xl font-bold text-gray-800 uppercase tracking-wide">Gestion des Alertes & Articles</h2>
         <p className="text-sm text-gray-600 mt-1">Publiez des informations officielles pour les citoyens de votre secteur.</p>
       </div>
 
-      {/* TABS (ONGLETS) */}
-      <div className="flex border-b border-gray-300 mb-6 bg-white shadow-sm">
+       <div className="flex border-b border-gray-300 mb-6 bg-white shadow-sm">
         <button
           onClick={() => {
             setActiveTab('list');
@@ -278,9 +276,8 @@ export default function ManagerAlerts() {
         )
       )}
 
-      {/* ========================================== */}
-      {/* VUE 2 : CRÉATION / MODIFICATION (Formulaire) */}
-      {/* ========================================== */}
+  // ================================================================
+    
       {activeTab === 'create' && (
         <div className="bg-gray-100   p-6   fade-in max-w-3xl mx-auto rounded-md">
           {isLoading ? (
@@ -335,7 +332,7 @@ export default function ManagerAlerts() {
                 </div>
               </div>
 
-              {/* Boutons (Annuler + Submit) */}
+  // ================================================================
               <div className="pt-6 border-t grid grid-cols-1  border-gray-200 flex justify-end gap-3 mt-6">
                 {isEditing && (
                   <button type="button" onClick={videFormEditing} className="bg-white border  border-gray-300 text-gray-700 hover:bg-gray-50 font-bold py-2.5 px-6 uppercase text-sm rounded-md transition-colors shadow-sm">
