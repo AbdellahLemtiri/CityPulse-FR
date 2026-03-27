@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Resources\Article\ArticleResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Article;
 use Illuminate\Http\Request;
@@ -17,30 +17,24 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+  public function index(Request $request)
     {
-        $user = Auth::user();
-
-        $query = Article::with(['media', 'user', 'sector'])
+         $articles = Article::select('id', 'title', 'slug', 'content', 'created_at', 'user_id', 'sector_id', 'status', 'scope')
+            ->with([
+                'user:id,first_name,last_name', 
+                'sector:id,name',
+                'media'
+            ])
             ->withCount(['likes', 'comments'])
-             ->withExists(['likes as is_liked' => function ($q) use ($user) {
-                $q->where('user_id', $user->id);
+            ->withExists(['likes as is_liked' => function ($q) {
+                $q->where('user_id', Auth::id());
             }])
-            ->latest();
+            ->where('status', 'published')
+            ->latest()
+            ->paginate(4);
 
-        if ($request->filled('type') && $request->input('type') !== 'tout') {
-            if ($request->input('type') === 'office') {
-                $query->whereNull('sector_id');
-            } elseif ($request->input('type') === 'quartier') {
-                $query->where('sector_id', $user->sector_id);
-            }
-        }
-
-        $articles = $query->where('status', 'published')->paginate(5);
-
-        return response()->json($articles, 200);
+         return ArticleResource::collection($articles);
     }
-
     /**
      * Store a newly created resource in storage.
      */
