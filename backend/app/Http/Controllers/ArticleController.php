@@ -20,8 +20,12 @@ class ArticleController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
+
         $query = Article::with(['media', 'user', 'sector'])
             ->withCount(['likes', 'comments'])
+             ->withExists(['likes as is_liked' => function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            }])
             ->latest();
 
         if ($request->filled('type') && $request->input('type') !== 'tout') {
@@ -32,7 +36,7 @@ class ArticleController extends Controller
             }
         }
 
-        $articles = $query->where('status', 'published')->paginate(10);
+        $articles = $query->where('status', 'published')->paginate(5);
 
         return response()->json($articles, 200);
     }
@@ -64,7 +68,8 @@ class ArticleController extends Controller
         }
 
         return response()->json([
-            'message' => 'Article créé avec succès','article'=> $article->load('media')
+            'message' => 'Article créé avec succès',
+            'article' => $article->load('media')
         ], 201);
     }
 
@@ -123,9 +128,9 @@ class ArticleController extends Controller
         if (isset($data['title']) && $data['title'] !== $article->title) {
             $data['slug'] = Str::slug($data['title']);
         }
-        if($user->role_id === 2 && $data['scope'] === 'local') {
+        if ($user->role_id === 2 && $data['scope'] === 'local') {
             $data['sector_id'] = $user->sector_id;
-        }else {
+        } else {
             $data['sector_id'] = null;
         }
         if ($request->hasFile('image')) {

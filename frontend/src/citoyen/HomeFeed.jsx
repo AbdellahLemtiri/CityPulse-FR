@@ -58,18 +58,14 @@ export default function HomeFeed() {
   };
 
   const tabs = ['Tout', 'Officiel', 'Quartier'];
+  
+  const handlLikeart = (id) =>{
 
-   void function toggleLike(post){
-
-    if(post.isLiked){
-      
-      // remove like
-
-    }else{
-      // add like
-    }
+    let data  = formData();
+    data.append('likeable_type', 'Article');
+    data.append('likeable_id', id);
+    axi
   }
-
   return (
     <>
       <div className="sticky w-full top-[60px] md:top-[64px] z-30 rounded-b-lg pt-2 pb-2 px-2 md:px-0 mb-4 bg-gray-50 dark:bg-gray-800">
