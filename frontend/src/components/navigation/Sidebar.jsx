@@ -4,13 +4,13 @@ export default function Sidebar() {
    const navClass = ({ isActive }) =>
     `nav-item w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium transition-all group ${
       isActive
-        ? "bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-500 font-bold border border-primary-100 dark:border-primary-500/20 shadow-[inset_4px_0_0_0_#f97316]"
+        ? "bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-500 font-bold "
         : "text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200"
     }`;
 
   const iconClass = ({ isActive }) =>
-    `material-symbols-outlined transition-all ${
-      isActive ? "" : "icon-outline group-hover:font-variation-settings-[FILL:1]"
+    `material-symbols-outlined  ${
+      isActive ? "" : "icon-outline  "
     }`;
 
   return (
@@ -18,10 +18,10 @@ export default function Sidebar() {
 
       <div className="p-6 flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/20">
-          <span className="material-symbols-outlined text-white">favorite</span>
+          <span className="material-symbols-outlined text-white"></span>
         </div>
         <span className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-          Safi<span className="text-primary-500">Pulse</span>
+          <span className="text-primary-500">Pulse</span>
         </span>
       </div>
 
