@@ -32,13 +32,29 @@ export default function HomeFeed() {
       if (category === 'Quartier') typeParam = 'quartier';
 
       const response = await axiosClient.get(`/articles?type=${typeParam}&page=${pageNum}`);
+      const rawData = response.data.data;
 
-      const newPosts = response.data.data;
+       const formattedPosts = rawData.map((post) => {
+        return {
+          id: post.id,
+          title: post.title,
+          content: post.content,
+          scope: post.scope,
+          status: post.status,
+          image_url: post.file_path ? post.file_path : null, 
+          created_at: post.created_at,
+          is_liked: post.is_liked,
+          sector_name: post.sector_name,
+          comment_count: post.comment_count,  
+          like_count: post.like_count,
+          author_name: post.author_name,
+        };
+      });
 
-      if (isLoadMore) {
-        setPosts((prev) => [...prev, ...newPosts]);
+       if (isLoadMore) {
+        setPosts((prev) => [...prev, ...formattedPosts]);
       } else {
-        setPosts(newPosts);
+        setPosts(formattedPosts);
       }
 
       setHasMore(response.data.current_page < response.data.last_page);
@@ -57,15 +73,36 @@ export default function HomeFeed() {
     }
   };
 
-  const tabs = ['Tout', 'Officiel', 'Quartier'];
   
-  const handlLikeart = (id) =>{
+  const tabs = ['Tout', 'Officiel', 'Quartier'];
 
-    let data  = formData();
+  const handlLikeart = (post) => {
+    if(post.is_liked){
+      posts.map((post) => {
+        if (post.id === post.id) {
+          post.is_liked = false;
+          post.like_count -= 1;
+        }
+      })
+    }else{
+      posts.map((post) => {
+        if (post.id === post.id) {
+          post.is_liked = true;
+          post.like_count += 1;
+        }
+      })
+ 
+      
+    }
+   
+    let data = new FormData();
     data.append('likeable_type', 'Article');
-    data.append('likeable_id', id);
-    axi
-  }
+    data.append('likeable_id', post.id);
+    axiosClient.post(`/likes/toggle`, data).then((response) => {
+      
+    
+    });
+  };
   return (
     <>
       <div className="sticky w-full top-[60px] md:top-[64px] z-30 rounded-b-lg pt-2 pb-2 px-2 md:px-0 mb-4 bg-gray-50 dark:bg-gray-800">
@@ -100,7 +137,7 @@ export default function HomeFeed() {
                   </div>
                   <div>
                     <div className="flex items-center gap-1">
-                      <h3 className="font-bold text-gray-900 dark:text-gray-100">{post.user.name || 'Utilisateur'}</h3>
+                      <h3 className="font-bold text-gray-900 dark:text-gray-100">{post.author_name || 'Utilisateur'}</h3>
 
                       {post.sector_id === null && (
                         <span className="material-symbols-outlined text-blue-500 text-[16px]" title="Compte Officiel">
@@ -118,12 +155,12 @@ export default function HomeFeed() {
 
                 {post.media && post.media.length > 0 && (
                   <div className="w-full h-64 md:h-80 bg-gray-100 dark:bg-gray-700 relative cursor-pointer">
-                    <img src={`http://localhost:8000/storage/${post.media[0].file_path}`} className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" alt="Post" />
+                    <img src={post.image_url} className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" alt="Post" />
                   </div>
                 )}
 
                 <div className="px-2 py-1 flex justify-between border-t border-gray-200 dark:border-gray-700 mt-2">
-                  <button className="  dark:border-gray-100 flex-1 flex items-center justify-center gap-2 py-2 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg  group">
+                  <button onClick={() => handlLikeart(post)} className="  dark:border-gray-100 flex-1 flex items-center justify-center gap-2 py-2 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg  group">
                     <span className="material-symbols-outlined group-hover:text-blue-500 ">
                       <span class="material-symbols-outlined">check</span>
                     </span>
