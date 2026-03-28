@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axiosClient from '../config/axios-client';
 // import { formatDistanceToNow } from "date-fns";
 // import { fr } from "date-fns/locale";
@@ -8,13 +8,14 @@ export default function HomeFeed() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [replyingTo, setReplyingTo] = useState(null);
-   const [openCommentsId, setOpenCommentsId] = useState(null);
+  const [openCommentsId, setOpenCommentsId] = useState(null);
   const [commentText, setCommentText] = useState('');
-
+  const [replyingToId, setReplyingToId] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [comments, setComments] = useState([{}]);
+  const commentInputRef = useRef(null);  
   useEffect(() => {
     setPosts([]);
     setPage(1);
@@ -99,7 +100,17 @@ export default function HomeFeed() {
       console.log(error);
     }
   };
+  const handleReplyClick = (commentId, authorName) => {
+    setReplyingToId(commentId); // Sajjlna l-ID d-l-parent
+    setCommentText(`@${authorName} `); // 7ttina @Smiya w moraha Espace
 
+    // Zrebna b 10 millisecondes bach React y-wjed l-Input 3ad n-dirou Focus
+    setTimeout(() => {
+      if (commentInputRef.current) {
+        commentInputRef.current.focus();
+      }
+    }, 10);
+  };
   async function handleFetchComments(postId) {
     try {
       if (openCommentsId === postId) {
@@ -116,18 +127,31 @@ export default function HomeFeed() {
       console.log(error);
     }
   }
-  async function handleSendComment(postId){
+  const handleSendComment = async (articleId) => {
+    if (!commentText.trim()) return;
     try {
-      let data = new FormData();
-      data.append('commentable_type', 'Article');
-      data.append('commentable_id', postId);
-      data.append('body', commentText);
+      const payload = {
+        commentable_type: 'Article',
+        commentable_id: articleId,
+        body: commentText,
+        parent_id: replyingToId,
+      };
 
-      console.log(commentText+'ddezd');
-      await axiosClient.post('/comments', data);
+      const response = await axiosClient.post('/comments', payload);
+
       setCommentText('');
+      setReplyingToId(null);
+
+      if (!replyingToId) {
+        setComments((prev) => [response.data.comment, ...prev]);
+
+        console.log(response.data.comment);
+        setPosts(posts.map((p) => (p.id === articleId ? { ...p, comment_count: p.comment_count + 1 } : p)));
+      } else {
+        handleFetchComments(articleId);
+      }
     } catch (error) {
-      console.log(error);
+      console.error('Mouchkil :', error);
     }
   };
   console.log(comments);
@@ -192,9 +216,9 @@ export default function HomeFeed() {
 
                 <div className="px-2 py-1 flex justify-between border-t border-gray-200 dark:border-gray-700 mt-2">
                   <button onClick={() => handlLikeart(post)} className=" hover:bg-gray-50 dark:hover:bg-gray-700  dark:border-gray-100 flex-1  flex items-center justify-center   py-1 text-gray-500 dark:text-gray-400  rounded-lg  group">
-                    <button className={`rounded-xl    mr-2 px-2 ${post.is_liked ? 'text-green-500 dark:bg-primary-500/20  ' : 'text-gray-500  '}  `}>
+                    <span className={`rounded-xl    mr-2 px-2 ${post.is_liked ? 'text-green-500 dark:bg-primary-500/20  ' : 'text-gray-500  '}  `}>
                       <span className={`   material-symbols-outlined ${post.is_liked ? 'text-green-500    ' : 'text-gray-500  '}`}>check</span>
-                    </button>
+                    </span>
                     {'  '}
                   </button>
 
@@ -210,24 +234,48 @@ export default function HomeFeed() {
 
                 {openCommentsId === post.id && (
                   <div className="border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/20 p-4 animate-fade-in rounded-b-2xl">
-                    <div className="space-y-4 mb-4 max-h-60 overflow-y-auto no-scrollbar">
-                      <div className="space-y-4 mb-4 max-h-60 overflow-y-auto no-scrollbar">
-                        {comments.length === 0 ? (
-                          <div className="text-center text-gray-500 py-4 text-sm">Aucun commentaire pour l'instant. Soyez le premier !</div>
-                        ) : (
-                          comments.map((comment) => (
-                          <CommentItem key={comment.id} comment={comment} />
-                          ))
-                        )}
-                      </div>
-                    </div>
+                    {/* LISTE DES COMMENTAIRES */}
+                    <div className="space-y-4 mb-4 max-h-60 overflow-y-auto no-scrollbar">{comments.length === 0 ? <div className="text-center text-gray-500 py-4 text-sm">Aucun commentaire pour l'instant. Soyez le premier !</div> : comments.map((comment) => <CommentItem key={comment.id} comment={comment} onReply={handleReplyClick} /* 👈 Darouriya bach t-khdem l-boutona d-Répondre */ />)}</div>
 
-                    <div className="flex gap-2 items-center mt-2 relative">
-                      <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0"></div>
-                      <input value={commentText} onChange={ (e) => setCommentText(e.target.value)}  type="text" placeholder="Écrire un commentaire..." className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm" />
-                      <button onClick={() => handleSendComment(openCommentsId)} className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 w-8 h-8 flex items-center justify-center rounded-full transition-colors">
-                        <span className="material-symbols-outlined text-[20px]">send</span>
-                      </button>
+                    {/* BLASSET L-INPUT (B l-UX dial Facebook) */}
+                    <div className="flex gap-2 items-center mt-2 relative flex-col">
+                      {/* 💡 L-Banniére d-Réponse (Kat-ban ghir ila knti kat-jawb chi wa7ed) */}
+                      {replyingToId && (
+                        <div className="w-full text-[11px] text-blue-600 flex justify-between px-2 mb-1 bg-blue-50/50 rounded-t-md py-1">
+                          <span>En réponse à un commentaire...</span>
+                          <button
+                            onClick={() => {
+                              setReplyingToId(null);
+                              setCommentText('');
+                            }}
+                            className="font-bold hover:text-red-500">
+                            Annuler
+                          </button>
+                        </div>
+                      )}
+
+                      {/* L-Input w l-Boutona d-Send */}
+                      <div className="flex w-full gap-2 relative items-center">
+                        <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0"></div>
+                        <input
+                          ref={commentInputRef} /* 👈 L-Focus */
+                          value={commentText}
+                          onChange={(e) => {
+                            setCommentText(e.target.value);
+                            // Ila mse7 l-ktaba, n-7iydo l-ID d-r-réponse
+                            if (e.target.value === '') setReplyingToId(null);
+                          }}
+                          type="text"
+                          placeholder="Écrire un commentaire..."
+                          className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm"
+                        />
+                        <button
+                          onClick={() => handleSendComment(post.id)} /* 👈 post.id machi openCommentsId */
+                          disabled={!commentText.trim()} // Ma-ymkench y-sift commentaire khawi
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 w-8 h-8 flex items-center justify-center rounded-full transition-colors">
+                          <span className="material-symbols-outlined text-[20px]">send</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
