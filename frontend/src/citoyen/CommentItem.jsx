@@ -3,12 +3,12 @@ const CommentItem = ({ comment, onReply, level = 0 }) => { // 👈 Zidna onReply
   return (
     <div className={`mb-2 mt-2 ${level > 0 && level < 2 ? "ml-8 border-l-2 border-gray-100 dark:border-gray-700 pl-2" : ""}`}>
        <div className="flex gap-2">
-        <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0 mt-1"></div>
+        <div className="w-8 h-8 rounded-lg bg-gray-300 flex-shrink-0 mt-1"></div>
         <div className="flex-1">
-          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-2.5 rounded-2xl rounded-tl-none shadow-sm">
+          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-2.5 rounded-lg   shadow-lg">
             <h4 className="font-bold text-xs text-gray-900 dark:text-gray-100">
               {comment.author_name}
-              {comment.is_accessible && <span className="ml-1 bg-blue-600 text-white text-[8px] px-1 rounded-sm">OFFICIEL</span>}
+              {comment.is_accessible && <span className="ml-1 bg-blue-600 text-white text-[8px] px-1 rounded-lg">OFFICIEL</span>}
             </h4>
             <p className="text-sm text-gray-700 dark:text-gray-300 mt-0.5">{comment.body}</p>
           </div>
