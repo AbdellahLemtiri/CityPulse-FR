@@ -4,15 +4,14 @@ export default function JournalisteLayout() {
   const navLinkStyle = ({ isActive }) =>
     `block px-4 py-3 mb-2 text-sm font-bold border-l-4 ${
       isActive
-        ? "border-secondary-600 bg-gray-200 text-gray-900" // Khedmna b l-bleu (secondary) bach n-fer9ouh 3la l-Manager
+        ? "border-secondary-600 bg-gray-200 text-gray-900" 
         : "border-transparent text-gray-600 bg-transparent"
     }`;
 
   return (
     <div className="flex h-screen bg-gray-100 font-sans">
       
-      {/* SIDEBAR */}
-      <aside className="w-64  bg-white border-r border-gray-300 flex flex-col">
+       <aside className="w-64  bg-white border-r border-gray-300 flex flex-col">
         <div className="p-4 border-b border-gray-300 bg-gray-50">
           <h1 className="text-lg font-bold text-gray-900 uppercase tracking-wider">
             SafiPulse Media
