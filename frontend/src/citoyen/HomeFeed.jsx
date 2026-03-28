@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
 import axiosClient from '../config/axios-client';
-// import { formatDistanceToNow } from "date-fns"; // Optionnel: ila bghiti l-we9t y-ban "Il y a 2h" (npm install date-fns)
+// import { formatDistanceToNow } from "date-fns";
 // import { fr } from "date-fns/locale";
 
 export default function HomeFeed() {
   const [activeTab, setActiveTab] = useState('Tout');
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [commentsSection, setCommentsSection] = useState(false);
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [commentText, setCommentText] = useState('');
+  const [openCommentsId, setOpenCommentsId] = useState(null);
 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-
+  // const [CommentsSection, setCommentsSection] = useState(false);
   useEffect(() => {
     setPosts([]);
     setPage(1);
@@ -30,35 +34,33 @@ export default function HomeFeed() {
       let typeParam = 'tout';
       if (category === 'Officiel') typeParam = 'office';
       if (category === 'Quartier') typeParam = 'quartier';
-
       const response = await axiosClient.get(`/articles?type=${typeParam}&page=${pageNum}`);
+      const metaData = response.data.meta;
       const rawData = response.data.data;
-
-       const formattedPosts = rawData.map((post) => {
+      const formattedPosts = rawData.map((post) => {
         return {
           id: post.id,
           title: post.title,
           content: post.content,
           scope: post.scope,
           status: post.status,
-          image_url: post.file_path ? post.file_path : null, 
+          image_url: post.image_url ? post.image_url : null,
           created_at: post.created_at,
           is_liked: post.is_liked,
           sector_name: post.sector_name,
-          comment_count: post.comment_count,  
-          like_count: post.like_count,
+          comment_count: post.comments_count,
+          like_count: post.likes_count,
           author_name: post.author_name,
         };
       });
-
-       if (isLoadMore) {
+      if (isLoadMore) {
         setPosts((prev) => [...prev, ...formattedPosts]);
       } else {
         setPosts(formattedPosts);
       }
 
-      setHasMore(response.data.current_page < response.data.last_page);
-      setPage(response.data.current_page);
+      setHasMore(metaData.current_page < metaData.last_page);
+      setPage(metaData.current_page);
     } catch (error) {
       console.error('Erreur fetch feed:', error);
     } finally {
@@ -73,39 +75,40 @@ export default function HomeFeed() {
     }
   };
 
-  
   const tabs = ['Tout', 'Officiel', 'Quartier'];
 
-  const handlLikeart = (post) => {
-    if(post.is_liked){
-      posts.map((post) => {
-        if (post.id === post.id) {
-          post.is_liked = false;
-          post.like_count -= 1;
-        }
-      })
-    }else{
-      posts.map((post) => {
-        if (post.id === post.id) {
-          post.is_liked = true;
-          post.like_count += 1;
-        }
-      })
- 
-      
-    }
-   
-    let data = new FormData();
-    data.append('likeable_type', 'Article');
-    data.append('likeable_id', post.id);
-    axiosClient.post(`/likes/toggle`, data).then((response) => {
-      
-    
+  const handlLikeart = (clickedPost) => {
+    const updatedPosts = posts.map((p) => {
+      if (p.id === clickedPost.id) {
+        return {
+          ...p,
+          is_liked: !p.is_liked,
+          like_count: p.is_liked ? p.like_count - 1 : p.like_count + 1,
+        };
+      }
+      return p;
     });
+
+    setPosts(updatedPosts);
+
+    let data = new FormData();
+
+    data.append('likeable_type', 'Article');
+    data.append('likeable_id', clickedPost.id);
+    try {
+      axiosClient.post(`/likes/toggle`, data);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const handleComment = (clickedPost) => {
+    setCommentsSection(true);
+  };
+  console.log(posts);
   return (
     <>
-      <div className="sticky w-full top-[60px] md:top-[64px] z-30 rounded-b-lg pt-2 pb-2 px-2 md:px-0 mb-4 bg-gray-50 dark:bg-gray-800">
+      <div className="sticky relative  w-full top-[60px] md:top-[64px] z-30 rounded-b-lg pt-2 pb-2 px-2 md:px-0 mb-4 bg-gray-50 dark:bg-gray-800">
         {' '}
         <div className="bg-white dark:bg-gray-800 p-1 rounded-lg flex font-bold text-sm shadow-sm border border-gray-200 dark:border-gray-700">
           {tabs.map((tab) => (
@@ -132,6 +135,7 @@ export default function HomeFeed() {
             {posts.map((post) => (
               <div key={post.id} className="bg-white dark:bg-gray-800 md:rounded-lg border-y md:border border-gray-200 dark:border-gray-700 mb-6">
                 <div className="p-4 flex items-center gap-3">
+                  1
                   <div className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-gray-100 flex items-center justify-center overflow-hidden">
                     <span className="material-symbols-outlined text-gray-500">account_circle</span>
                   </div>
@@ -153,29 +157,76 @@ export default function HomeFeed() {
                   <p className="text-gray-800 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">{post.content}</p>
                 </div>
 
-                {post.media && post.media.length > 0 && (
-                  <div className="w-full h-64 md:h-80 bg-gray-100 dark:bg-gray-700 relative cursor-pointer">
-                    <img src={post.image_url} className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" alt="Post" />
-                  </div>
-                )}
+                <div className=" w-full h-64 md:h-80 bg-gray-100 dark:bg-gray-700 relative cursor-pointer">
+                  <img src={post.image_url} className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" alt="Post" />
+                </div>
+                <div className="flex items-center justify-between  grid grid-cols-3">
+                  <button className="  ">
+                    <span className={`text-gray-500   rounded-xl `}>{post.like_count}</span>
+                  </button>
+                </div>
 
                 <div className="px-2 py-1 flex justify-between border-t border-gray-200 dark:border-gray-700 mt-2">
-                  <button onClick={() => handlLikeart(post)} className="  dark:border-gray-100 flex-1 flex items-center justify-center gap-2 py-2 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg  group">
-                    <span className="material-symbols-outlined group-hover:text-blue-500 ">
-                      <span class="material-symbols-outlined">check</span>
-                    </span>
-                    {post.likes_count || 0}
+                  <button onClick={() => handlLikeart(post)} className=" hover:bg-gray-50 dark:hover:bg-gray-700  dark:border-gray-100 flex-1  flex items-center justify-center   py-1 text-gray-500 dark:text-gray-400  rounded-lg  group">
+                    <button className={`rounded-xl    mr-2 px-2 ${post.is_liked ? 'text-green-500 dark:bg-primary-500/20  ' : 'text-gray-500  '}  `}>
+                      <span className={`   material-symbols-outlined ${post.is_liked ? 'text-green-500    ' : 'text-gray-500  '}`}>check</span>
+                    </button>
+                    {'  '}
                   </button>
 
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg  group">
-                    <span className="material-symbols-outlined group-hover:text-blue-500 ">comment</span>
+                  <button onClick={() => setOpenCommentsId(openCommentsId === post.id ? null : post.id)} className="flex-1  flex items-center justify-center gap-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg  group">
+                    <span className="material-symbols-outlined  ">comment</span>
                     {post.comments_count || 0}
                   </button>
 
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg  group">
-                    <span className="material-symbols-outlined group-hover:text-green-500 ">share</span>
+                  <button className="flex-1 flex items-center justify-center gap-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700  rounded-lg  group">
+                    <span className="material-symbols-outlined   ">share</span>
                   </button>
                 </div>
+
+                 {openCommentsId === post.id && (
+                  <div className="border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/20 p-4 animate-fade-in rounded-b-2xl">
+                    <div className="space-y-4 mb-4 max-h-60 overflow-y-auto no-scrollbar">
+                      <div className="flex gap-2">
+                        <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0 mt-1"></div>
+                        <div className="flex-1">
+                          <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-2.5 rounded-2xl rounded-tl-none shadow-sm">
+                            <div className="flex justify-between items-center">
+                              <h4 className="font-bold text-xs text-gray-900 dark:text-gray-100">Brahim El Filali</h4>
+                              <span className="text-[10px] text-gray-400">Il y a 10 min</span>
+                            </div>
+                            <p className="text-sm text-gray-700 dark:text-gray-300 mt-0.5">Mzyan tbarkellah, walakin wach hadchi ghadi y-koun f ga3 l-a7ya2?</p>
+                          </div>
+                          <button className="text-[11px] font-bold text-gray-500 hover:text-blue-600 mt-1 ml-2 transition-colors">Répondre</button>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 ml-8">
+                        <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
+                          <span className="material-symbols-outlined text-[12px] text-blue-600">verified_user</span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="bg-blue-50 dark:bg-blue-900/20 p-2 rounded-xl rounded-tl-none border border-blue-100 dark:border-blue-800">
+                            <h4 className="font-bold text-xs text-blue-800 dark:text-blue-300 flex items-center gap-1">
+                              Admin SafiPulse
+                              <span className="bg-blue-600 text-white text-[8px] px-1 rounded-sm">OFFICIEL</span>
+                            </h4>
+                            <p className="text-xs text-blue-700 dark:text-blue-200 mt-0.5">Ah b-tabi3at l-7al a si Brahim, l-projet ghadi y-chmel mdint Asfi kamla.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* INPUT AJOUTER UN COMMENTAIRE */}
+                    <div className="flex gap-2 items-center mt-2 relative">
+                      <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0"></div>
+                      <input type="text" placeholder="Écrire un commentaire..." className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm" />
+                      <button className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 w-8 h-8 flex items-center justify-center rounded-full transition-colors">
+                        <span className="material-symbols-outlined text-[20px]">send</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
 
@@ -195,6 +246,8 @@ export default function HomeFeed() {
             )}
           </>
         )}
+
+        {/* --- SECTION COMMENTAIRES INLINE --- */}
       </div>
     </>
   );
