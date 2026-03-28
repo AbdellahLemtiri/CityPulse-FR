@@ -25,6 +25,7 @@ class StoreCommentRequest extends FormRequest
             'body'             => 'required|string',
             'commentable_type' => 'required|string|in:Article,Post',
             'commentable_id'   => 'required|integer',
+            'parent_id'        => 'nullable|integer',
         ];
     }
 }
