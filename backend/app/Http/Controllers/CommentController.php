@@ -2,23 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\comment\getCommentRequest;
 use App\Models\Comment;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreCommentRequest;
-
+use App\Http\Resources\comment\CommentResorse;
 class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(getCommentRequest $request)
     {
-        //
+
+        $data = $request->validated();
+
+        $modelType = 'App\\Models\\' .class_basename($data['commentable_type']);
+        $modelId = $data['commentable_id'];
+
+        $comments = Comment::where('commentable_id', $modelId)->where('commentable_type', $modelType)->with([
+            'user:id,first_name,last_name,role_id',
+            'replies' => function ($query) {
+                $query->with('user:id,first_name,last_name,role_id')
+                    ->orderBy('created_at', 'asc');
+            }
+        ])->latest()->paginate(10);
 
 
-    }
+        return CommentResorse::collection($comments);
+        }
 
     /**
      * Show the form for creating a new resource.
