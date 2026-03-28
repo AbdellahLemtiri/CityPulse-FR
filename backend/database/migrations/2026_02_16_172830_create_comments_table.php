@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->morphs('commentable');
             $table->text('body');
+            $table->foreignId('parent_id')->nullable()->constrained('comments')->onDelete('cascade');
             $table->boolean('is_flagged')->default(false);
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->softDeletes();
