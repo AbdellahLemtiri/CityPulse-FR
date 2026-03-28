@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Resources\comment\CommentResorse;
+
 class CommentController extends Controller
 {
     /**
@@ -19,7 +20,7 @@ class CommentController extends Controller
 
         $data = $request->validated();
 
-        $modelType = 'App\\Models\\' .class_basename($data['commentable_type']);
+        $modelType = 'App\\Models\\' . class_basename($data['commentable_type']);
         $modelId = $data['commentable_id'];
 
         $comments = Comment::where('commentable_id', $modelId)->where('commentable_type', $modelType)->with([
@@ -32,7 +33,7 @@ class CommentController extends Controller
 
 
         return CommentResorse::collection($comments);
-        }
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -54,6 +55,7 @@ class CommentController extends Controller
         $comment = $model->comments()->create([
             'user_id' => $UserId,
             'body'    => $data['body'],
+            'parent_id' => $data['parent_id'] ?? null,
         ]);
 
         return response()->json([
