@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/articles', ArticleController::class)->only(['index', 'store','destroy']);
 
      Route::post('/comments', [CommentController::class, 'store']);
+     Route::get('/comments', [CommentController::class, 'index']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
     Route::post('/likes/toggle', [LikeController::class, 'toggle']);
     Route::post('/incidents', [IncidentController::class,'store']);
