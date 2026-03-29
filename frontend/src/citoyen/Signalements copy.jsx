@@ -82,10 +82,7 @@ export default function Signalements() {
       console.error(error);
     }
   };
-
-  // ==========================================
-  // 2. GESTION DES IMAGES (Max 4)
-  // ==========================================
+ 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     if (images.length + files.length > 4) {
