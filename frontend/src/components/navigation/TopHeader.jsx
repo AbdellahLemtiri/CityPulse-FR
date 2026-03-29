@@ -9,11 +9,11 @@ export default function TopHeader() {
           <span className="material-symbols-outlined text-white text-[18px]">favorite</span>
         </div>
         <span className="md:hidden text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-          Safi<span className="text-primary-500">Pulse</span>
+          City<span className="text-primary-500">Pulse</span>
         </span>
         
          <h1 className="hidden md:block text-2xl font-bold text-gray-900 dark:text-white">
-          Espace Citoyen
+           ---------------------------------------------------------------
         </h1>
       </div>
 
