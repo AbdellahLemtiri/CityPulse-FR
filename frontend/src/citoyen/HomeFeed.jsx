@@ -148,7 +148,7 @@ export default function HomeFeed() {
         console.log(response.data.comment);
         setPosts(posts.map((p) => (p.id === articleId ? { ...p, comment_count: p.comment_count + 1 } : p)));
       } else {
-        handleFetchComments(articleId);
+        // handleFetchComments(articleId);
       }
     } catch (error) {
       console.error('Mouchkil :', error);
@@ -184,7 +184,7 @@ export default function HomeFeed() {
             {posts.map((post) => (
               <div key={post.id} className="bg-white dark:bg-gray-800 px-1.5 md:rounded-lg border-y md:border border-gray-200 dark:border-gray-700 mb-6">
                 <div className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-gray-100 flex items-center justify-center overflow-hidden">
+                  <div className="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 flex items-center justify-center overflow-hidden">
                     <span className="material-symbols-outlined text-gray-500">account_circle</span>
                   </div>
                   <div>
@@ -208,9 +208,14 @@ export default function HomeFeed() {
                 <div className=" w-full h-64 md:h-80 bg-gray-100 dark:bg-gray-700 relative cursor-pointer">
                   <img src={post.image_url} className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" alt="Post" />
                 </div>
-                <div className="flex items-center justify-between  grid grid-cols-3">
+                <div className="flex items-center   pt-1.5  text-sm  grid grid-cols-3">
                   <button className="  ">
-                    <span className={`text-gray-500   rounded-xl `}>{post.like_count}</span>
+                    <span className={`text-gray-400   rounded-xl `}>{post.like_count}</span>
+                  </button>
+                   <button className="  ">
+                    <span className={`text-gray-400   rounded-xl `}>{post.comment_count}</span>
+                  </button> <button className="  ">
+                    <span className={`text-gray-400   rounded-xl `}>...</span>
                   </button>
                 </div>
 
@@ -224,7 +229,6 @@ export default function HomeFeed() {
 
                   <button onClick={() => handleFetchComments(post.id)} className="flex-1  flex items-center justify-center gap-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg  group">
                     <span className="material-symbols-outlined  ">comment</span>
-                    {post.comments_count || 0}
                   </button>
 
                   <button className="flex-1 flex items-center justify-center gap-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700  rounded-lg  group">
@@ -234,13 +238,10 @@ export default function HomeFeed() {
 
                 {openCommentsId === post.id && (
                   <div className="border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/20 p-4 animate-fade-in rounded-b-2xl">
-                    {/* LISTE DES COMMENTAIRES */}
-                    <div className="space-y-4 mb-4 max-h-60 overflow-y-auto no-scrollbar">{comments.length === 0 ? <div className="text-center text-gray-500 py-4 text-sm">Aucun commentaire pour l'instant. Soyez le premier !</div> : comments.map((comment) => <CommentItem key={comment.id} comment={comment} onReply={handleReplyClick} /* 👈 Darouriya bach t-khdem l-boutona d-Répondre */ />)}</div>
+                     <div className="space-y-4 mb-4 max-h-60 overflow-y-auto no-scrollbar">{comments.length === 0 ? <div className="text-center text-gray-500 py-4 text-sm">Aucun commentaire pour l'instant. Soyez le premier !</div> : comments.map((comment) => <CommentItem key={comment.id} comment={comment} onReply={handleReplyClick} /* 👈 Darouriya bach t-khdem l-boutona d-Répondre */ />)}</div>
 
-                    {/* BLASSET L-INPUT (B l-UX dial Facebook) */}
-                    <div className="flex gap-2 items-center mt-2 relative flex-col">
-                      {/* 💡 L-Banniére d-Réponse (Kat-ban ghir ila knti kat-jawb chi wa7ed) */}
-                      {replyingToId && (
+                     <div className="flex gap-2 items-center mt-2 relative flex-col">
+                       {replyingToId && (
                         <div className="w-full text-[11px] text-blue-600 flex justify-between px-2 mb-1 bg-blue-50/50 rounded-t-md py-1">
                           <span>En réponse à un commentaire...</span>
                           <button
@@ -254,25 +255,23 @@ export default function HomeFeed() {
                         </div>
                       )}
 
-                      {/* L-Input w l-Boutona d-Send */}
-                      <div className="flex w-full gap-2 relative items-center">
-                        <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0"></div>
+                       <div className="flex w-full gap-2 relative items-center">
+                        <div className="w-8 h-8 rounded-lg bg-gray-300 flex-shrink-0"></div>
                         <input
-                          ref={commentInputRef} /* 👈 L-Focus */
+                          ref={commentInputRef} 
                           value={commentText}
                           onChange={(e) => {
                             setCommentText(e.target.value);
-                            // Ila mse7 l-ktaba, n-7iydo l-ID d-r-réponse
-                            if (e.target.value === '') setReplyingToId(null);
+                             if (e.target.value === '') setReplyingToId(null);
                           }}
                           type="text"
-                          placeholder="Écrire un commentaire..."
+                          placeholder="Écrire un commentaire...."
                           className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm"
                         />
                         <button
-                          onClick={() => handleSendComment(post.id)} /* 👈 post.id machi openCommentsId */
-                          disabled={!commentText.trim()} // Ma-ymkench y-sift commentaire khawi
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 w-8 h-8 flex items-center justify-center rounded-full transition-colors">
+                          onClick={() => handleSendComment(post.id)} 
+                          disabled={!commentText.trim()}  
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 w-8 h-8 flex items-center justify-center rounded-lg transition-colors">
                           <span className="material-symbols-outlined text-[20px]">send</span>
                         </button>
                       </div>
@@ -284,7 +283,7 @@ export default function HomeFeed() {
 
             {hasMore && (
               <div className="text-center py-4">
-                <button onClick={handleLoadMore} disabled={loadingMore} className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold py-2 px-6 rounded-full text-sm  disabled:opacity-50 flex items-center justify-center mx-auto gap-2">
+                <button onClick={handleLoadMore} disabled={loadingMore} className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold py-2 px-6 rounded-lg text-sm  disabled:opacity-50 flex items-center justify-center mx-auto gap-2">
                   {loadingMore ? (
                     <>
                       <span className="material-symbols-outlined animate-spin text-sm">autorenew</span>
@@ -299,8 +298,7 @@ export default function HomeFeed() {
           </>
         )}
 
-        {/* --- SECTION COMMENTAIRES INLINE --- */}
-      </div>
+       </div>
     </>
   );
 }
