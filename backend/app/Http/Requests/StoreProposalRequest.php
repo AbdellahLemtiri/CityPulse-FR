@@ -11,7 +11,7 @@ class StoreProposalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class StoreProposalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            
+            'title' => 'required|string|max:255|min:3',
+            'description' => 'required|string|max:255|min:3',
+            'location_name' => 'required|string|max:255|min:3',
+             'images.*'      => 'sometimes|array|min:1|max:4',
+
+
         ];
     }
 }
