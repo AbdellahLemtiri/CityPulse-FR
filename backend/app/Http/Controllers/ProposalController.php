@@ -16,14 +16,7 @@ class ProposalController extends Controller
     {
         //
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+ 
 
     /**
      * Store a newly created resource in storage.
@@ -31,15 +24,11 @@ class ProposalController extends Controller
     public function store(StoreProposalRequest $request)
     {
         //
+
+        
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Proposal $proposal)
-    {
-        //
-    }
+   
 
     /**
      * Show the form for editing the specified resource.
