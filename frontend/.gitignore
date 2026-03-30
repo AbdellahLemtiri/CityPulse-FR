@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+              <input type="text" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" placeholder="Ex: Création d'un parc de jeux..." />
 
  .vscode/*
 !.vscode/extensions.json

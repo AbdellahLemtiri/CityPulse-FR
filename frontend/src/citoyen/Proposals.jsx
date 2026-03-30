@@ -8,7 +8,8 @@ export default function Proposals() {
   const [images, setImages] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
+  // const [isMyProposalTab, setIsMyProposalTab] = useState(false);
+   const [formData, setFormData] = useState({
     title: '',
     location_name: '',
     description: '',
@@ -22,11 +23,11 @@ export default function Proposals() {
     fetchProposals();
   }, []);
 
-  const fetchProposals = async () => {
+  const fetchProposalsMysecteur = async () => {
     // setLoading(true);
     try {
-      // const response = await axiosClient.get("/proposals");
-      // setProposals(response.data.data);
+      const response = await axiosClient.get("/proposals");
+      setProposals(response.data);
     } catch (error) {
       console.error('Erreur récupération propositions', error);
     } finally {
@@ -40,17 +41,18 @@ export default function Proposals() {
 
     try {
       
-      await axiosClient.post('/proposals', formData);
+    const response =  await axiosClient.post('/proposals', formData);
 
       const newProposal = {
-        id: Date.now(),
-        ...formData,
-        votes_count: 0,
-        xp_reward: 100,
-        image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=800',
-        status: 'pending',
+        id: response.data.proposal.id,
+        title: response.data.proposal.title,
+        location_name: response.data.proposal.location_name,
+        image: response.data.proposal.images,
+        description:  response.data.proposal.description, 
+        images: response.data.proposal.images, 
         is_voted: false,
-        is_mine: true,
+        votes_count: 0,
+        created_at: response.data.proposal.created_at,
       };
 
       setProposals([newProposal, ...proposals]);

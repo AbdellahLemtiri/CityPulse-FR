@@ -12,6 +12,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SectorController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\CategoryIncidentController;
+use App\Http\Controllers\ProposalController;
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/sectors', [SectorController::class, 'index']);
@@ -28,8 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
     Route::post('/likes/toggle', [LikeController::class, 'toggle']);
     Route::post('/incidents', [IncidentController::class,'store']);
-
-
+    Route::post('/proposals', [ProposalController::class,'store']);
+    Route::get('/proposals', [ProposalController::class,'index']);
 
  
    
