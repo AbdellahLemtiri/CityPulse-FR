@@ -17,10 +17,17 @@ class ProposalController extends Controller
     {
         //
         $user = Auth::user();
-        $proposals = Proposal::where('sector_id', $user->sector_id)->get();
+        $proposals = Proposal::where('sector_id', $user->sector_id)->where('user_id','!=', $user->id)->where('status', 'pending')->get();
         return response()->json($proposals, 200);
     }
 
+    public function MyProposals()
+    {
+        //
+        $user = Auth::user();
+        $proposals = Proposal::where('user_id', $user->id)->get();
+        return response()->json($proposals, 200);
+    }
 
     /**
      * Store a newly created resource in storage.
