@@ -23,7 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });  
-    
+
     Route::resource('/articles', ArticleController::class)->only(['index', 'store','destroy']);
 
      Route::post('/comments', [CommentController::class, 'store']);
@@ -32,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/likes/toggle', [LikeController::class, 'toggle']);
     Route::post('/incidents', [IncidentController::class,'store']);
     Route::post('/proposals', [ProposalController::class,'store']);
+    Route::get('/proposals/my-proposals', [ProposalController::class,'MyProposals']);
     Route::get('/proposals', [ProposalController::class,'index']);
 
  
