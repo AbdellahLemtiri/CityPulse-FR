@@ -31,14 +31,14 @@ class Storeservice
                     $path = $image->store('proposals', 'public');
                      $proposal->media()->create([
                         'file_path' => $path,
-                         'is_public' => true,
+                        'is_public' => true,
                         'file_type' => 'image'
                     ]);
                 }
             }
 
             DB::commit();
-            return true;
+            return $proposal->load('media');
         } catch (\Exception $e) {
             DB::rollBack();
             return false;
