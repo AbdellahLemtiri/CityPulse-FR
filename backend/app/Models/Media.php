@@ -9,7 +9,10 @@ class Media extends Model
 {
     //
     protected $fillable = ['file_path', 'file_type', 'is_public'];
-    
-   
-    public function model(): MorphTo { return $this->morphTo(); }
+
+
+    public function model(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }
