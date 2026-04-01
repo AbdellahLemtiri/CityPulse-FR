@@ -5,6 +5,7 @@ namespace App\Http\Resources\proposal;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+
 class getProposalResource extends JsonResource
 {
     /**
@@ -18,13 +19,10 @@ class getProposalResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'created_at' => $this->created_at,
-            'created_at_human' => $this->created_at->diffForHumans(),
+            'created_at' => $this->created_at->diffForHumans(),
             'status' => $this->status,
             'sector_name' => $this->sector->name,
-            'images' => $this->media->map(function ($item) {
-                return Storage::url($item->file_path);
-            }),
+            'images' => $this->media->pluck('file_path'),
             'author_name' => $this->user->first_name . ' ' . $this->user->last_name,
             'location_name' => $this->location_name,
 
