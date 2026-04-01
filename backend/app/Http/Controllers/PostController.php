@@ -38,8 +38,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation inline (T9der t-khrjha l FormRequest b7al li derti f Article)
-        $data = $request->validate([
+         $data = $request->validate([
             'caption'  => 'required|string',
             'location' => 'nullable|string|max:255',
             'status'   => 'required|in:draft,published',
