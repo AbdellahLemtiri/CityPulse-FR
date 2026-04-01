@@ -53,8 +53,7 @@ export default function Login() {
       isValid = false;
     }
 
-    // Password validation
-    if (!password.trim()) {
+     if (!password.trim()) {
       newErrors.password = 'Veuillez entrer votre mot de passe';
       isValid = false;
     } else if (!validatePassword(password)) {
