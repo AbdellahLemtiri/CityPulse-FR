@@ -2,23 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Proposal;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProposalRequest;
 use App\Http\Requests\UpdateProposalRequest;
+use App\Http\Resources\proposal\getProposalResource;
+use App\services\proposal\Storeservice;
 
 class ProposalController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    public $storeservice;
+    public function __construct()
+    {
+        $this->storeservice = new Storeservice();
+    }
+
     public function index()
     {
         //
         $user = Auth::user();
-        $proposals = Proposal::where('sector_id', $user->sector_id)->where('user_id','!=', $user->id)->where('status', 'pending')->get();
-        return response()->json($proposals, 200);
+        $proposals = Proposal::where('sector_id', $user->sector_id)
+            ->where('status', 'pending')
+            ->with([
+                'user:id,first_name,last_name',
+                'sector:id,name',
+                'media:id,file_path'
+            ])
+            ->withCount('likes')
+            ->withExists([
+                'likes as is_liked' => function ($q) {
+                    $q->where('user_id', Auth::id());
+                }
+            ])
+            ->get();
+
+        return response()->json(getProposalResource::collection($proposals), 200);
     }
 
     public function MyProposals()
@@ -34,33 +58,15 @@ class ProposalController extends Controller
      */
     public function store(StoreProposalRequest $request)
     {
-        //
 
         $user = Auth::user();
         $data = $request->validated();
-        $data['user_id'] = $user->id;
-        $data['sector_id'] = $user->sector_id;
-        $proposal = Proposal::create(
-            $data
-        );
-        if ($request->hasFile('images')) {
-            $images = $request->files('images');
-            foreach ($images as $image) {
-                $path = $image->store('proposals', 'public');
-                $name = $image->getClientOriginalName();
-                $proposal->media()->create([
-                    'file_path' => $path,
-                    'file_name' => $name,
-                    'is_public' => true,
-                    'file_type' => 'image'
-                ]);
-            }
+        $success = $this->storeservice->store($data, $request);
+        if ($success) {
+            return response()->json(['message' => 'Proposition envoyé avec succès'], 201);
+        } else {
+            return response()->json(['message' => 'Erreur lors de l\'envoi de la proposition'], 500);
         }
-
-        return response()->json([
-            'message' => 'Proposition envoyée',
-            'proposal' => $proposal->load('media')
-        ]);
     }
 
 
