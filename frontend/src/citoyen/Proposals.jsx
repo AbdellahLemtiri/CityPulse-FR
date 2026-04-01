@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import axiosClient from '../config/axios-client';
 
 export default function Proposals() {
-  const [proposals, setProposals] = useState([{}]);
+  const [proposals, setProposals] = useState([]);
+  const [myProposals, setMyProposals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('quartier');
   const [images, setImages] = useState([]);
+  const currentProposals = activeTab === 'mes_idees' ? myProposals : proposals;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // const [isMyProposalTab, setIsMyProposalTab] = useState(false);
-   const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     title: '',
     location_name: '',
     description: '',
@@ -20,13 +22,13 @@ export default function Proposals() {
   const [isVoting, setIsVoting] = useState(false);
 
   useEffect(() => {
-    fetchProposals();
+    fetchProposalsMysecteur();
   }, []);
 
   const fetchProposalsMysecteur = async () => {
     // setLoading(true);
     try {
-      const response = await axiosClient.get("/proposals");
+      const response = await axiosClient.get('/proposals');
       setProposals(response.data);
     } catch (error) {
       console.error('Erreur récupération propositions', error);
@@ -35,21 +37,40 @@ export default function Proposals() {
     }
   };
 
+  const handelTabChange = (tab) => {
+    if (tab === 'mes_idees') {
+      fetchMyProposals();
+    } else if (tab === 'quartier') {
+      fetchProposalsMysecteur();
+    }
+    setActiveTab(tab);
+  };
+  const fetchMyProposals = async () => {
+    try {
+      const response = await axiosClient.get('/proposals/my-proposals');
+      setMyProposals(response.data);
+    } catch (error) {
+      console.error('Erreur récupération propositions', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    
 
     try {
-      
-    const response =  await axiosClient.post('/proposals', formData);
+      const response = await axiosClient.post('/proposals', formData);
 
       const newProposal = {
         id: response.data.proposal.id,
         title: response.data.proposal.title,
         location_name: response.data.proposal.location_name,
         image: response.data.proposal.images,
-        description:  response.data.proposal.description, 
-        images: response.data.proposal.images, 
+        description: response.data.proposal.description,
+        images: response.data.proposal.images,
         is_voted: false,
         votes_count: 0,
         created_at: response.data.proposal.created_at,
@@ -60,7 +81,7 @@ export default function Proposals() {
 
       alert('Votre idée a été soumise ! Elle sera visible par le quartier après validation du Manager.');
 
-       setFormData({ title: '', location_name: '', description: '' , images: []});
+      setFormData({ title: '', location_name: '', description: '', images: [] });
       setIsModalOpen(false);
     } catch (error) {
       console.error('Erreur création', error);
@@ -72,11 +93,14 @@ export default function Proposals() {
 
   const handleVote = async () => {
     if (!proposalToVote) return;
+
     setIsVoting(true);
 
-    try {
-      // await axiosClient.post(`/proposals/${proposalToVote.id}/like`);
+    const likeable_type = 'Proposal';
+    const likeable_id = proposalToVote.id;
 
+    try {
+      await axiosClient.post(`/likes/toggle`, { likeable_type, likeable_id });
       setProposals(
         proposals.map((p) => {
           if (p.id === proposalToVote.id) {
@@ -101,8 +125,8 @@ export default function Proposals() {
   };
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    if (images.length + files.length > 4) {
-      alert('Vous ne pouvez télécharger que 4 images maximum.');
+    if (images.length + files.length > 2) {
+      alert('Vous ne pouvez télécharger que 2 images maximum.');
       return;
     }
 
@@ -117,49 +141,68 @@ export default function Proposals() {
   return (
     <>
       <div className="max-w-3xl mx-auto p-4 md:p-0 pb-24 md:pb-8">
-        <div className="flex justify-between items-center mb-6 mt-4">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Budget Participatif</h2>
-            <p className="text-sm text-gray-500">Proposez et votez pour l'amélioration de votre quartier.</p>
+        {!isModalOpen ? (
+          <>
+            <div className="flex justify-between items-center mb-6 mt-4">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Budget Participatif</h2>
+                <p className="text-sm text-gray-500">Proposez et votez pour l'amélioration de votre quartier.</p>
+              </div>
+              <button onClick={() => setIsModalOpen(true)} className="bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold py-2 px-4 rounded-xl shadow-sm  flex items-center gap-2">
+                <span className="material-symbols-outlined text-[20px]">lightbulb</span> Soumettre une idée
+              </button>
+            </div>
+            <div className="flex border-b border-gray-200 dark:border-gray-700 ">
+              <button onClick={() => setActiveTab('quartier')} className={`pb-3 px-4 text-sm font-bold  ${activeTab === 'quartier' ? 'border-b-2 border-primary-600 text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
+                Projets du Quartier
+              </button>
+              <button onClick={() => handelTabChange('mes_idees')} className={`pb-3 px-4 text-sm font-bold  ${activeTab === 'mes_idees' ? 'border-b-2 border-primary-600 text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
+                Mes Propositions
+              </button>
+            </div>{' '}
+          </>
+        ) : (
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
+            <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+              <span className="  px-2 py-1 rounded-lg bg-primary-500/40 text-white">Annuler</span>
+            </button>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary-500">add_circle</span>
+              Nouvelle Proposition
+            </h2>
           </div>
-          <button onClick={() => setIsModalOpen(true)} className="bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold py-2 px-4 rounded-xl shadow-sm transition-colors flex items-center gap-2">
-            <span className="material-symbols-outlined text-[20px]">lightbulb</span> Soumettre une idée
-          </button>
-        </div>
-        <div className="flex border-b border-gray-200 dark:border-gray-700 ">
-          <button onClick={() => setActiveTab('quartier')} className={`pb-3 px-4 text-sm font-bold transition-colors ${activeTab === 'quartier' ? 'border-b-2 border-primary-600 text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
-            Projets du Quartier
-          </button>
-          <button onClick={() => setActiveTab('mes_idees')} className={`pb-3 px-4 text-sm font-bold transition-colors ${activeTab === 'mes_idees' ? 'border-b-2 border-primary-600 text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
-            Mes Propositions
-          </button>
-        </div>
+        )}
+
         {loading && (
           <div className="flex justify-center py-10">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
         )}
         {!isModalOpen &&
-          (proposals.length === 0 ? (
+          (currentProposals.length === 0 ? (
             <div className="text-center mt-8 py-12 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700">
               <span className="material-symbols-outlined text-4xl text-gray-400 mb-2">inbox</span>
-              <h3 className="text-gray-600 dark:text-gray-300 font-bold">Aucune proposition trouvée.</h3>
-              <p className="text-sm text-gray-500 mt-1">Soyez le premier à proposer une idée d'aménagement !</p>
+              <h3 className="text-gray-600 dark:text-gray-300 font-bold">{activeTab === 'mes_idees' ? "Vous n'avez encore proposé aucune idée." : 'Aucune proposition trouvée.'}</h3>
+              <p className="text-sm text-gray-500 mt-1">{activeTab === 'mes_idees' ? "Participez à l'amélioration de Safi !" : "Soyez le premier à proposer une idée d'aménagement !"}</p>
             </div>
           ) : (
             <div className="space-y-6 mt-4">
-              {proposals.map((proposal) => (
-                <div key={proposal.id} className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden transition-colors relative">
+              {currentProposals.map((proposal) => (
+                <div key={proposal.id} className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden  relative">
                   <div className="p-5">
                     {activeTab === 'mes_idees' && (
                       <div className="mb-3">
-                        <span className={`text-[10px] font-bold uppercase px-2 py-1 rounded-md border ${proposal.status === 'pending' ? 'bg-orange-100 text-orange-700 border-orange-200' : proposal.status === 'validated' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-blue-100 text-blue-700 border-blue-200'}`}>{proposal.status === 'pending' ? '⏳ En cours de validation' : proposal.status === 'validated' ? '✅ Validé (En vote)' : '🚀 Implémenté'}</span>
+                        <span
+                          className={`text-[10px] font-bold uppercase px-2 py-1 rounded-md border 
+                      ${proposal.status === 'pending' ? 'bg-orange-100 text-orange-700 border-orange-200' : proposal.status === 'validated' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-blue-100 text-blue-700 border-blue-200'}`}>
+                          {proposal.status === 'pending' ? ' En cours de validation' : proposal.status === 'validated' ? ' Validé (En vote)' : 'Implémenté'}
+                        </span>
                       </div>
                     )}
 
-                    <div className=" flex justify-between items-start gap-4">
+                    <div className="flex justify-between items-start gap-4">
                       <div className="w-40 h-40 rounded-md overflow-hidden shrink-0 hidden sm:block">
-                        <img src={proposal.image} alt="Projet" className="w-full h-full object-cover" />
+                        <img src={proposal.image_url || proposal.image} alt="Projet" className="w-full h-full object-cover" />
                       </div>
 
                       <div className="flex-1">
@@ -175,13 +218,16 @@ export default function Proposals() {
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1.5 text-gray-700 dark:text-gray-200 font-bold">
-                          <span class="material-symbols-outlined">lightbulb_2</span>
+                          <span className="material-symbols-outlined">lightbulb_2</span>
                           {proposal.votes_count} <span className="text-sm font-normal text-gray-500">soutiens</span>
                         </div>
                       </div>
-
+                      <div className='flex gap-2'>
+                      <button className="px-4 py-2 rounded-lg font-bold text-sm shadow-sm  flex items-center gap-2 bg-primary-600/95 text-white hover:bg-primary-500">
+                        <span className="material-symbols-outlined text-[18px]">visibility</span> Voir
+                      </button>
                       {activeTab === 'quartier' && (
-                        <button onClick={() => setProposalToVote(proposal)} className={`px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors flex items-center gap-2 ${proposal.is_voted ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-800' : 'bg-primary-600 text-white hover:bg-primary-500'}`}>
+                        <button onClick={() => setProposalToVote(proposal)} className={`px-4 py-2 rounded-lg font-bold text-sm shadow-sm  flex items-center gap-2 ${proposal.is_voted ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-800' : 'bg-primary-600 text-white hover:bg-primary-500'}`}>
                           {proposal.is_voted ? (
                             <>
                               <span className="material-symbols-outlined text-[18px]">how_to_vote</span> Soutenu
@@ -191,24 +237,15 @@ export default function Proposals() {
                           )}
                         </button>
                       )}
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-          ))}{' '}
+          ))}
         {isModalOpen && (
           <div className="bg-white mt-4 dark:bg-gray-900 w-full max-w-lg rounded-lg  dark:border-gray-700 overflow-hidden ">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary-500">add_circle</span>
-                Nouvelle Proposition
-              </h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
             <form onSubmit={handleSubmit} className="p-6 space-y-4   ">
               <div>
                 <label className="block text-sm  font-bold text-gray-700 dark:text-gray-300 mb-1">Titre de l'idée *</label>
@@ -231,14 +268,14 @@ export default function Proposals() {
                 {images.map((img, index) => (
                   <div key={index} className="aspect-square relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 group">
                     <img src={img.url} className="w-full h-full object-cover" alt="Preview" />
-                    <button type="button" onClick={() => removeImage(index)} className="absolute inset-0 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button type="button"   className="absolute inset-0 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <span className="material-symbols-outlined">delete</span>
                     </button>
                   </div>
                 ))}
               </div>
               {images.length < 2 && (
-                <div onClick={() => document.getElementById('incident-image-input').click()} className="aspect-square rounded-xl border-2  border-gray-300 dark:border-gray-600 hover:border-primary-500 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center cursor-pointer transition-colors text-gray-400 hover:text-primary-500">
+                <div onClick={() => document.getElementById('incident-image-input').click()} className="aspect-square rounded-xl border-2  border-gray-300 dark:border-gray-600 hover:border-primary-500 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center cursor-pointer  text-gray-400 hover:text-primary-500">
                   <span className="material-symbols-outlined text-2xl">add_a_photo</span>
                 </div>
               )}
@@ -247,10 +284,10 @@ export default function Proposals() {
               </div>
 
               <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 bg-gray-200 dark:bg-gray-800  text-gray-800 dark:text-white font-bold py-3 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 bg-gray-200 dark:bg-gray-800  text-gray-800 dark:text-white font-bold py-3 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 ">
                   Annuler
                 </button>
-                <button type="submit" disabled={isSubmitting} className="flex-1 bg-primary-600 text-white font-bold py-3 rounded-xl hover:bg-primary-500 transition-colors disabled:opacity-50">
+                <button type="submit" disabled={isSubmitting} className="flex-1 bg-primary-600 text-white font-bold py-3 rounded-xl hover:bg-primary-500  disabled:opacity-50">
                   {isSubmitting ? 'Envoi...' : "Soumettre l'idée"}
                 </button>
               </div>
@@ -271,10 +308,10 @@ export default function Proposals() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{proposalToVote.is_voted ? `Êtes-vous sûr de vouloir retirer votre soutien à "${proposalToVote.title}" ?` : `Vous allez voter pour "${proposalToVote.title}". Cela aidera à prioriser ce projet pour le quartier.`}</p>
 
             <div className="flex gap-3">
-              <button onClick={() => setProposalToVote(null)} className="flex-1 bg-gray-100  text-gray-800 dark:text-white font-bold py-2.5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+              <button onClick={() => setProposalToVote(null)} className="flex-1 bg-gray-100  text-gray-800 dark:text-white font-bold py-2.5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 ">
                 Retour
               </button>
-              <button onClick={handleVote} disabled={isVoting} className={`flex-1 font-bold py-2.5 rounded-xl transition-colors text-white ${proposalToVote.is_voted ? 'bg-red-500 hover:bg-red-600' : 'bg-primary-600 hover:bg-primary-500'}`}>
+              <button onClick={handleVote} disabled={isVoting} className={`flex-1 font-bold py-2.5 rounded-xl  text-white ${proposalToVote.is_voted ? 'bg-red-500 hover:bg-red-600' : 'bg-primary-600 hover:bg-primary-500'}`}>
                 {isVoting ? '...' : proposalToVote.is_voted ? 'Retirer' : 'Confirmer'}
               </button>
             </div>
