@@ -16,8 +16,8 @@ class ReplyCommentResorse extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'            => $this->id, // 👈 Zdnaha
-            'body'          => $this->body, // 👈 S77naha
+            'id'            => $this->id,  
+            'body'          => $this->body,  
             'created_at'    => $this->created_at->diffForHumans(),
             'author_name'   => $this->user->first_name . ' ' . $this->user->last_name, 
              'is_accessible' => $this->user->role_id === 1 || in_array($this->user->id, [2, 4]),
