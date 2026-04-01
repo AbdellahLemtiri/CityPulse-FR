@@ -10,7 +10,7 @@ use App\Http\Requests\StoreProposalRequest;
 use App\Http\Requests\UpdateProposalRequest;
 use App\Http\Resources\proposal\getProposalResource;
 use App\services\proposal\Storeservice;
-
+use Illuminate\Http\Request;
 class ProposalController extends Controller
 {
     /**
@@ -23,35 +23,30 @@ class ProposalController extends Controller
         $this->storeservice = new Storeservice();
     }
 
-    public function index()
-    {
-        //
-        $user = Auth::user();
-        $proposals = Proposal::where('sector_id', $user->sector_id)
-            ->where('status', 'pending')
-            ->with([
-                'user:id,first_name,last_name',
-                'sector:id,name',
-                'media:id,file_path'
-            ])
-            ->withCount('likes')
-            ->withExists([
-                'likes as is_liked' => function ($q) {
-                    $q->where('user_id', Auth::id());
-                }
-            ])
-            ->get();
+ public function index(Request $request)
+{
+    $user = Auth::user();
 
-        return response()->json(getProposalResource::collection($proposals), 200);
+    // 1. Start the query
+    $query = Proposal::with(['user:id,first_name,last_name', 'sector:id,name', 'media'])
+        ->withCount('likes')
+        ->withExists(['likes as is_liked' => function ($q) {
+            $q->where('user_id', Auth::id());
+        }]);
+
+     if ($request->has('my-proposals')) {
+        $query->where('user_id', $user->id);
+    } else {
+         $query->where('sector_id', $user->sector_id)
+              ->where('status', 'pending');
     }
 
-    public function MyProposals()
-    {
-        //
-        $user = Auth::user();
-        $proposals = Proposal::where('user_id', $user->id)->get();
-        return response()->json($proposals, 200);
-    }
+     $proposals = $query->get();
+
+     return response()->json(getProposalResource::collection($proposals), 200);
+}
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -62,10 +57,12 @@ class ProposalController extends Controller
         $user = Auth::user();
         $data = $request->validated();
         $success = $this->storeservice->store($data, $request);
-        if ($success) {
-            return response()->json(['message' => 'Proposition envoyé avec succès'], 201);
-        } else {
+
+        if (!$success) {
             return response()->json(['message' => 'Erreur lors de l\'envoi de la proposition'], 500);
+        } else {
+            $proposal = getProposalResource::make($success);
+            return response()->json(['message' => 'Proposition envoyé avec succès', 'proposal' => $proposal], 201);
         }
     }
 
