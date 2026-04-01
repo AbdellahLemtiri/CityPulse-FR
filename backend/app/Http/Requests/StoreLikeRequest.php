@@ -24,7 +24,7 @@ class StoreLikeRequest extends FormRequest
         return [
             //
 
-            'likeable_type' => 'required|string|in:Article,Post',
+            'likeable_type' => 'required|string|in:Article,Post,Proposal',
             'likeable_id'   => 'required|integer',
         ];
     }
