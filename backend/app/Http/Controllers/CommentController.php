@@ -41,18 +41,19 @@ class CommentController extends Controller
     public function store(StoreCommentRequest $request)
     {
         $UserId = Auth::id();
-        $data = $request->validated();
+
         $modelClass = 'App\\Models\\' . $data['commentable_type'];
         $model = $modelClass::findOrFail($data['commentable_id']);
         $comment = $model->comments()->create([
             'user_id' => $UserId,
-            'body'    => $data['body'],
-            'parent_id' => $data['parent_id'] ?? null,
+            'body'=> $data['body'],
+            'parent_id' => $data['parent_id']?? 0,
         ]);
+
 
         return response()->json([
             'message' => 'Commentaire ajouté',
-            'comment' => $comment->load('user')
+            'comment' => $comment->load('user'),$data['parent_id']??0 
         ], 201);
     }
 
