@@ -26,6 +26,6 @@ class StoreLikeRequest extends FormRequest
 
             'likeable_type' => 'required|string|in:Article,Post,Proposal',
             'likeable_id'   => 'required|integer',
-        ];
+         ];
     }
 }
