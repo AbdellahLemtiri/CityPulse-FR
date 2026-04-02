@@ -15,8 +15,8 @@ class StoreIncidentRequest extends FormRequest
         return [      
             'title'       => 'required|string|max:255',
             'description' => 'required|string|min:10',
-            'latitude'    => 'required|numeric|between:-90,90',
-            'longitude'   => 'required|numeric|between:-180,180',
+            'latitude'    => 'sometimes|numeric|between:-90,90',
+            'longitude'   => 'sometimes|numeric|between:-180,180',
             'address'     => 'nullable|string|max:255',
              'images'      => 'required|array|min:1|max:4',
             'images.*'    => 'required|image|mimes:jpeg,png,webp|max:5120',  
