@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Resources\Article\ArticleResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Article;
@@ -11,30 +12,35 @@ use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
-
+use App\Http\Requests\article\getDataRequest;
 class ArticleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-  public function index(Request $request)
+    public function index(getDataRequest $request)
     {
-         $articles = Article::select('id', 'title', 'slug', 'content', 'created_at', 'user_id', 'sector_id', 'status', 'scope')
+        $user = Auth::user();
+        $req = $request->validated();
+        $articles = Article::select('id', 'title', 'slug', 'content', 'created_at', 'user_id', 'sector_id', 'status', 'scope')
             ->with([
-                'user:id,first_name,last_name', 
+                'user:id,first_name,last_name',
                 'sector:id,name',
                 'media'
-            ])
-            ->withCount(['likes', 'comments'])
+            ])->withCount(['likes', 'comments'])
             ->withExists(['likes as is_liked' => function ($q) {
                 $q->where('user_id', Auth::id());
-            }])
-            ->where('status', 'published')
-            ->latest()
-            ->paginate(4);
-
-         return ArticleResource::collection($articles);
+            }])->where('status', 'published');
+        if ($req['type'] === 'local') {
+            $articles->where('scope', 'local')->where('sector_id', $user->sector_id);
+        }
+        if ($req['type'] === 'global') {
+            $articles->where('scope', 'global')->whereNull('sector_id');
+        }
+        $articles = $articles->latest()->paginate(5);
+        return ArticleResource::collection($articles);
     }
+
     /**
      * Store a newly created resource in storage.
      */
