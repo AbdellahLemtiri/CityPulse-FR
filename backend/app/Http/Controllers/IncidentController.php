@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Incident;
 use Illuminate\Support\Facades\Auth;
 use App\Services\IncidentService;
+use App\Http\Resources\incident\getIncidentResourse;
 
 class IncidentController extends Controller
 {
@@ -16,7 +17,6 @@ class IncidentController extends Controller
 
     protected $incidentService;
 
-    // Injection de dépendance (DI) dial l-Service
     public function __construct(IncidentService $incidentService)
     {
         $this->incidentService = $incidentService;
@@ -28,6 +28,14 @@ class IncidentController extends Controller
     {
         //
 
+        $user = Auth::user();
+        if ($user->role_id === 2) {
+            $incidents = Incident::where('sector_id', $user->sector_id)->with(['user:id,first_name,last_name','category:name'])  ->latest()->paginate(10);
+            return getIncidentResourse::collection($incidents);
+        } elseif ($user->role_id === 3) {
+            $incidents = Incident::where('sector_id', $user->sector_id)->latest()->paginate(10);
+            return getIncidentResourse::collection($incidents);
+        }
 
     }
 
@@ -51,7 +59,7 @@ class IncidentController extends Controller
         $incident = $this->incidentService->createIncident($data, $user, $images, $audio);
         return response()->json([
             'message' => 'Incident signalé avec succès',
-            'data'    => $incident->load('media')  
+            'data'    => $incident->load('media')
         ], 201);
     }
 
