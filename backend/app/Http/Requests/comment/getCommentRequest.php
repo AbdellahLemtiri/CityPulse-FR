@@ -22,7 +22,7 @@ class getCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'commentable_type' => 'required|string|in:Article,Post,comment',
+            'commentable_type' => 'required|string|in:Article,Post',
             'commentable_id'   => 'required|integer',
         ];
     }
