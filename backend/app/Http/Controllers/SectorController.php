@@ -13,10 +13,11 @@ class SectorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sectors = Sector::with('logo')->get();
-
+        //
+        $id = $request->city_id;
+        $sectors = Sector::where('city_id', $id)->with('logo')->get();
         return response()->json($sectors, 200);
     }
 
