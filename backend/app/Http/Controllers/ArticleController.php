@@ -22,7 +22,7 @@ class ArticleController extends Controller
     {
         $user = Auth::user();
         $req = $request->validated();
-        $articles = Article::select('id', 'title', 'slug', 'content', 'created_at', 'user_id', 'sector_id', 'status', 'scope')
+        $articles = Article::select('id', 'content', 'slug', 'content', 'created_at', 'user_id', 'sector_id', 'status', 'scope')
             ->with([
                 'user:id,first_name,last_name',
                 'sector:id,name',
@@ -56,7 +56,7 @@ class ArticleController extends Controller
             }
         }
 
-        $data['slug'] = Str::slug($data['title']);
+        $data['slug'] = Str::slug($data['content']);
         $article = Article::create($data);
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('articles', 'public');
@@ -80,7 +80,7 @@ class ArticleController extends Controller
         $articles = Article::with(['media' => function ($query) {
             $query->latest();
         }])
-            ->select('id', 'title', 'content', 'scope', 'status', 'created_at', 'user_id')
+            ->select('id', 'content', 'scope', 'status', 'created_at', 'user_id')
             ->where('user_id', $user->id)
             ->latest()
             ->paginate(10);
@@ -109,7 +109,7 @@ class ArticleController extends Controller
         $article = DB::table('articles')->leftJoin('media', function ($join) {
             $join->on('articles.id', '=', 'media.model_id')
                 ->where('media.model_type', '=', 'App\Models\Article');
-        })->select('articles.id', 'articles.title', 'articles.content', 'articles.scope', 'articles.status', 'media.file_path')
+        })->select('articles.id', 'articles.content', 'articles.content', 'articles.scope', 'articles.status', 'media.file_path')
             ->where('articles.id', $id)
             ->first();
 
@@ -125,8 +125,8 @@ class ArticleController extends Controller
         $user = Auth::user();
         $data = $request->validated();
 
-        if (isset($data['title']) && $data['title'] !== $article->title) {
-            $data['slug'] = Str::slug($data['title']);
+        if (isset($data['content']) && $data['content'] !== $article->content) {
+            $data['slug'] = Str::slug($data['content']);
         }
         if ($user->role_id === 2 && $data['scope'] === 'local') {
             $data['sector_id'] = $user->sector_id;
