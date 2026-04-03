@@ -23,13 +23,14 @@ class ArticleController extends Controller
         $user = Auth::user();
         $req = $request->validated();
         $articles = Article::select('id', 'content', 'slug', 'content', 'created_at', 'user_id', 'sector_id', 'status', 'scope')
+            ->where('city_id', $user->city_id)
             ->with([
                 'user:id,first_name,last_name',
                 'sector:id,name',
                 'media'
             ])->withCount(['likes', 'comments'])
             ->withExists(['likes as is_liked' => function ($q) {
-                $q->where('user_id', Auth::id());
+                $q->where(' ', Auth::id());
             }])->where('status', 'published');
         if ($req['type'] === 'local') {
             $articles->where('scope', 'local')->where('sector_id', $user->sector_id);
