@@ -17,48 +17,47 @@ class CommentController extends Controller
      */
     public function index(getCommentRequest $request)
     {
-        //
-
         $data = $request->validated();
-
         $modelType = 'App\\Models\\' . class_basename($data['commentable_type']);
         $modelId = $data['commentable_id'];
 
-        $comments = Comment::where('commentable_id', $modelId)->where('commentable_type', $modelType)->with([
-            'user:id,first_name,last_name,role_id',
-            'replies' => function ($query) {
-                $query->with('user:id,first_name,last_name,role_id')
-                    ->orderBy('created_at', 'asc');
-            }
-        ])->latest()->paginate(10);
+        $comments = Comment::where('commentable_id', $modelId)
 
-        return CommentResorse::collection($comments);
+            ->where('commentable_type', $modelType)
+            ->whereNull('parent_id')
+            ->with([
+                'user:id,first_name,last_name,role_id',
+                'replies'
+            ])
+            ->latest()
+            ->paginate(100);
+        $totalCount = Comment::where('commentable_id', $modelId)
+            ->where('commentable_type', $modelType)
+            ->count();
+        return CommentResorse::collection($comments)->additional([
+            'meta' => [
+                'total_all_comments' => $totalCount,
+            ]
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-public function store(StoreCommentRequest $request)
+    public function store(StoreCommentRequest $request)
     {
         $UserId = Auth::id();
-        
-        // 1. On stocke les données validées dans une NOUVELLE variable
-        $validated = $request->validated(); 
-
+        $validated = $request->validated();
         $modelClass = 'App\\Models\\' . $validated['commentable_type'];
         $model = $modelClass::findOrFail($validated['commentable_id']);
-        
-        // 2. On crée le commentaire en gérant l'absence potentielle du parent_id
         $comment = $model->comments()->create([
             'user_id'   => $UserId,
             'body'      => $validated['body'],
-            'parent_id' => $validated['parent_id'] ?? null, // <-- Ajout du ?? null ici
+            'parent_id' => $validated['parent_id'] ?? null,
         ]);
-
         return response()->json([
-            'message'   => 'Commentaire ajouté',
-            'comment'   => $comment->load('user'), 
-            'parent_id' => $comment->parent_id // On retourne ce qui a été VRAIMENT stocké
+            'comment'   => $comment->load('user'),
+            'parent_id' => $comment->parent_id
         ], 201);
     }
 
