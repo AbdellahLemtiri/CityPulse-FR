@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
- 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -34,8 +34,9 @@ class User extends Authenticatable
         'xp_points',
         'is_banned',
         'preferences',
-        'cin',        
-        'adresse'     
+        'cin',
+        'adresse',
+        'city_id',
     ];
 
     /**
@@ -59,12 +60,35 @@ class User extends Authenticatable
         'password' => 'hashed',
         'preferences' => 'array',
         'is_banned' => 'boolean',
+
     ];
 
-    public function role(): BelongsTo { return $this->belongsTo(Role::class); }
-    public function sector(): BelongsTo { return $this->belongsTo(Sector::class); }
-    public function incidents(): HasMany { return $this->hasMany(Incident::class); }
-    public function posts(): HasMany { return $this->hasMany(Post::class); }
-     public function badges(): BelongsToMany { return $this->belongsToMany(Badge::class, 'user_badges')->withPivot('awarded_at'); }
-    public function strikes(): HasMany { return $this->hasMany(Strike::class); }
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+    public function sector(): BelongsTo
+    {
+        return $this->belongsTo(Sector::class);
+    }
+    public function incidents(): HasMany
+    {
+        return $this->hasMany(Incident::class);
+    }
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+    public function badges(): BelongsToMany
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges')->withPivot('awarded_at');
+    }
+    public function strikes(): HasMany
+    {
+        return $this->hasMany(Strike::class);
+    }
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class);
+    }
 }
