@@ -38,22 +38,27 @@ class CommentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCommentRequest $request)
+public function store(StoreCommentRequest $request)
     {
         $UserId = Auth::id();
+        
+        // 1. On stocke les données validées dans une NOUVELLE variable
+        $validated = $request->validated(); 
 
-        $modelClass = 'App\\Models\\' . $data['commentable_type'];
-        $model = $modelClass::findOrFail($data['commentable_id']);
+        $modelClass = 'App\\Models\\' . $validated['commentable_type'];
+        $model = $modelClass::findOrFail($validated['commentable_id']);
+        
+        // 2. On crée le commentaire en gérant l'absence potentielle du parent_id
         $comment = $model->comments()->create([
-            'user_id' => $UserId,
-            'body'=> $data['body'],
-            'parent_id' => $data['parent_id']?? 0,
+            'user_id'   => $UserId,
+            'body'      => $validated['body'],
+            'parent_id' => $validated['parent_id'] ?? null, // <-- Ajout du ?? null ici
         ]);
 
-
         return response()->json([
-            'message' => 'Commentaire ajouté',
-            'comment' => $comment->load('user'),$data['parent_id']??0 
+            'message'   => 'Commentaire ajouté',
+            'comment'   => $comment->load('user'), 
+            'parent_id' => $comment->parent_id // On retourne ce qui a été VRAIMENT stocké
         ], 201);
     }
 
