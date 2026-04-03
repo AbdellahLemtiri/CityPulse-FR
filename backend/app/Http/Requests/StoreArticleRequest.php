@@ -22,7 +22,6 @@ class StoreArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'     => 'required|string|max:255',
             'content'   => 'required|string',
             'scope'     => 'required|in:global,local',
             'sector_id' => 'nullable|exists:sectors,id',
