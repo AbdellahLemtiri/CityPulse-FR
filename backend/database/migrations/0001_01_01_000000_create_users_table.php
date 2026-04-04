@@ -12,27 +12,26 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-                $table->id();
-                $table->uuid('uuid')->unique();
-                $table->string('first_name');
-                $table->string('last_name');
-                $table->string('email')->unique();
-                $table->string('phone')->nullable();
-                
-                $table->string('cin')->unique()->nullable();
-                $table->text('adresse')->nullable(); 
-    
-                $table->string('password');
-                $table->json('preferences')->nullable();
-                $table->integer('xp_points')->default(0);
-                $table->boolean('is_banned')->default(false);
-                $table->foreignId('role_id')->constrained()->onDelete('cascade');
-                $table->foreignId('sector_id')->nullable()->constrained()->onDelete('set null');
-                $table->timestamp('email_verified_at')->nullable();
-                $table->rememberToken();
-                $table->timestamps();
-                $table->softDeletes();
-            });
+            $table->id();
+            $table->uuid('uuid')->unique();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('email')->unique();
+            $table->string('phone');
+            $table->string('cin')->unique();
+            $table->text('adresse')->nullable();
+            $table->string('password');
+            $table->json('preferences')->nullable();
+            $table->integer('xp_points')->default(0);
+            $table->boolean('is_banned')->default(false);
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('sector_id')->constrained()->onDelete('cascade');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
+            $table->rememberToken();
+            $table->timestamps();
+            $table->softDeletes();
+        });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
