@@ -13,32 +13,39 @@ use App\Http\Requests\UpdateArticleRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\article\getDataRequest;
+
 class ArticleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(getDataRequest $request)
+    public function index(getDataRequest $request) 
     {
         $user = Auth::user();
         $req = $request->validated();
-        $articles = Article::select('id', 'content', 'slug', 'content', 'created_at', 'user_id', 'sector_id', 'status', 'scope')
+
+         $articles = Article::select('id', 'content', 'slug', 'created_at', 'user_id', 'sector_id', 'city_id', 'status', 'scope')
             ->where('city_id', $user->city_id)
             ->with([
                 'user:id,first_name,last_name',
                 'sector:id,name',
                 'media'
-            ])->withCount(['likes', 'comments'])
+            ])
+            ->withCount(['likes', 'comments'])
             ->withExists(['likes as is_liked' => function ($q) {
-                $q->where(' ', Auth::id());
-            }])->where('status', 'published');
+                 $q->where('user_id', Auth::id());
+            }])
+            ->where('status', 'published');
+ 
         if ($req['type'] === 'local') {
             $articles->where('scope', 'local')->where('sector_id', $user->sector_id);
         }
         if ($req['type'] === 'global') {
             $articles->where('scope', 'global')->whereNull('sector_id');
         }
-        $articles = $articles->latest()->paginate(5);
+
+        $articles = $articles->latest()->paginate(5);  
+
         return ArticleResource::collection($articles);
     }
 
