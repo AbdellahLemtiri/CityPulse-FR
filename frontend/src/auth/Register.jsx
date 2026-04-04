@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import axiosClient from './config/axios-client';
-import { useStateContext } from './contexts/ContextProvider';
+import axiosClient from './../config/axios-client';
+import { useStateContext } from './../contexts/ContextProvider';
 import axios from 'axios';
 
 export default function Register() {
   const { token, setToken, setUser } = useStateContext();
   const [step, setStep] = useState(1);
-  const [sector, setSector] = useState([{}]);
+  const [cities, setCities] = useState([]);
+  const [sectors, setSectors] = useState([]);
+
   const [message, setMessage] = useState(null);
   const [formData, setFormData] = useState({
     first_name: '',
@@ -15,6 +17,7 @@ export default function Register() {
     cin: '',
     telephone: '',
     sector_id: '',
+    city_id: '',
     adresse: '',
     email: '',
     password: '',
@@ -73,10 +76,10 @@ export default function Register() {
       localStorage.setItem('token', response.data.access_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
-      navigate('/');
+      window.location.href = '/';
     } catch (err) {
       console.log(err);
-       if (err.response && err.response.status === 422) {
+      if (err.response && err.response.status === 422) {
         setErrors(err.response.data.errors);
       } else {
         setErrors({
@@ -91,22 +94,45 @@ export default function Register() {
   const strengthColors = ['bg-gray-200', 'bg-red-600', 'bg-orange-500', 'bg-yellow-500', 'bg-green-600'];
   const strengthLabels = ['Très faible', 'Très faible', 'Faible', 'Moyen', 'Fort'];
 
-  const fetchSectors = async () => {
+  const fetchCities = async () => {
     try {
-      const response = await axiosClient.get('/sectors');
-      console.log(response.data.data);
-      setSector(response.data);
+      const response = await axiosClient.get('/cities');
+      console.log(response.data);
+      setCities(response.data);
     } catch (err) {
       console.log(err);
     }
   };
 
   useEffect(() => {
-    fetchSectors();
+    fetchCities();
   }, []);
+
+  const handelchanageCity = async (e) => {
+    const selectedCityId = e.target.value;
+
+    setFormData({
+      ...formData,
+      city_id: selectedCityId,
+      sector_id: '',
+    });
+
+    if (selectedCityId) {
+      try {
+        const response = await axiosClient.get('sectors/city', { params: { city_id: selectedCityId } });
+        setSectors(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error('Erreur f chargement dyal les secteurs:', error);
+      }
+    } else {
+      setSectors([]);
+    }
+  };
+
   return (
     <div className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-sans min-h-screen flex flex-col items-center p-6 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+      <div className="absolute top-0 right-0 w-64 h-64 bg-orange-600/10 rounded-xl blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
       <header className="w-full max-w-lg flex items-center justify-between z-10 mb-4">
         <Link to="/login" className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-orange-600 transition">
@@ -128,9 +154,9 @@ export default function Register() {
             <span className={step >= 3 ? 'text-orange-600' : ''}>Sécurité</span>
           </div>
           <div className="flex gap-2 h-1.5">
-            <div className={`flex-1 rounded-full transition-all duration-500 ${step >= 1 ? 'bg-orange-600 shadow-sm shadow-orange-500/50' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
-            <div className={`flex-1 rounded-full transition-all duration-500 ${step >= 2 ? 'bg-orange-600 shadow-sm shadow-orange-500/50' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
-            <div className={`flex-1 rounded-full transition-all duration-500 ${step >= 3 ? 'bg-orange-600 shadow-sm shadow-orange-500/50' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
+            <div className={`flex-1 rounded-lg   ${step >= 1 ? 'bg-orange-600 shadow-sm shadow-orange-500/50' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
+            <div className={`flex-1 rounded-lg   ${step >= 2 ? 'bg-orange-600 shadow-sm shadow-orange-500/50' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
+            <div className={`flex-1 rounded-lg   ${step >= 3 ? 'bg-orange-600 shadow-sm shadow-orange-500/50' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
           </div>
         </div>
 
@@ -144,7 +170,7 @@ export default function Register() {
 
         {message && <div className="bg-green-50 text-green-600 text-sm p-3 rounded-xl mb-4 border border-green-200">{message}</div>}
 
-        <div className="w-full bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-2xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 relative min-h-[400px]">
+        <div className="w-full bg-white dark:bg-slate-900 p-8 rounded-lg shadow-2xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 relative min-h-[400px]">
           <form onSubmit={onSubmit} className="flex flex-col h-full justify-between">
             {step === 1 && (
               <div className="animate-fade-in space-y-4">
@@ -155,28 +181,28 @@ export default function Register() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Prénom *</label>
-                    <input type="text" id="first_name" value={formData.first_name} onChange={handleChange} required className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none transition-all" />
+                    <input type="text" id="first_name" value={formData.first_name} onChange={handleChange} required className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none " />
                   </div>
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Nom *</label>
-                    <input type="text" id="last_name" value={formData.last_name} onChange={handleChange} required className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none transition-all" />
+                    <input type="text" id="last_name" value={formData.last_name} onChange={handleChange} required className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 px-4 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none " />
                   </div>
                 </div>
                 <div className="space-y-1 relative group">
                   <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">CIN (Carte Nationale) *</label>
                   <div className="relative">
-                    <input type="text" id="cin" value={formData.cin} onChange={handleChange} required placeholder="H123456" className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 pl-11 pr-4 uppercase focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none transition-all" />
+                    <input type="text" id="cin" value={formData.cin} onChange={handleChange} required placeholder="H123456" className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 pl-11 pr-4 uppercase focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none " />
                     <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">badge</span>
                   </div>
                 </div>
                 <div className="space-y-1 relative group">
                   <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Téléphone *</label>
                   <div className="relative">
-                    <input type="tel" id="telephone" value={formData.telephone} onChange={handleChange} required placeholder="06..." className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 pl-11 pr-4 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none transition-all" />
+                    <input type="tel" id="telephone" value={formData.telephone} onChange={handleChange} required placeholder="06..." className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 pl-11 pr-4 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none " />
                     <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">smartphone</span>
                   </div>
                 </div>
-                <button type="button" onClick={nextStep} disabled={!formData.first_name || !formData.last_name || !formData.cin || !formData.telephone} className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-600/20 transition-all flex items-center justify-center gap-2 mt-4 disabled:opacity-50">
+                <button type="button" onClick={nextStep} disabled={!formData.first_name || !formData.last_name || !formData.cin || !formData.telephone} className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-orange-600/20  flex items-center justify-center gap-2 mt-4 disabled:opacity-50">
                   Suivant <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </button>
               </div>
@@ -188,32 +214,40 @@ export default function Register() {
                   <h2 className="text-2xl font-bold mb-1">Votre Secteur</h2>
                   <p className="text-sm text-gray-500 mb-4">Choisissez votre zone dans Safi.</p>
 
-                  <label className="text-[10px] font-bold uppercase text-gray-400 ml-1 mb-2 block">Secteurs disponibles *</label>
+                  <div>
+                    <label>Ville</label>
+                    <select name="city_id" id="city_id" value={formData.city_id} onChange={handelchanageCity} className="border p-2 w-full rounded">
+                      <option value="">Selectionnez Votre ville</option>
+                      {cities.map((city) => (
+                        <option key={city.id} value={city.id}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-                  <div className="grid grid-cols-2 gap-3 mb-4 max-h-[220px] overflow-y-auto pr-1">
-                    <select id="sector_id" value={formData.sector_id} onChange={handleChange} className="w-full bg-gray-50 dark:bg-slate-800 border-none rounded-xl p-3.5 ">
-                      {sector.length === 0 ? (
-                        <option>Chargement...</option>
-                      ) : (
-                        sector.map((sector) => (
-                          <option key={sector.id} value={sector.id}>
-                            {sector.name}
-                          </option>
-                        ))
-                      )}
+                  <div>
+                    <label>L'annexe administrative de votre district</label>
+                    <select name="sector_id" id="sector_id" value={formData.sector_id} onChange={handleChange} disabled={!formData.city_id || sectors.length === 0} className="border p-2 w-full rounded disabled:bg-gray-200">
+                      <option value="">Choisir</option>
+                      {sectors.map((sector) => (
+                        <option key={sector.id} value={sector.id}>
+                          {sector.name} {sector.description ? `(${sector.description})` : ''}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Adresse exacte (Optionnel)</label>
-                    <textarea id="adresse" rows="2" value={formData.adresse} onChange={handleChange} placeholder="Rue, N°..." className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3 px-4 resize-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none transition-all"></textarea>
+                    <textarea id="adresse" rows="2" value={formData.adresse} onChange={handleChange} placeholder="Rue, N°..." className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3 px-4 resize-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none "></textarea>
                   </div>
                 </div>
                 <div className="flex gap-3 mt-4">
-                  <button type="button" onClick={prevStep} className="px-6 border border-gray-200 dark:border-slate-700 text-gray-500 font-bold py-4 rounded-xl hover:bg-gray-50 transition-all">
+                  <button type="button" onClick={prevStep} className="px-6 border border-gray-200 dark:border-slate-700 text-gray-500 font-bold py-4 rounded-xl hover:bg-gray-50 ">
                     Retour
                   </button>
-                  <button type="button" onClick={nextStep} disabled={!formData.sector_id} className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                  <button type="button" onClick={nextStep} disabled={!formData.sector_id} className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl  flex items-center justify-center gap-2 disabled:opacity-50">
                     Suivant <span className="material-symbols-outlined text-sm">arrow_forward</span>
                   </button>
                 </div>
@@ -230,7 +264,7 @@ export default function Register() {
                     <div className="space-y-1 relative">
                       <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Email *</label>
                       <div className="relative">
-                        <input type="email" id="email" value={formData.email} onChange={handleChange} required className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 pl-11 pr-4 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none transition-all" />
+                        <input type="email" id="email" value={formData.email} onChange={handleChange} required className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 pl-11 pr-4 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none " />
                         <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">mail</span>
                       </div>
                     </div>
@@ -238,7 +272,7 @@ export default function Register() {
                     <div className="space-y-1 relative">
                       <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">Mot de passe *</label>
                       <div className="relative">
-                        <input type={showPassword ? 'text' : 'password'} id="password" value={formData.password} onChange={handleChange} required className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 pl-11 pr-10 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none transition-all" />
+                        <input type={showPassword ? 'text' : 'password'} id="password" value={formData.password} onChange={handleChange} required className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl py-3.5 pl-11 pr-10 focus:ring-2 focus:ring-orange-500/50 focus:border-orange-600 outline-none " />
                         <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">lock</span>
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-600">
                           <span className="material-symbols-outlined text-sm">{showPassword ? 'visibility' : 'visibility_off'}</span>
@@ -254,7 +288,7 @@ export default function Register() {
 
                           <div className="flex gap-1 h-1.5 mb-2">
                             {[1, 2, 3, 4].map((num) => (
-                              <div key={num} className={`flex-1 rounded-full ${pwdStrength.score >= num ? strengthColors[pwdStrength.score] : 'bg-gray-200 dark:bg-slate-700'}`}></div>
+                              <div key={num} className={`flex-1 rounded-xl ${pwdStrength.score >= num ? strengthColors[pwdStrength.score] : 'bg-gray-200 dark:bg-slate-700'}`}></div>
                             ))}
                           </div>
 
@@ -290,10 +324,10 @@ export default function Register() {
                 </div>
 
                 <div className="flex gap-3 mt-4">
-                  <button type="button" onClick={prevStep} className="px-6 border border-gray-200 dark:border-slate-700 text-gray-500 font-bold py-4 rounded-xl hover:bg-gray-50 transition-all">
+                  <button type="button" onClick={prevStep} className="px-6 border border-gray-200 dark:border-slate-700 text-gray-500 font-bold py-4 rounded-xl hover:bg-gray-50 ">
                     Retour
                   </button>
-                  <button type="submit" disabled={loading || pwdStrength.score < 3 || !formData.terms} className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:opacity-90 font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                  <button type="submit" disabled={loading || pwdStrength.score < 3 || !formData.terms} className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:opacity-90 font-bold py-4 rounded-xl shadow-lg  flex items-center justify-center gap-2 disabled:opacity-50">
                     {loading ? 'Création...' : 'Terminer'} <span className="material-symbols-outlined text-sm">check_circle</span>
                   </button>
                 </div>
