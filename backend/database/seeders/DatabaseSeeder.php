@@ -21,8 +21,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $adminRole = Role::create(['name' => 'admin', 'label' => 'Administrateur']);
-        $managerRole = Role::create(['name' => 'manager', 'label' => 'Manager de Secteur']);
+        $managerRole = Role::create(['name' => 'manager', 'label' => ' le Responsable de Secteur']);
         $citoyenRole = Role::create(['name' => 'citoyen', 'label' => 'Citoyen']);
-        $citoyenRole = Role::create(['name' => 'jounaliste', 'label' => 'jounaliste']);
+        $citoyenRole = Role::create(['name' => 'jounaliste', 'label' => 'le jounaliste de la ville']);
+
+        
     }
 }
