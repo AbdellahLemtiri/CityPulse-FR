@@ -4,8 +4,7 @@ import { useTheme } from "../contexts/ThemeContext";
 export default function Profil() {
   const { isDarkMode, toggleTheme } = useTheme();
 
-  // 1. MOCK DATA
-  const mockUser = {
+   const mockUser = {
     first_name: "Abdellah",
     last_name: "Lemtiri",
     email: "abdellah.lemtiri@email.com",
@@ -13,7 +12,7 @@ export default function Profil() {
     cin: "HH123456",
     adresse: "Quartier Plateau, Safi",
     xp_points: 1200,
-    avatar: "https://i.pravatar.cc/150?u=abdellah"
+    avatar: ""
   };
 
   // 2. STATES
@@ -40,8 +39,7 @@ export default function Profil() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    // Simulation dial l-API
-    setTimeout(() => {
+     setTimeout(() => {
       setUser({ ...user, ...formData });
       setIsEditing(false);
       setLoading(false);
@@ -55,8 +53,7 @@ export default function Profil() {
         Profil & Paramètres
       </h2>
 
-      {/* 1. HEADER DIAL L-PROFIL */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-6 shadow-sm flex items-center gap-6 transition-colors">
+       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-6 shadow-sm flex items-center gap-6 transition-colors">
         <img 
           src={user.avatar} 
           alt="Profil" 
