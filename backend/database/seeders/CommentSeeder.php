@@ -54,7 +54,6 @@ class CommentSeeder extends Seeder
                     Comment::create([
                         'body'             => $faker->randomElement($reponsesManager),
                         'is_flagged'       => false,
-                        // Kan-ferdouha t-koun l-User r9m 1 awla 2 (b-ze3ma homa l-Managers)
                         'user_id'          => $users->whereIn('role_id', [1, 2])->random()->id ?? $users->random()->id,
                         'commentable_type' => 'App\\Models\\Article',
                         'commentable_id'   => $article->id,
