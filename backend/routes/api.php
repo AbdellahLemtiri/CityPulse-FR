@@ -13,10 +13,11 @@ use App\Http\Controllers\SectorController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\CategoryIncidentController;
 use App\Http\Controllers\ProposalController;
-
+use App\Http\Controllers\cityController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::get('/sectors', [SectorController::class, 'index']);
+Route::get('/cities', [cityController::class, 'index']);
+Route::get('sectors/city', [SectorController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -25,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });  
 
     Route::resource('/articles', ArticleController::class)->only(['index', 'store','destroy']);
+    Route::resource('/incidents', IncidentController::class)->only(['index', 'store','destroy']);
 
      Route::post('/comments', [CommentController::class, 'store']);
      Route::get('/comments', [CommentController::class, 'index']);
@@ -34,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/proposals', [ProposalController::class,'store']);
     Route::get('/proposals/my-proposals', [ProposalController::class,'MyProposals']);
     Route::get('/proposals', [ProposalController::class,'index']);
+    Route::apiResource('/categories', CategoryIncidentController::class);
 
  
    
@@ -51,7 +54,6 @@ Route::prefix('admin')->group(function () {
      Route::post('/staff', [StaffController::class, 'store']);
     Route::get('/staff', [StaffController::class, 'index']);
     Route::apiResource('/categories', CategoryIncidentController::class);
-    Route::apiResource('/sectors', SectorController::class);
-    Route::apiResource('/partners', PartnerController::class);
+     Route::apiResource('/partners', PartnerController::class);
     Route::post('/workflows', [CategoryIncidentController::class, 'storeWorkflows']);
 });
