@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axiosClient from '../config/axios-client';
+import { ScrollText } from 'lucide-react';
+
 // import { formatDistanceToNow } from "date-fns";
 // import { fr } from "date-fns/locale";
 import CommentItem from './CommentItem.jsx';
@@ -14,8 +16,9 @@ export default function HomeFeed() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [comments, setComments] = useState([{}]);
-  const commentInputRef = useRef(null);  
+  const [comments, setComments] = useState([]);
+  const commentInputRef = useRef(null);
+  const tabs = ['Tout', 'Officiel', 'Quartier'];
   useEffect(() => {
     setPosts([]);
     setPage(1);
@@ -23,24 +26,31 @@ export default function HomeFeed() {
     fetchFeed(activeTab, 1, false);
   }, [activeTab]);
 
-  const fetchFeed = async (category, pageNum = 1, isLoadMore = false) => {
+  const fetchFeed = async (selectTab, pageNum = 1, isLoadMore = false) => {
     if (isLoadMore) {
       setLoadingMore(true);
     } else {
       setLoading(true);
     }
-
+    let typeParam = 'tout';
+    if (selectTab === 'Officiel') {
+      typeParam = 'global';
+    }
+    if (selectTab === 'Quartier') {
+      typeParam = 'local';
+    }
+    let type = typeParam;
     try {
-      let typeParam = 'tout';
-      if (category === 'Officiel') typeParam = 'office';
-      if (category === 'Quartier') typeParam = 'quartier';
-      const response = await axiosClient.get(`/articles?type=${typeParam}&page=${pageNum}`);
+      console.log(selectTab);
+      console.log(typeParam);
+      const response = await axiosClient.get('/articles', { params: { type: typeParam, page: pageNum } });
+      console.log(typeParam);
+
       const metaData = response.data.meta;
       const rawData = response.data.data;
       const formattedPosts = rawData.map((post) => {
         return {
           id: post.id,
-          title: post.title,
           content: post.content,
           scope: post.scope,
           status: post.status,
@@ -74,8 +84,6 @@ export default function HomeFeed() {
     }
   };
 
-  const tabs = ['Tout', 'Officiel', 'Quartier'];
-
   const handlLikeart = (clickedPost) => {
     const updatedPosts = posts.map((p) => {
       if (p.id === clickedPost.id) {
@@ -101,10 +109,9 @@ export default function HomeFeed() {
     }
   };
   const handleReplyClick = (commentId, authorName) => {
-    setReplyingToId(commentId); // Sajjlna l-ID d-l-parent
-    setCommentText(`@${authorName} `); // 7ttina @Smiya w moraha Espace
+    setReplyingToId(commentId);
+    setCommentText(`@${authorName}  `);
 
-    // Zrebna b 10 millisecondes bach React y-wjed l-Input 3ad n-dirou Focus
     setTimeout(() => {
       if (commentInputRef.current) {
         commentInputRef.current.focus();
@@ -161,7 +168,12 @@ export default function HomeFeed() {
         {' '}
         <div className="bg-white dark:bg-gray-800 p-1 rounded-lg flex font-bold text-sm shadow-sm border border-gray-200 dark:border-gray-700">
           {tabs.map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`flex-1 py-1.5 rounded-lg   ${activeTab === tab ? 'bg-primary-100 dark:bg-primary-600/20 dark:text-primary-100 dark:primary-500 text-gray-500   ' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50  '}`}>
+            <button
+              key={tab}
+              onClick={() => {
+                setActiveTab(tab);
+              }}
+              className={`flex-1 py-1.5 rounded-lg   ${activeTab === tab ? 'bg-primary-100 dark:bg-primary-600/20 dark:text-primary-100 dark:primary-500 text-gray-500   ' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50  '}`}>
               {tab}
             </button>
           ))}
@@ -170,14 +182,13 @@ export default function HomeFeed() {
 
       <div className="space-y-6 pb-20 md:pb-0 ">
         {loading && page === 1 ? (
-          <div className="text-center py-10">
-            <span className="material-symbols-outlined animate-spin text-blue-500 text-4xl">autorenew</span>
-            <p className="text-gray-500 mt-2">Chargement de l'actualité...</p>
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-10 text-gray-500 bg-white dark:bg-gray-800 rounded-lg border border-dashed border-gray-300">
-            <span className="material-symbols-outlined text-4xl mb-2 text-gray-400 block">article</span>
-            Aucune actualité trouvée pour la catégorie "{activeTab}".
+          <div className="text-center flex justify-center gap-4 py-10 text-gray-500 bg-white dark:bg-gray-800 rounded-lg    ">
+            <ScrollText className='text-gray-500 dark:text-gray-400 ' />
+            Aucune actualité trouvée pour le mement .
           </div>
         ) : (
           <>
@@ -197,7 +208,7 @@ export default function HomeFeed() {
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500 flex items-center gap-1">{new Date(post.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-gray-500 flex items-center gap-1">{post.created_at}</p>
                   </div>
                 </div>
 
@@ -212,9 +223,10 @@ export default function HomeFeed() {
                   <button className="  ">
                     <span className={`text-gray-400   rounded-xl `}>{post.like_count}</span>
                   </button>
-                   <button className="  ">
+                  <button className="  ">
                     <span className={`text-gray-400   rounded-xl `}>{post.comment_count}</span>
-                  </button> <button className="  ">
+                  </button>{' '}
+                  <button className="  ">
                     <span className={`text-gray-400   rounded-xl `}>...</span>
                   </button>
                 </div>
@@ -237,11 +249,11 @@ export default function HomeFeed() {
                 </div>
 
                 {openCommentsId === post.id && (
-                  <div className="border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/20 p-4 animate-fade-in rounded-b-2xl">
-                     <div className="space-y-4 mb-4 max-h-60 overflow-y-auto no-scrollbar">{comments.length === 0 ? <div className="text-center text-gray-500 py-4 text-sm">Aucun commentaire pour l'instant. Soyez le premier !</div> : comments.map((comment) => <CommentItem key={comment.id} comment={comment} onReply={handleReplyClick} /* 👈 Darouriya bach t-khdem l-boutona d-Répondre */ />)}</div>
+                  <div className="border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/20 p-4 animate-fade-in rounded-b-lg">
+                    <div className="space-y-4 mb-4  overflow-y-auto no-scrollbar">{comments.length === 0 ? <div className="text-center text-gray-500 py-4 text-sm">Aucun commentaire pour l'instant. Soyez le premier !</div> : comments.map((comment) => <CommentItem key={comment.id} comment={comment} onReply={handleReplyClick} />)}</div>
 
-                     <div className="flex gap-2 items-center mt-2 relative flex-col">
-                       {replyingToId && (
+                    <div className="flex gap-2 items-center mt-2 relative flex-col">
+                      {replyingToId && (
                         <div className="w-full text-[11px] text-blue-600 flex justify-between px-2 mb-1 bg-blue-50/50 rounded-t-md py-1">
                           <span>En réponse à un commentaire...</span>
                           <button
@@ -255,23 +267,20 @@ export default function HomeFeed() {
                         </div>
                       )}
 
-                       <div className="flex w-full gap-2 relative items-center">
+                      <div className="flex w-full gap-2 relative items-center">
                         <div className="w-8 h-8 rounded-lg bg-gray-300 flex-shrink-0"></div>
                         <input
-                          ref={commentInputRef} 
+                          ref={commentInputRef}
                           value={commentText}
                           onChange={(e) => {
                             setCommentText(e.target.value);
-                             if (e.target.value === '') setReplyingToId(null);
+                            if (e.target.value === '') setReplyingToId(null);
                           }}
                           type="text"
                           placeholder="Écrire un commentaire...."
                           className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-sm"
                         />
-                        <button
-                          onClick={() => handleSendComment(post.id)} 
-                          disabled={!commentText.trim()}  
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 w-8 h-8 flex items-center justify-center rounded-lg transition-colors">
+                        <button onClick={() => handleSendComment(post.id)} disabled={!commentText.trim()} className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 w-8 h-8 flex items-center justify-center rounded-lg transition-colors">
                           <span className="material-symbols-outlined text-[20px]">send</span>
                         </button>
                       </div>
@@ -297,8 +306,7 @@ export default function HomeFeed() {
             )}
           </>
         )}
-
-       </div>
+      </div>
     </>
   );
 }
