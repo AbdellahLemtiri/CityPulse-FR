@@ -37,62 +37,62 @@ export default function AdminBanMonitor() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl mx-auto text-gray-200">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-wide">
+        <h2 className="text-2xl font-bold text-white uppercase tracking-wide">
           Surveillance des Bannissements
         </h2>
-        <p className="text-sm text-gray-600 mt-1">Gérez les comptes citoyens suspendus suite à la règle des 3 Strikes.</p>
+        <p className="text-sm text-gray-400 mt-1">Gérez les comptes citoyens suspendus suite à la règle des 3 Strikes.</p>
       </div>
 
-      {/* Message d'information */}
-      <div className="bg-red-50 border-l-4 border-red-600 p-4 mb-6 flex items-start gap-3">
-        <span className="material-symbols-outlined text-red-600">warning</span>
+      {/* Message d'information (Adapté pour le Dark Mode) */}
+      <div className="bg-red-900/20 border-l-4 border-red-500 p-4 mb-6 flex items-start gap-3 rounded-r-lg">
+        <span className="material-symbols-outlined text-red-500">warning</span>
         <div>
-          <p className="text-sm font-bold text-red-800">Règle de suspension automatique activée</p>
-          <p className="text-xs text-red-700 mt-1">Tout utilisateur atteignant 3 avertissements (Strikes) est automatiquement placé dans cette liste. Seul un Administrateur peut lever cette sanction.</p>
+          <p className="text-sm font-bold text-red-400">Règle de suspension automatique activée</p>
+          <p className="text-xs text-red-300 mt-1">Tout utilisateur atteignant 3 avertissements (Strikes) est automatiquement placé dans cette liste. Seul un Administrateur peut lever cette sanction.</p>
         </div>
       </div>
 
       {/* TABLEAU DES BANNIS */}
-      <div className="bg-white border border-gray-300 shadow-sm overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+      <div className="bg-gray-800 border border-gray-700 shadow-sm rounded-lg overflow-x-auto">
+        <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
-            <tr className="bg-gray-100 border-b border-gray-300 text-xs text-gray-700 uppercase tracking-wider">
-              <th className="p-3 border-r border-gray-200">Citoyen Banni</th>
-              <th className="p-3 border-r border-gray-200">Date de Suspension</th>
-              <th className="p-3 border-r border-gray-200">Dernier Motif (3ème Strike)</th>
-              <th className="p-3 border-r border-gray-200">Sanctionné par</th>
-              <th className="p-3 text-center">Action Admin</th>
+            <tr className="bg-gray-900 border-b border-gray-700 text-xs text-gray-400 uppercase tracking-wider">
+              <th className="p-4 border-r border-gray-700">Citoyen Banni</th>
+              <th className="p-4 border-r border-gray-700">Date de Suspension</th>
+              <th className="p-4 border-r border-gray-700">Dernier Motif (3ème Strike)</th>
+              <th className="p-4 border-r border-gray-700">Sanctionné par</th>
+              <th className="p-4 text-center">Action Admin</th>
             </tr>
           </thead>
           <tbody>
             {bannedUsers.length === 0 ? (
               <tr>
-                <td colSpan="5" className="p-6 text-center text-gray-500 font-bold">
+                <td colSpan="5" className="p-8 text-center text-gray-500 font-bold bg-gray-800">
                   Aucun citoyen n'est actuellement banni.
                 </td>
               </tr>
             ) : (
               bannedUsers.map(user => (
-                <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-50 text-sm">
-                  <td className="p-3 border-r border-gray-200">
-                    <p className="font-bold text-gray-900">{user.first_name} {user.last_name}</p>
-                    <p className="text-xs text-gray-500">{user.email}</p>
+                <tr key={user.id} className="border-b border-gray-700 hover:bg-gray-700/50 text-sm transition-colors">
+                  <td className="p-4 border-r border-gray-700">
+                    <p className="font-bold text-gray-200">{user.first_name} {user.last_name}</p>
+                    <p className="text-xs text-gray-400">{user.email}</p>
                   </td>
-                  <td className="p-3 border-r border-gray-200 text-red-600 font-bold">
+                  <td className="p-4 border-r border-gray-700 text-red-400 font-bold">
                     {new Date(user.ban_date).toLocaleString('fr-FR')}
                   </td>
-                  <td className="p-3 border-r border-gray-200 text-gray-800">
+                  <td className="p-4 border-r border-gray-700 text-gray-300">
                     {user.last_reason}
                   </td>
-                  <td className="p-3 border-r border-gray-200 text-gray-600 text-xs">
+                  <td className="p-4 border-r border-gray-700 text-gray-400 text-xs">
                     {user.banned_by}
                   </td>
-                  <td className="p-3 text-center">
+                  <td className="p-4 text-center">
                     <button 
                       onClick={() => handleUnban(user.id, `${user.first_name} ${user.last_name}`)}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-1.5 px-3 uppercase text-xs transition-colors flex items-center justify-center gap-1 mx-auto"
+                      className="bg-green-600 hover:bg-green-500 text-white font-bold py-1.5 px-3 rounded uppercase text-xs transition-colors flex items-center justify-center gap-1 mx-auto"
                       title="Réactiver le compte"
                     >
                       <span className="material-symbols-outlined text-[16px]">how_to_reg</span>
