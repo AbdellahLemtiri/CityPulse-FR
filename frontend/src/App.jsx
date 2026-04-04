@@ -1,11 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Welcome from './Welcome';
-import Login from './Login';
-import Register from './Register';
+import Login from './auth/Login';
+import Register from './auth/Register';
 import Dashboard from './Dashboard';
 import HomeFeed from './citoyen/HomeFeed';
 import Proposals from './citoyen/Proposals';
 import Signalements from './citoyen/Signalements';
+import Pharmacy from './citoyen/pharmacy';
 import Profil from './citoyen/Profil';
 import JournalisteLayout from './components/layouts/JournalisteLayout';
 import JournalisteEditor from './journaliste/JournalisteEditor';
@@ -20,8 +21,7 @@ import AdminLayout from './components/layouts/AdminLayout';
 import AdminMasterData from './admin/AdminMasterData';
 import AdminStaff from './admin/AdminStaff';
 import AdminBanMonitor from './admin/AdminBanMonitor';
-import AdminSystem from './admin/AdminSystem';
-function App() {
+ function App() {
   return (
     <Routes>
        <Route path="/" element={<Welcome />} />
@@ -34,6 +34,7 @@ function App() {
         <Route path="/idees" element={<Proposals />} />
         <Route path="/signalements" element={<Signalements />} />
         <Route path="/profil" element={<Profil />} />
+        <Route path="/parmacy" element={<Pharmacy />} />
       </Route>
 
       <Route path="/manager" element={<ManagerLayout />}>
@@ -54,8 +55,7 @@ function App() {
         <Route path="masterdata" element={<AdminMasterData />} />
         <Route path="staff" element={<AdminStaff />} />
         <Route path="bans" element={<AdminBanMonitor />} />
-        <Route path="systeme" element={<AdminSystem />} />
-      </Route>
+       </Route>
     </Routes>
   );
 }
