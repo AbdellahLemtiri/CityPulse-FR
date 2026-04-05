@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreStaffRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\Sector;
 
 class StaffController extends Controller
 {
@@ -17,8 +19,8 @@ class StaffController extends Controller
     public function index()
     {
         //
-        $staffs = User::whereIn('role_id', [2, 4])->with('role')->get();
-
+        $admin = Auth::user();
+        $staffs = User::where('city_id', $admin->city_id)->whereIn('role_id', [2, 4])->with('role')->get();
         return response()->json($staffs);
     }
 
@@ -37,8 +39,11 @@ class StaffController extends Controller
     {
         //  
 
+      
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
+        $sector = Sector::findOrFail($data['sector_id']);
+        $data['city_id'] = $sector->city_id;
         $data['uuid'] = Str::uuid();
         User::create($data);
         $user = User::where('email', $data['email'])->with('role')->firstOrFail();
