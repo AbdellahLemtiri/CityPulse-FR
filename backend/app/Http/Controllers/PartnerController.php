@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Partner;
 use App\Http\Requests\StorePartnerRequest;
+use Illuminate\Support\Facades\Auth;
 
 class PartnerController extends Controller
 {
@@ -30,8 +31,10 @@ class PartnerController extends Controller
 
             $data = $request->validated();
 
+            $user = Auth::user();
             $logoFile = $request->file('logo');
             unset($data['logo']);
+            $data['city_id'] = $user->city_id;
             $partner = Partner::create($data);
 
             if ($logoFile) {
