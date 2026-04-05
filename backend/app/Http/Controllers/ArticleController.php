@@ -23,7 +23,7 @@ class ArticleController extends Controller
     {
         $user = Auth::user();
         $req = $request->validated();
-
+                    
          $articles = Article::select('id', 'content', 'slug', 'created_at', 'user_id', 'sector_id', 'city_id', 'status', 'scope')
             ->where('city_id', $user->city_id)
             ->with([
@@ -65,7 +65,9 @@ class ArticleController extends Controller
         }
 
         $data['slug'] = Str::slug($data['content']);
+        $data['city_id'] = $user->city_id;
         $article = Article::create($data);
+
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('articles', 'public');
             $article->media()->create([
