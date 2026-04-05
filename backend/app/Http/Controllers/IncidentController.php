@@ -14,6 +14,7 @@ use App\Mail\PartnerIncidentMail;
 use Illuminate\Support\Facades\DB;
 use App\Models\CategoryIncident;
 use Illuminate\Support\Facades\Mail;
+
 class IncidentController extends Controller
 {
 
@@ -30,17 +31,24 @@ class IncidentController extends Controller
      */
     public function index()
     {
-        //
-
         $user = Auth::user();
-        if ($user->role_id === 2) {
-            $incidents = Incident::where('sector_id', $user->sector_id)->with(['user:id,first_name,last_name','category:name'])  ->latest()->paginate(10);
+        $roleId = 2;
+
+        if ($roleId === 2) {
+            $incidents = Incident::where('sector_id', $user->sector_id)
+                ->with(['user:id,first_name,last_name', 'category:id,name', 'partner:name,email,phone_fix,whatsapp,sla_hours', 'media:file_path'])
+                ->latest()
+                ->paginate(10);
+
             return getIncidentResourse::collection($incidents);
-        } elseif ($user->role_id === 3) {
-            $incidents = Incident::where('sector_id', $user->sector_id)->latest()->paginate(10);
+        } elseif ($roleId === 3) {
+            $incidents = $user->incidents()
+                ->with('category:id,name')
+                ->latest()
+                ->paginate(10);
+
             return getIncidentResourse::collection($incidents);
         }
-
     }
 
     /**
@@ -67,51 +75,68 @@ class IncidentController extends Controller
         ], 201);
     }
 
-    
+
     public function qualifyIncident(Request $request, $id)
     {
-        
-       
+        $manager = Auth::guard('sanctum')->user();
         $request->validate([
             'category_id' => 'required|exists:category_incidents,id'
         ]);
 
-        return DB::transaction(function () use ($request, $id) {
-             $incident = Incident::findOrFail($id);
-
-           
+        return DB::transaction(function () use ($request, $id, $manager) {
+            $incident = Incident::findOrFail($id);
             $category = CategoryIncident::findOrFail($request->category_id);
-            $partner = $category->partners()->where('city_id', $incident->city_id)->first();
+            $partner = DB::table('category_incidents')->join('category_partner', 'category_incidents.id', '=', 'category_partner.category_incident_id')->join('partners', 'category_partner.partner_id', '=', 'partners.id')->where('category_incidents.id', $category->id)->where('partners.city_id', $manager->city_id)->first();
+
 
             if (!$partner) {
                 return response()->json(['message' => 'Erreur : Aucun partenaire assigné à cette catégorie dans cette ville.'], 400);
             }
 
-             $incident->update([
-                'category_incident_id' => $category->id,
+            $incident->update([
+                'category_id' => $category->id,
                 'partner_id' => $partner->id,
                 'status' => 'in_progress',
-                'qualified_at' => now(),  
+                'qualified_at' => now(),
             ]);
 
-           
-            Mail::to($partner->email)->send(new PartnerIncidentMail($incident, $partner));
+
+            $incident->load("category");
+            Mail::to($partner->email)->send(new PartnerIncidentMail($incident, $partner, $manager));
 
             return response()->json([
                 'message' => 'Incident qualifié et partenaire notifié avec succès !',
-                'incident' => $incident->load(['category', 'partner'])  
+                'incident' => $incident->load(['category', 'partner'])
             ], 200);
         });
     }
- 
+
+    public function rejectIncident(Request $request, $id)
+    {
+        $manager = Auth::guard('sanctum')->user();
+
+        $request->validate([
+            'rejection_reason' => 'required|string'
+        ]);
+
+        $incident = Incident::findOrFail($id);
+        $incident->update([
+            'status' => 'rejected',
+            'rejection_reason' => $request->rejection_reason,
+            'rejected_at' => now(),
+        ]);
+
+        return response()->json([
+            'message' => 'Incident rejetté avec succès !',
+            'incident' => $incident->load(['category', 'partner'])
+        ], 200);
+    }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update($request, string $id)
-    {
-        //
-    }
+    public function update($request, string $id) {}
 
     /**
      * Remove the specified resource from storage.
