@@ -9,7 +9,11 @@ use App\Models\Incident;
 use Illuminate\Support\Facades\Auth;
 use App\Services\IncidentService;
 use App\Http\Resources\incident\getIncidentResourse;
-
+use App\Http\Requests\UpdateIncidentRequest;
+use App\Mail\PartnerIncidentMail;
+use Illuminate\Support\Facades\DB;
+use App\Models\CategoryIncident;
+use Illuminate\Support\Facades\Mail;
 class IncidentController extends Controller
 {
 
@@ -63,21 +67,43 @@ class IncidentController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    
+    public function qualifyIncident(Request $request, $id)
     {
-        //
-    }
+        
+       
+        $request->validate([
+            'category_id' => 'required|exists:category_incidents,id'
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return DB::transaction(function () use ($request, $id) {
+             $incident = Incident::findOrFail($id);
+
+           
+            $category = CategoryIncident::findOrFail($request->category_id);
+            $partner = $category->partners()->where('city_id', $incident->city_id)->first();
+
+            if (!$partner) {
+                return response()->json(['message' => 'Erreur : Aucun partenaire assigné à cette catégorie dans cette ville.'], 400);
+            }
+
+             $incident->update([
+                'category_incident_id' => $category->id,
+                'partner_id' => $partner->id,
+                'status' => 'in_progress',
+                'qualified_at' => now(),  
+            ]);
+
+           
+            Mail::to($partner->email)->send(new PartnerIncidentMail($incident, $partner));
+
+            return response()->json([
+                'message' => 'Incident qualifié et partenaire notifié avec succès !',
+                'incident' => $incident->load(['category', 'partner'])  
+            ], 200);
+        });
     }
+ 
 
     /**
      * Update the specified resource in storage.
