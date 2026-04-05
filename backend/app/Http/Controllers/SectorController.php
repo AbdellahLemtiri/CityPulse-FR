@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Sector\StoreSectorRequest;
 use App\Models\Sector;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class SectorController extends Controller
 {
@@ -15,9 +16,17 @@ class SectorController extends Controller
      */
     public function index(Request $request)
     {
-        //
-        $id = $request->city_id;
-        $sectors = Sector::where('city_id', $id)->with('logo')->get();
+        $user = Auth::guard('sanctum')->user();
+        if ($user) {
+            $city_id = $user->city_id;
+        } else {
+            $request->validate([
+                'city_id' => 'required|integer|exists:cities,id'
+            ]);
+
+            $city_id = $request->input('city_id');
+        }
+        $sectors = Sector::where('city_id', $city_id)->with('logo')->get();
         return response()->json($sectors, 200);
     }
 
