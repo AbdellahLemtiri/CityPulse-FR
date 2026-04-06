@@ -24,6 +24,7 @@ class getIncidentResourse extends JsonResource
             'images' => $this->media->pluck('file_path'),
             'address' => $this->location_name,
             'rejection_reason' => $this->location_address,
+            'category' => $this->category?->name,
         ];
     }
 }
