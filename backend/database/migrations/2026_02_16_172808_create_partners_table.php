@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('phone_fix')->nullable();
             $table->string('whatsapp')->nullable();
             $table->integer('sla_hours')->default(48);
+            $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
              $table->timestamps();
         });
     }
