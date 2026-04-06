@@ -30,6 +30,9 @@ class StoreStaffRequest extends FormRequest
             'email' => 'required|email|unique:users,email',
             'password' => ['required', Password::min(8)->letters()->numbers()->symbols()],
             'role_id' => 'required|exists:roles,id',
-'sector_id' => 'required_if:role_id,2|nullable|exists:sectors,id',        ];
+            'sector_id' => 'required|exists:sectors,id',
+            'phone' => 'required|string|unique:users,phone',
+            'cin' => 'required|string|unique:users,cin',
+        ];
     }
 }
