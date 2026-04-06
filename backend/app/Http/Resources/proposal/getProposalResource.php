@@ -17,8 +17,7 @@ class getProposalResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
-            'description' => $this->description,
+             'description' => $this->description,
             'created_at' => $this->created_at->diffForHumans(),
             'status' => $this->status,
             'sector_name' => $this->sector->name,
