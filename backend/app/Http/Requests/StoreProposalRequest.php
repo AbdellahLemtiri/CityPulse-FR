@@ -23,8 +23,7 @@ class StoreProposalRequest extends FormRequest
     {
         return [
             
-            'title' => 'required|string|max:255|min:3',
-            'description' => 'required|string|max:255|min:3',
+             'description' => 'required|string|max:255|min:3',
             'location_name' => 'required|string|max:255|min:3',
         ];
     }
