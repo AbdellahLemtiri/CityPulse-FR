@@ -36,7 +36,7 @@ class IncidentController extends Controller
 
         if ($roleId === 2) {
             $incidents = Incident::where('sector_id', $user->sector_id)
-                ->with(['user:id,first_name,last_name', 'category:id,name', 'partner:name,email,phone_fix,whatsapp,sla_hours', 'media:file_path'])
+                ->with(['category:id,name',])
                 ->latest()
                 ->paginate(10);
 
@@ -51,13 +51,7 @@ class IncidentController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+  
 
     /**
      * Store a newly created resource in storage.
@@ -134,8 +128,25 @@ class IncidentController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
+     * show the specified resource in storage.
      */
+
+
+    public function show(Incident $incident)
+    {
+      
+       $incident->load([
+            'category:id,name', 
+            'partner:id,name,email,phone_fix,whatsapp,sla_hours',
+            'user:id,first_name,last_name,email,phone',
+            'media:id,model_id,file_path' 
+        ]);
+        return response()->json($incident, 200);
+
+    }
+
+
+
     public function update($request, string $id) {}
 
     /**
