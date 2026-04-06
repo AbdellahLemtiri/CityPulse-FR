@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateProposalRequest;
 use App\Http\Resources\proposal\getProposalResource;
 use App\services\proposal\Storeservice;
 use Illuminate\Http\Request;
+
 class ProposalController extends Controller
 {
     /**
@@ -23,28 +24,27 @@ class ProposalController extends Controller
         $this->storeservice = new Storeservice();
     }
 
- public function index(Request $request)
-{
-    $user = Auth::user();
+    public function index(Request $request)
+    {
+        $user = Auth::user();
 
-    // 1. Start the query
-    $query = Proposal::with(['user:id,first_name,last_name', 'sector:id,name', 'media'])
-        ->withCount('likes')
-        ->withExists(['likes as is_liked' => function ($q) {
-            $q->where('user_id', Auth::id());
-        }]);
+        $query = Proposal::with(['user:id,first_name,last_name', 'sector:id,name', 'media'])
+            ->withCount('likes');
 
-     if ($request->has('my-proposals')) {
-        $query->where('user_id', $user->id);
-    } else {
-         $query->where('sector_id', $user->sector_id)
-              ->where('status', 'pending');
+
+        if ($request->has('my-proposals')) {
+            $query->where('user_id', $user->id);
+        } else {
+            $query->where('sector_id', $user->sector_id)
+                ->where('status', 'validated')->withExists(['likes as is_liked' => function ($q) {
+                    $q->where('user_id', Auth::id());
+                }]);
+        }
+
+        $proposals = $query->get();
+
+        return response()->json(getProposalResource::collection($proposals), 200);
     }
-
-     $proposals = $query->get();
-
-     return response()->json(getProposalResource::collection($proposals), 200);
-}
 
 
 
