@@ -29,23 +29,23 @@ class IncidentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
-        $roleId = 2;
+        $roleId = $user->role_id;
 
         if ($roleId === 2) {
             $incidents = Incident::where('sector_id', $user->sector_id)
                 ->with(['category:id,name',])
                 ->latest()
-                ->paginate(10);
+                ->paginate(2);
 
             return getIncidentResourse::collection($incidents);
         } elseif ($roleId === 3) {
             $incidents = $user->incidents()
                 ->with('category:id,name')
                 ->latest()
-                ->paginate(10);
+                ->paginate(2);
 
             return getIncidentResourse::collection($incidents);
         }
