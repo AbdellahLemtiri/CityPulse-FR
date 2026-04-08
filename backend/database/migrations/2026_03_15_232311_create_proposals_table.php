@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description');
+             $table->text('description');
             $table->string('location_name');
             $table->enum('status', ['pending', 'validated', 'rejected', 'implemented', 'archived'])->default('pending');
             $table->integer('xp_reward')->default(100);  
