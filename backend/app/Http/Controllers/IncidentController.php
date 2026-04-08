@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Notifications\IncidentUpdatedNotification;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreIncidentRequest;
 use Illuminate\Http\Request;
@@ -51,7 +52,7 @@ class IncidentController extends Controller
         }
     }
 
-  
+
 
     /**
      * Store a newly created resource in storage.
@@ -94,8 +95,17 @@ class IncidentController extends Controller
                 'qualified_at' => now(),
             ]);
 
+            $user = User::find($incident->user_id);
+
+            $data = [
+                'id' => $incident->id,
+                'title' => $incident->title,
+            ];
+
+            $user->notify(new IncidentUpdatedNotification($data));
 
             $incident->load("category");
+
             Mail::to($partner->email)->send(new PartnerIncidentMail($incident, $partner, $manager));
 
             return response()->json([
@@ -134,15 +144,14 @@ class IncidentController extends Controller
 
     public function show(Incident $incident)
     {
-      
-       $incident->load([
-            'category:id,name', 
+
+        $incident->load([
+            'category:id,name',
             'partner:id,name,email,phone_fix,whatsapp,sla_hours',
             'user:id,first_name,last_name,email,phone',
-            'media:id,model_id,file_path' 
+            'media:id,model_id,file_path'
         ]);
         return response()->json($incident, 200);
-
     }
 
 
