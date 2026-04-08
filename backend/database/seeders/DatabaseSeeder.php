@@ -10,6 +10,9 @@ use App\Models\Sector;
 use App\Models\Category;
 use App\Models\Badge;
 use App\Models\Role;
+use App\Models\CategoryIncident;
+use Database\Seeders\CategoryIncidentSeder;
+use Database\Seeders\CategorySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +28,8 @@ class DatabaseSeeder extends Seeder
         $citoyenRole = Role::create(['name' => 'citoyen', 'label' => 'Citoyen']);
         $citoyenRole = Role::create(['name' => 'jounaliste', 'label' => 'le jounaliste de la ville']);
 
-        
+        $this->call([
+            CategoryIncidentSeder::class,
+        ]);
     }
 }
