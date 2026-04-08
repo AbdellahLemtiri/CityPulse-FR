@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->longText('content');
             $table->enum('scope', ['global', 'local']);
+            $table->foreignId('city_id')->nullable()->after('sector_id')->constrained('cities')->onDelete('cascade');
             $table->foreignId('sector_id')->nullable()->constrained()->onDelete('cascade');
             $table->enum('status', ['draft', 'published']);
             $table->softDeletes();
