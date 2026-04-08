@@ -49,7 +49,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(LoginRequest $request)
+   public function login(LoginRequest $request)
     {
         $data = $request->validated();
 
@@ -57,12 +57,13 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email ou mot de passe incorrect'], 401);
         }
 
+         $request->session()->regenerate();
+
         $user = User::where('email', $data['email'])->firstOrFail();
-        $token = $user->createToken('auth_token')->plainTextToken;
         $user->load(['role', 'sector', 'city']);
-        return response()->json([
+
+         return response()->json([
             'message' => 'Connexion réussie',
-            'access_token' => $token,
             'user' => new UserResource($user),
         ]);
     }
