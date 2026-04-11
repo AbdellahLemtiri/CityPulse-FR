@@ -13,18 +13,30 @@ use App\Http\Requests\UpdateArticleRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\article\getDataRequest;
+use App\Services\Article\ArticleService;
 
 class ArticleController extends Controller
 {
+
+
+
+
+    protected $articleService;
+
+    public function __construct(ArticleService $articleService)
+    {
+        $this->articleService = $articleService;
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(getDataRequest $request) 
+    public function index(getDataRequest $request)
     {
         $user = Auth::user();
         $req = $request->validated();
-                    
-         $articles = Article::select('id', 'content', 'slug', 'created_at', 'user_id', 'sector_id', 'city_id', 'status', 'scope')
+
+        $articles = Article::select('id', 'content', 'slug', 'created_at', 'user_id', 'sector_id', 'city_id', 'status', 'scope')
             ->where('city_id', $user->city_id)
             ->with([
                 'user:id,first_name,last_name',
@@ -33,18 +45,18 @@ class ArticleController extends Controller
             ])
             ->withCount(['likes', 'comments'])
             ->withExists(['likes as is_liked' => function ($q) {
-                 $q->where('user_id', Auth::id());
+                $q->where('user_id', Auth::id());
             }])
             ->where('status', 'published');
- 
+
         if ($req['type'] === 'local') {
             $articles->where('scope', 'local')->where('sector_id', $user->sector_id);
         }
         if ($req['type'] === 'global') {
-            $articles->where('scope', 'global')->whereNull('sector_id');
+            $articles->where('scope', 'global')->where('city_id', $user->city_id)->whereNull('sector_id');
         }
 
-        $articles = $articles->latest()->paginate(5);  
+        $articles = $articles->latest()->paginate(5);
 
         return ArticleResource::collection($articles);
     }
@@ -56,37 +68,22 @@ class ArticleController extends Controller
     {
         $user = Auth::user();
         $data = $request->validated();
-        $data['user_id'] = $user->id;
-        if ($user->role_id === 2) {
-            $data['sector_id'] = $user->sector_id;
-            if ($data['scope'] === 'global') {
-                $data['sector_id'] = null;
-            }
-        }
-
-        $data['slug'] = Str::slug($data['content']);
-        $data['city_id'] = $user->city_id;
-        $article = Article::create($data);
-
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('articles', 'public');
-            $article->media()->create([
-                'file_path' => $path,
-                'file_type' => 'image',
-                'is_public' => true,
-            ]);
-        }
-
+        $images = $request->file('images');
+        $article = $this->articleService->createArticle($data, $user, $images);
         return response()->json([
             'message' => 'Article créé avec succès',
-            'article' => $article->load('media')
+            'article' => $article
         ], 201);
     }
+
+
+
+
+
 
     public function getArticleByEditor()
     {
         $user = Auth::user();
-
         $articles = Article::with(['media' => function ($query) {
             $query->latest();
         }])
@@ -94,14 +91,12 @@ class ArticleController extends Controller
             ->where('user_id', $user->id)
             ->latest()
             ->paginate(10);
-
         $articles->getCollection()->transform(function ($article) {
             $article->file_path = $article->media->first() ? $article->media->first()->file_path : null;
             unset($article->media);
             unset($article->user_id);
             return $article;
         });
-
         return response()->json($articles, 200);
     }
 
@@ -109,6 +104,11 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      */
+
+
+
+
+
     public function show(Article $article)
     {
         return response()->json($article->load(['media', 'user', 'sector', 'comments.user']), 200);
@@ -125,6 +125,9 @@ class ArticleController extends Controller
 
         return response()->json($article, 200);
     }
+
+
+
     /**
      * Update the specified resource in storage.
      */
@@ -138,7 +141,7 @@ class ArticleController extends Controller
         if (isset($data['content']) && $data['content'] !== $article->content) {
             $data['slug'] = Str::slug($data['content']);
         }
-        if ($user->role_id === 2 && $data['scope'] === 'local') {
+        if ($user->hasRole('manager') && $data['scope'] === 'local') {
             $data['sector_id'] = $user->sector_id;
         } else {
             $data['sector_id'] = null;
@@ -152,6 +155,8 @@ class ArticleController extends Controller
         $article->update($data);
         return response()->json(['message' => 'Article modifié avec succès', 'article' => $article], 200);
     }
+
+
 
     public function updateStatus(Request $request, Article $article)
     {
@@ -167,10 +172,37 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+
+
+
     public function destroy(Article $article)
     {
         Gate::authorize('delete', $article);
         $article->delete();
         return response()->json(['message' => 'Article supprimé avec succès'], 200);
+    }
+
+    
+    public function showBySlug($slug)
+    {
+        $article = Article::select('id', 'content', 'slug', 'created_at', 'user_id', 'sector_id', 'status', 'scope')
+            ->where('slug', $slug)
+            ->where('status', 'published')
+            ->with([
+                'user:id,first_name,last_name',
+                'sector:id,name',
+                'media'
+            ])
+            ->withCount(['likes', 'comments'])
+            ->firstOrFail();
+
+
+        $article->is_liked = false;
+
+        if (Auth::guard('sanctum')->check()) {
+            $article->is_liked = $article->likes()->where('user_id', Auth::guard('sanctum')->id())->exists();
+        }
+
+        return new ArticleResource($article);
     }
 }
