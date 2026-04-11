@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Sector;
-use App\Models\Role;
 use App\Http\Resources\UserResource;
+
 class AuthController extends Controller
 {
     //
@@ -31,7 +31,6 @@ class AuthController extends Controller
             'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role_id' => Role::where('name', 'citoyen')->first()->id,
             'sector_id' => $sector->id,
             'phone' => $data['telephone'],
             'cin' => $data['cin'],
@@ -39,17 +38,16 @@ class AuthController extends Controller
             'city_id' => $sector->city_id
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
+        $user->assignRole('citoyen');
+        $request->session()->regenerate();
         $user->load(['role', 'sector', 'city']);
         return response()->json([
             'message' => 'Compte créé avec succès',
-            'access_token' => $token,
             'user' => new UserResource($user),
         ], 201);
     }
 
-   public function login(LoginRequest $request)
+    public function login(LoginRequest $request)
     {
         $data = $request->validated();
 
@@ -57,12 +55,12 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email ou mot de passe incorrect'], 401);
         }
 
-         $request->session()->regenerate();
+        $request->session()->regenerate();
 
         $user = User::where('email', $data['email'])->firstOrFail();
-        $user->load(['role', 'sector', 'city']);
+        $user->load(['sector', 'city']);
 
-         return response()->json([
+        return response()->json([
             'message' => 'Connexion réussie',
             'user' => new UserResource($user),
         ]);
