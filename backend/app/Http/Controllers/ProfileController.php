@@ -13,7 +13,6 @@ class ProfileController extends Controller
     {
         //
         $user = Auth::user();
-        $user->load('role');
         return response()->json($user, 200);
     }
 }
