@@ -23,7 +23,7 @@ class ModirationUserResource extends JsonResource
             'is_banned' => $this->is_banned,
             'cin' => $this->cin,
             'strikes_count'=>$this->strikes()->count()??0,
-            'created_at'=> $this->created_at->diffForHumans(),      
+            'created_at'=> date('Y-m-d  ', strtotime($this->created_at))  ,      
         ];
     }
 }
