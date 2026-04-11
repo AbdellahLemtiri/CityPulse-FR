@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Notifications\IncidentUpdatedNotification;
 use App\Models\User;
 use App\Http\Controllers\Controller;
@@ -35,18 +36,19 @@ class IncidentController extends Controller
         $user = Auth::user();
         $roleId = $user->role_id;
 
-        if ($roleId === 2) {
+        if ($user->hasRole('manager')) {
             $incidents = Incident::where('sector_id', $user->sector_id)
                 ->with(['category:id,name',])
                 ->latest()
-                ->paginate(2);
+                ->paginate(10);
 
             return getIncidentResourse::collection($incidents);
-        } elseif ($roleId === 3) {
+        } 
+        elseif ($user->hasRole('citoyen')) {
             $incidents = $user->incidents()
                 ->with('category:id,name')
                 ->latest()
-                ->paginate(2);
+                ->paginate(10);
 
             return getIncidentResourse::collection($incidents);
         }
