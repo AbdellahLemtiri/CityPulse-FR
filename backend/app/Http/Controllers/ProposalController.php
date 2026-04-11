@@ -26,7 +26,7 @@ class ProposalController extends Controller
  public function index(Request $request)
 {
     $user = Auth::user();
-    $role = $user->role->name;
+    $role = $user->getRoleNames()->first();
 
      $query = Proposal::with(['user:id,first_name,last_name', 'sector:id,name', 'media'])
         ->withCount('likes');
