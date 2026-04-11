@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Resources\Article;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+
 class ArticleResource extends JsonResource
 {
     /**
@@ -21,12 +23,14 @@ class ArticleResource extends JsonResource
             'scope'          => $this->scope,
             'status'         => $this->status,
             'created_at'     => $this->created_at->diffForHumans(),
-             'likes_count'    => (int) $this->likes_count,
+            'likes_count'    => (int) $this->likes_count,
             'comments_count' => (int) $this->comments_count,
             'is_liked'       => (bool) $this->is_liked,
-             'author_name'    => $this->user ? $this->user->first_name . ' ' . $this->user->last_name : 'Inconnu',
-             'sector_name'    => $this->sector?->name,
-            'image_url'      => $this->media->first() ? asset('storage/' . $this->media->first()->file_path) : null,
+            'author_name'    => $this->user ? $this->user->first_name . ' ' . $this->user->last_name : 'Inconnu',
+            'sector_name'    => $this->sector?->name,
+            'images' => $this->media->map(function ($item) {
+                return asset('storage/' . $item->file_path);
+            }),
         ];
     }
 }
