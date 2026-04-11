@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\Sector;
-
+use App\Http\Resources\StaffResource;
 class StaffController extends Controller
 {
     /**
@@ -20,8 +20,9 @@ class StaffController extends Controller
     {
         //
         $admin = Auth::user();
-        $staffs = User::where('city_id', $admin->city_id)->whereIn('role_id', [2, 4])->with('role')->get();
-        return response()->json($staffs);
+        $staffs = User::role(['manager', 'journaliste'])->where('city_id', $admin->city_id)->get();
+
+        return response()->json(StaffResource::collection($staffs), 200);
     }
 
     /**
@@ -37,17 +38,25 @@ class StaffController extends Controller
      */
     public function store(StoreStaffRequest $request)
     {
-        //  
-
-      
         $data = $request->validated();
+
+        $roleName = $data['role'];
+        unset($data['role']);
+
         $data['password'] = Hash::make($data['password']);
         $sector = Sector::findOrFail($data['sector_id']);
         $data['city_id'] = $sector->city_id;
-        $data['uuid'] = Str::uuid();
-        User::create($data);
-        $user = User::where('email', $data['email'])->with('role')->firstOrFail();
-        return response()->json(['message' => 'Staff créé avec succès', 'user' => $user], 201);
+        $data['uuid'] = (string) Str::uuid();
+
+        $user = User::create($data);
+
+        $user->assignRole($roleName);
+
+        $user->load(['sector', 'city']);
+
+        return response()->json([
+            StaffResource::collection($user)             
+        ], 201);
     }
 
     /**
