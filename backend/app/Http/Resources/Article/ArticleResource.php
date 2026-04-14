@@ -22,7 +22,7 @@ class ArticleResource extends JsonResource
             'content'        => $this->content,
             'scope'          => $this->scope,
             'status'         => $this->status,
-            'created_at'     => $this->created_at->diffForHumans(),
+            'created_at'     => date('Y-m-d  ', strtotime($this->created_at)),
             'likes_count'    => (int) $this->likes_count,
             'comments_count' => (int) $this->comments_count,
             'is_liked'       => (bool) $this->is_liked,
