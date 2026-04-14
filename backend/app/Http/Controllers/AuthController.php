@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Sector;
 use App\Http\Resources\UserResource;
-
+use App\Http\Resources\profile\userProfileResource;
 class AuthController extends Controller
 {
     //
@@ -40,10 +40,10 @@ class AuthController extends Controller
 
         $user->assignRole('citoyen');
         $request->session()->regenerate();
-        $user->load(['role', 'sector', 'city']);
+        $user->load(['sector', 'city', 'photo']);
         return response()->json([
             'message' => 'Compte créé avec succès',
-            'user' => new UserResource($user),
+            'user' => new userProfileResource($user),
         ], 201);
     }
 
@@ -58,11 +58,20 @@ class AuthController extends Controller
         $request->session()->regenerate();
 
         $user = User::where('email', $data['email'])->firstOrFail();
-        $user->load(['sector', 'city']);
+        $user->load(['sector', 'city', 'photo']);
 
         return response()->json([
             'message' => 'Connexion réussie',
-            'user' => new UserResource($user),
+            'user' => new userProfileResource($user),
         ]);
+    }
+
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return response()->json(['message' => 'Deconnexion réussie']);
     }
 }
