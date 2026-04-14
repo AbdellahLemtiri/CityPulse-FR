@@ -115,7 +115,7 @@ class ArticleController extends Controller
     }
 
     public function showEditor($id)
-    {
+    {     
         $article = DB::table('articles')->leftJoin('media', function ($join) {
             $join->on('articles.id', '=', 'media.model_id')
                 ->where('media.model_type', '=', 'App\Models\Article');
