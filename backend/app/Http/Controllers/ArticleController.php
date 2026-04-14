@@ -66,6 +66,7 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
+        Gate::authorize('create', Article::class);
         $user = Auth::user();
         $data = $request->validated();
         $images = $request->file('images');
@@ -83,6 +84,7 @@ class ArticleController extends Controller
 
     public function getArticleByEditor()
     {
+
         $user = Auth::user();
         $articles = Article::with(['media' => function ($query) {
             $query->latest();
@@ -115,7 +117,7 @@ class ArticleController extends Controller
     }
 
     public function showEditor($id)
-    {     
+    {
         $article = DB::table('articles')->leftJoin('media', function ($join) {
             $join->on('articles.id', '=', 'media.model_id')
                 ->where('media.model_type', '=', 'App\Models\Article');
@@ -135,25 +137,16 @@ class ArticleController extends Controller
     {
         Gate::authorize('update', $article);
 
-        $user = Auth::user();
         $data = $request->validated();
 
-        if (isset($data['content']) && $data['content'] !== $article->content) {
-            $data['slug'] = Str::slug($data['content']);
-        }
-        if ($user->hasRole('manager') && $data['scope'] === 'local') {
-            $data['sector_id'] = $user->sector_id;
-        } else {
-            $data['sector_id'] = null;
-        }
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('articles', 'public');
-            $article->media()->update([
-                'file_path' => $path,
-            ]);
-        }
-        $article->update($data);
-        return response()->json(['message' => 'Article modifié avec succès', 'article' => $article], 200);
+        $images = $request->file('images');
+
+        $article = $this->articleService->updateArticle($article, $data, $images);
+
+        return response()->json([
+            'message' => 'Article modifié avec succès',
+            'article' => $article
+        ], 200);
     }
 
 
@@ -182,7 +175,7 @@ class ArticleController extends Controller
         return response()->json(['message' => 'Article supprimé avec succès'], 200);
     }
 
-    
+
     public function showBySlug($slug)
     {
         $article = Article::select('id', 'content', 'slug', 'created_at', 'user_id', 'sector_id', 'status', 'scope')
@@ -195,8 +188,6 @@ class ArticleController extends Controller
             ])
             ->withCount(['likes', 'comments'])
             ->firstOrFail();
-
-
         $article->is_liked = false;
 
         if (Auth::guard('sanctum')->check()) {
