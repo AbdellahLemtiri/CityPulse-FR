@@ -22,9 +22,10 @@ class StoreProposalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            
-             'description' => 'required|string|max:255|min:3',
+
+            'description' => 'required|string|max:255|min:3',
             'location_name' => 'required|string|max:255|min:3',
-        ];
+            'images.*' => 'sometimes|image|mimes:jpeg,png,webp,jpg|max:5120 ',
+         ];
     }
 }
