@@ -66,9 +66,10 @@ class IncidentController extends Controller
         $images = $request->file('images', []);
         $audio = $request->file('audio');
         $incident = $this->incidentService->createIncident($data, $user, $images, $audio);
+        $incident->load(['media', 'category']);
         return response()->json([
             'message' => 'Incident signalé avec succès',
-            'data'    => $incident->load('media')
+            'data'    => getIncidentResourse::make($incident)
         ], 201);
     }
 
