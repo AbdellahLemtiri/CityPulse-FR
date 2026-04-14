@@ -17,12 +17,16 @@ class getProposalResource extends JsonResource
     {
         return [
             'id' => $this->id,
-             'description' => $this->description,
-            'created_at' => $this->created_at->diffForHumans(),
+            'description' => $this->description,
+            'created_at' => date('Y-m-d  ', strtotime($this->created_at)),
             'status' => $this->status,
             'sector_name' => $this->sector->name,
-            'images' => $this->media->pluck('file_path'),
+            'images' => $this->media?->isNotEmpty()
+                ? $this->media->map(fn($m) => asset('storage/' . $m->file_path))
+                : [],
             'author_name' => $this->user->first_name . ' ' . $this->user->last_name,
+            'imageAuthor'  => $this->user->photo ? asset('storage/' . $this->user->photo->file_path)
+                : 'https://ui-avatars.com/api/?name=' . urlencode($this->user->first_name . '+' . $this->user->last_name) . '&background=random&color=fff&rounded=true',
             'location_name' => $this->location_name,
 
             'votes_count' => $this->likes_count,
