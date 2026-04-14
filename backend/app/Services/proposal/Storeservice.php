@@ -38,7 +38,7 @@ class Storeservice
             }
 
             DB::commit();
-            return $proposal->load('media');
+            return  true ;
         } catch (\Exception $e) {
             DB::rollBack();
             return false;
