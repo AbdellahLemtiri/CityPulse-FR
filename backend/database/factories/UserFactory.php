@@ -5,8 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use App\Models\Role;
-/**
+ /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
@@ -35,8 +34,7 @@ class UserFactory extends Factory
             'password' => Hash::make('Password@1'),
             'city_id' =>1,
             'sector_id' =>1,
-            'role_id' =>Role::where('name', 'citoyen')->first()->id,
-            'xp_points' => fake()->numberBetween(0, 500),
+             'xp_points' => fake()->numberBetween(0, 500),
             'is_banned' => false,
         ];
     }

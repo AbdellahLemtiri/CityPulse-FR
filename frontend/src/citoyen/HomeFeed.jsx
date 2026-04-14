@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axiosClient from '../config/axios-client';
-import { ScrollText } from 'lucide-react';
+import { ScrollText, ArrowBigLeftDash, ArrowBigRightDash} from 'lucide-react';
 
-// import { formatDistanceToNow } from "date-fns";
-// import { fr } from "date-fns/locale";
 import CommentItem from './CommentItem.jsx';
 export default function HomeFeed() {
   const [activeTab, setActiveTab] = useState('Tout');
@@ -15,10 +13,53 @@ export default function HomeFeed() {
   const [replyingToId, setReplyingToId] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
   const [comments, setComments] = useState([]);
   const commentInputRef = useRef(null);
+  const [seeLink, setSeeLink] = useState(null);
+  const [link, setLink] = useState(null);
+  const [slugActual, setSlugActual] = useState(null);
   const tabs = ['Tout', 'Officiel', 'Quartier'];
+  const [fullscreenImage, setFullscreenImage] = useState(null);
+  const ImageCarousel = ({ images, onImageClick }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    if (!images || images.length === 0) return null;
+
+    const nextImage = (e) => {
+      e.stopPropagation();
+      setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    };
+
+    const prevImage = (e) => {
+      e.stopPropagation();
+      setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    };
+    return (
+      <div className="   bg-gray-100 dark:bg-gray-800 relative group overflow-hidden flex items-center justify-center">
+        <img src={images[currentIndex]} onClick={() => onImageClick(images[currentIndex])} className="max-w-full max-h-full object-contain cursor-pointer" alt={`Post image ${currentIndex + 1}`} />
+
+        {images.length > 1 && (
+          <>
+            <button onClick={prevImage} className="absolute left-2 top-1/2 -translate-y-1/2 w-16 h-16 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+              <ArrowBigLeftDash />{' '}
+            </button>
+
+            <button onClick={nextImage} className="absolute right-2 top-1/2 -translate-y-1/2 w-16 h-16 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+              <ArrowBigRightDash />{' '}
+            </button>
+
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {images.map((_, idx) => (
+                <div key={idx} className={`w-2 h-2 rounded-full transition-all ${idx === currentIndex ? 'bg-white scale-110' : 'bg-white/50'}`} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+
   useEffect(() => {
     setPosts([]);
     setPage(1);
@@ -41,32 +82,18 @@ export default function HomeFeed() {
     }
     let type = typeParam;
     try {
-      console.log(selectTab);
-      console.log(typeParam);
+      // console.log(selectTab);
+      // console.log(typeParam);
       const response = await axiosClient.get('/articles', { params: { type: typeParam, page: pageNum } });
       console.log(typeParam);
 
       const metaData = response.data.meta;
-      const rawData = response.data.data;
-      const formattedPosts = rawData.map((post) => {
-        return {
-          id: post.id,
-          content: post.content,
-          scope: post.scope,
-          status: post.status,
-          image_url: post.image_url ? post.image_url : null,
-          created_at: post.created_at,
-          is_liked: post.is_liked,
-          sector_name: post.sector_name,
-          comment_count: post.comments_count,
-          like_count: post.likes_count,
-          author_name: post.author_name,
-        };
-      });
+      const dataArticles = response.data.data;
+
       if (isLoadMore) {
-        setPosts((prev) => [...prev, ...formattedPosts]);
+        setPosts((prev) => [...prev, ...dataArticles]);
       } else {
-        setPosts(formattedPosts);
+        setPosts(dataArticles);
       }
 
       setHasMore(metaData.current_page < metaData.last_page);
@@ -83,14 +110,18 @@ export default function HomeFeed() {
       fetchFeed(activeTab, page + 1, true);
     }
   };
-
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(link);
+    // toast.success("Lien copié avec succès !"); // Kay-tle3 l-Toast
+    setSeeLink(false);
+  };
   const handlLikeart = (clickedPost) => {
     const updatedPosts = posts.map((p) => {
       if (p.id === clickedPost.id) {
         return {
           ...p,
           is_liked: !p.is_liked,
-          like_count: p.is_liked ? p.like_count - 1 : p.like_count + 1,
+          likes_count: p.is_liked ? p.likes_count - 1 : p.likes_count + 1,
         };
       }
       return p;
@@ -161,7 +192,23 @@ export default function HomeFeed() {
       console.error('Mouchkil :', error);
     }
   };
+  const handleShare = (slug) => {
+    setSlugActual(slug);
+    const shareUrl = `${window.location.origin}/article/${slug}`;
+    setLink(shareUrl);
+    setSeeLink(true);
+
+    // navigator.clipboard.writeText(shareUrl);
+
+    // toast.success("Lien de l'article copié !");
+  };
   console.log(comments);
+
+  const hiddLinkDiv = () => {
+    setLink(null);
+    setSeeLink(null);
+    setSlugActual(null);
+  };
   return (
     <>
       <div className="sticky relative  w-full top-[60px] md:top-[64px] z-30 rounded-b-lg pt-2 pb-2 px-2 md:px-0 mb-4 bg-gray-50 dark:bg-gray-800">
@@ -187,7 +234,7 @@ export default function HomeFeed() {
           </div>
         ) : posts.length === 0 ? (
           <div className="text-center flex justify-center gap-4 py-10 text-gray-500 bg-white dark:bg-gray-800 rounded-lg    ">
-            <ScrollText className='text-gray-500 dark:text-gray-400 ' />
+            <ScrollText className="text-gray-500 dark:text-gray-400 " />
             Aucune actualité trouvée pour le mement .
           </div>
         ) : (
@@ -216,15 +263,13 @@ export default function HomeFeed() {
                   <p className="text-gray-800 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">{post.content}</p>
                 </div>
 
-                <div className=" w-full h-64 md:h-80 bg-gray-100 dark:bg-gray-700 relative cursor-pointer">
-                  <img src={post.image_url} className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" alt="Post" />
-                </div>
+                {post.images && post.images.length > 0 && <ImageCarousel images={post.images} onImageClick={(clickedImageUrl) => setFullscreenImage(clickedImageUrl)} />}
                 <div className="flex items-center   pt-1.5  text-sm  grid grid-cols-3">
                   <button className="  ">
-                    <span className={`text-gray-400   rounded-xl `}>{post.like_count}</span>
+                    <span className={`text-gray-400   rounded-xl `}>{post.likes_count}</span>
                   </button>
                   <button className="  ">
-                    <span className={`text-gray-400   rounded-xl `}>{post.comment_count}</span>
+                    <span className={`text-gray-400   rounded-xl `}>{post.comments_count}</span>
                   </button>{' '}
                   <button className="  ">
                     <span className={`text-gray-400   rounded-xl `}>...</span>
@@ -243,11 +288,26 @@ export default function HomeFeed() {
                     <span className="material-symbols-outlined  ">comment</span>
                   </button>
 
-                  <button className="flex-1 flex items-center justify-center gap-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700  rounded-lg  group">
+                  <button onClick={() => handleShare(post.slug)} className="flex-1 flex items-center justify-center gap-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700  rounded-lg  group">
                     <span className="material-symbols-outlined   ">share</span>
                   </button>
                 </div>
+                {seeLink && slugActual === post.slug && (
+                  <div className="absolute bottom-32 right-0 mt-2 w-72 p-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-xl z-50 animate-fade-in-up">
+                    <button onClick={hiddLinkDiv} className="flex items-center justify-end">
+                      <span className="material-symbols-outlined text-gray-500 dark:text-gray-400">close</span>
+                    </button>
+                    <span className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Lien de l'article :</span>
 
+                    <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-900 rounded-lg p-1.5 border border-gray-200 dark:border-gray-700">
+                      <input type="text" value={link} className="flex-1 bg-transparent text-sm text-gray-600 dark:text-gray-300 px-2 outline-none truncate" readOnly />
+
+                      <button onClick={handleCopyLink} className="flex items-center justify-center w-8 h-8 rounded-md bg-white dark:bg-gray-800 text-gray-500 hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/30 border border-gray-200 dark:border-gray-700 transition-all active:scale-95" title="Copier le lien">
+                        <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
                 {openCommentsId === post.id && (
                   <div className="border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/20 p-4 animate-fade-in rounded-b-lg">
                     <div className="space-y-4 mb-4  overflow-y-auto no-scrollbar">{comments.length === 0 ? <div className="text-center text-gray-500 py-4 text-sm">Aucun commentaire pour l'instant. Soyez le premier !</div> : comments.map((comment) => <CommentItem key={comment.id} comment={comment} onReply={handleReplyClick} />)}</div>
@@ -305,6 +365,16 @@ export default function HomeFeed() {
               </div>
             )}
           </>
+        )}
+
+        {fullscreenImage && (
+          <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in" onClick={() => setFullscreenImage(null)}>
+            <button className="absolute top-4 right-4 text-white hover:text-gray-300 bg-black/50 p-2 rounded-full transition-colors" onClick={() => setFullscreenImage(null)}>
+              <span className="material-symbols-outlined text-[24px]">close</span>
+            </button>
+
+            <img src={fullscreenImage} alt="Fullscreen" className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" onClick={(e) => e.stopPropagation()} />
+          </div>
         )}
       </div>
     </>

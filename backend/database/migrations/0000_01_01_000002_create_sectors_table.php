@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->boolean('status')->default(true);
             $table->json('boundaries')->nullable();
-            $table->foreignId('city_id')->constrained()->onDelete('cascade');
+            $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
             $table->timestamps();
         });
     }

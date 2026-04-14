@@ -1,22 +1,20 @@
 import { useState, useRef, useEffect } from 'react';
 import axiosClient from '../config/axios-client';
 import moment from 'moment';
+import { ImageDown, Compass } from 'lucide-react';
+
 import 'moment/locale/fr';
-// import toast, { Toaster } from 'react-hot-toast';
 import toast, { Toaster } from 'react-hot-toast';
+
 export default function ManagerAlerts() {
-  // ==========================================
-  // STATES
-  // ==========================================
   const [activeTab, setActiveTab] = useState('list');
   const [articles, setArticles] = useState([]);
 
   const [formData, setFormData] = useState({
-    title: '',
     content: '',
     scope: 'local',
     status: 'published',
-    image: null,
+    images: [],
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -28,15 +26,13 @@ export default function ManagerAlerts() {
 
   const fileInputRef = useRef(null);
 
-  const handleTitleChange = (e) => {
-    setFormData({ ...formData, title: e.target.value });
-  };
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    const newImages = [...formData.images];
+    newImages[1] = file;
     if (file) {
       setCoverImage(file);
-      setFormData({ ...formData, image: file });
+      setFormData({ ...formData, images: newImages });
       setPreviewUrl(URL.createObjectURL(file));
     }
   };
@@ -44,7 +40,7 @@ export default function ManagerAlerts() {
   const handleRemoveImage = () => {
     setCoverImage(null);
     setPreviewUrl(null);
-    setFormData({ ...formData, image: null });
+    setFormData({ ...formData, images: [] });
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -52,11 +48,10 @@ export default function ManagerAlerts() {
 
   const videFormEditing = () => {
     setFormData({
-      title: '',
       content: '',
       scope: 'local',
       status: 'published',
-      image: null,
+      images: null,
     });
     setPreviewUrl(null);
     setCoverImage(null);
@@ -71,13 +66,14 @@ export default function ManagerAlerts() {
     setIsSubmitting(true);
 
     const dataToSubmit = new FormData();
-    dataToSubmit.append('title', formData.title);
     dataToSubmit.append('content', formData.content);
     dataToSubmit.append('scope', formData.scope);
     dataToSubmit.append('status', formData.status);
 
-    if (formData.image) {
-      dataToSubmit.append('image', formData.image);
+    if (formData.images.length > 0) {
+      formData.images.forEach((image, index) => {
+        dataToSubmit.append(`images[${index}]`, image);
+      });
     }
 
     if (isEditing) {
@@ -91,28 +87,24 @@ export default function ManagerAlerts() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      toast.success(isEditing ? 'Article modifié avec succès !' : 'Article créé avec succès !');
+      toast.success(isEditing ? 'Article modifié avec succès !' : 'Article créé avec succès !', { style: { background: '#333', color: '#fff' } });
 
       videFormEditing();
       if (!isEditing) {
         const art = response.data.article;
         const formattedData = {
           id: art.id,
-          title: art.title,
           content: art.content,
           scope: art.scope,
           status: art.status,
-          image: art.media[0].file_path ? `http://127.0.0.1:8000/storage/${art.file_path}` : null,
+          images: art.media && art.media[0] && art.media[0].file_path ? `http://127.0.0.1:8000/storage/${art.media[0].file_path}` : null,
           created_at: art.created_at,
         };
         setArticles((prev) => [formattedData, ...prev]);
-        console.log(articles);
-        console.log(formattedData);
-        console.log('=====================================================');
       }
     } catch (error) {
       console.log(error);
-      toast.error("Erreur lors de l'enregistrement.");
+      toast.error("Erreur lors de l'enregistrement.", { style: { background: '#333', color: '#fff' } });
     } finally {
       setIsSubmitting(false);
     }
@@ -121,23 +113,23 @@ export default function ManagerAlerts() {
   const fetchArticles = async () => {
     try {
       const response = await axiosClient.get('/manager/articles');
-      const rawArticles = response.data.data;
+      const rawArticles = response.data.data || response.data;
 
       const formattedData = rawArticles.map((art) => ({
         id: art.id,
-        title: art.title,
         content: art.content,
         scope: art.scope,
         status: art.status,
-        image: art.file_path ? `http://127.0.0.1:8000/storage/${art.file_path}` : null,
+        images: art.file_path ? `http://127.0.0.1:8000/storage/${art.file_path}` : null,
         created_at: art.created_at,
       }));
 
       setArticles(formattedData);
-      setIsLoading(false);
     } catch (error) {
       console.error('Erreur Backend :', error);
-      alert("Impossible de charger l'historique.");
+      toast.error("Impossible de charger l'historique.", { style: { background: '#333', color: '#fff' } });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -146,27 +138,19 @@ export default function ManagerAlerts() {
       try {
         await axiosClient.delete(`/manager/articles/${id}`);
         setArticles(articles.filter((art) => art.id !== id));
+        toast.success('Article supprimé.', { style: { background: '#333', color: '#fff' } });
       } catch (error) {
         console.error(error);
-        alert('Erreur lors de la suppression.');
+        toast.error('Erreur lors de la suppression.', { style: { background: '#333', color: '#fff' } });
       }
     }
   };
 
-  const handlePublish = async (id) => {
-    try {
-      await axiosClient.patch(`/manager/articles/${id}/publish`);
-      setArticles(articles.map((art) => (art.id === id ? { ...art, status: 'published' } : art)));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const handlePublish = async (id) => { ... } // (A garder si tu l'utilises ailleur)
 
   useEffect(() => {
     fetchArticles();
   }, []);
-
-  // ================================================================
 
   const handleEdit = async (id) => {
     setActiveTab('create');
@@ -176,7 +160,7 @@ export default function ManagerAlerts() {
 
     try {
       const response = await axiosClient.get(`/manager/articles/${id}`);
-      const fullArticle = response.data; // wla response.data.article
+      const fullArticle = response.data.article || response.data;
 
       if (fullArticle.file_path) {
         setPreviewUrl(`http://127.0.0.1:8000/storage/${fullArticle.file_path}`);
@@ -189,11 +173,11 @@ export default function ManagerAlerts() {
         content: fullArticle.content,
         scope: fullArticle.scope,
         status: fullArticle.status,
-        image: null,
+        images: null,
       });
     } catch (error) {
       console.error('Erreur de récupération :', error);
-      alert("Impossible de charger l'article.");
+      toast.error("Impossible de charger l'article.", { style: { background: '#333', color: '#fff' } });
       videFormEditing();
     } finally {
       setIsLoading(false);
@@ -201,70 +185,72 @@ export default function ManagerAlerts() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto pb-10">
-       <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-800 uppercase tracking-wide">Gestion des Alertes & Articles</h2>
-        <p className="text-sm text-gray-600 mt-1">Publiez des informations officielles pour les citoyens de votre secteur.</p>
+    <div className="max-w-5xl mx-auto pb-10 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-wide">Gestion des Alertes & Articles</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Publiez des informations officielles pour les citoyens de votre secteur.</p>
       </div>
 
-       <div className="flex border-b border-gray-300 mb-6 bg-white shadow-sm">
+      <div className="flex border-b border-gray-200 dark:border-gray-700 mb-6 bg-white dark:bg-gray-800 shadow-sm rounded-t-lg overflow-hidden transition-colors">
         <button
           onClick={() => {
             setActiveTab('list');
             videFormEditing();
           }}
-          className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors flex justify-center items-center gap-2 ${activeTab === 'list' ? 'border-b-4 border-primary-600 text-primary-700 bg-primary-50' : 'text-gray-600 hover:bg-gray-50'}`}>
+          className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider flex justify-center items-center gap-2 transition-all ${activeTab === 'list' ? 'text-primary-600 dark:text-gray-200 bg-primary-50 dark:bg-primary-500/20 border-b-2 border-primary-500' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
           <span className="material-symbols-outlined text-[18px]">format_list_bulleted</span>
           Gérer les Articles
         </button>
-        <button onClick={() => setActiveTab('create')} className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider transition-colors flex justify-center items-center gap-2 ${activeTab === 'create' ? 'border-b-4 border-primary-600 text-primary-700 bg-primary-50' : 'text-gray-600 hover:bg-gray-50'}`}>
+        <button onClick={() => setActiveTab('create')} className={`flex-1 py-3 text-sm font-bold uppercase tracking-wider flex justify-center items-center gap-2 transition-all ${activeTab === 'create' ? 'text-primary-600 dark:text-gray-200 bg-primary-50 dark:bg-primary-500/20 border-b-2 border-primary-500' : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'}`}>
           <span className="material-symbols-outlined text-[18px]">{isEditing ? 'edit_note' : 'edit_document'}</span>
           {isEditing ? "Modifier l'Article" : 'Rédiger un Article'}
         </button>
       </div>
-      <Toaster />
+
+      <Toaster position="top-center" />
 
       {isLoading ? (
         <div className="flex justify-center py-10">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-500"></div>
         </div>
       ) : (
         activeTab === 'list' && (
-          <div className="bg-white border border-gray-200 shadow-sm rounded-md p-5 fade-in">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-lg p-5 transition-colors">
             {articles.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 font-bold bg-gray-50 rounded-md border border-dashed border-gray-300">
-                <span className="material-symbols-outlined text-4xl mb-2 text-gray-400 block">article</span>
+              <div className="p-8 text-center text-gray-400 dark:text-gray-500 font-bold bg-gray-50 dark:bg-gray-900 rounded-md border border-dashed border-gray-200 dark:border-gray-700">
+                <span className="material-symbols-outlined text-4xl mb-2 text-gray-300 dark:text-gray-600 block">article</span>
                 Aucun article publié pour le moment.
               </div>
             ) : (
-              <ul className="divide-y divide-gray-100">
+              <ul className="divide-y divide-gray-100 dark:divide-gray-700">
                 {articles.map((art) => (
-                  <li key={art.id} className="py-3 flex items-center justify-between hover:bg-gray-50 px-3 transition-colors rounded-md group">
+                  <li key={art.id} className="py-4 flex flex-col md:flex-row md:items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/30 px-4 rounded-lg gap-4 transition-colors">
                     <div className="flex items-center gap-4">
-                      {art.image ? (
-                        <img src={art.image} alt={art.title} className="w-12 h-12 object-cover rounded-md border border-gray-200" />
+                      {art.images ? (
+                        <img src={art.images} alt={art.title} className="w-14 h-14 object-cover rounded-md border border-gray-200 dark:border-gray-600 shadow-sm" />
                       ) : (
-                        <div className="w-12 h-12 bg-gray-100 rounded-md flex items-center justify-center border border-gray-200">
-                          <span className="material-symbols-outlined text-gray-400">description</span>
+                        <div className="w-14 h-14 bg-gray-100 dark:bg-gray-900 text-gray-400 rounded-md flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                          <span className="material-symbols-outlined">description</span>
                         </div>
                       )}
                       <div className="border-l-2 border-primary-500 pl-3 py-1">
-                        <span className="font-bold text-gray-800 text-sm block">{art.title}</span>
+                        <span className="font-bold text-gray-800 dark:text-gray-200 text-sm block">{art.title}</span>
+                        {art.scope === 'global' && <span className="text-[10px] uppercase font-bold text-purple-600 dark:text-purple-400 mt-1 block tracking-wider">Global</span>}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-3 border rounded-md border-gray-400 pr-4">
-                        <span className={`px-2 py-1 text-[10px]   font-bold uppercase rounded-sm border ${art.status === 'published' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-yellow-100 text-yellow-700 border-yellow-200'}`}>{art.status}</span>
-                        <span className="text-xs text-gray-500 font-medium">{moment(art.created_at).fromNow()}</span>
+                    <div className="flex items-center gap-4 self-end md:self-auto">
+                      <div className="flex items-center gap-3 border rounded-md border-gray-200 dark:border-gray-700 pr-4 bg-gray-50 dark:bg-gray-900/50 transition-colors">
+                        <span className={`px-2 py-1.5 text-[10px] font-bold uppercase rounded-l-md border-r ${art.status === 'published' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800/50' : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800/50'}`}>{art.status === 'published' ? 'Publié' : 'Brouillon'}</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">{moment(art.created_at).fromNow()}</span>
                       </div>
 
-                      <div className="flex items-center gap-2 border border-gray-400 rounded-md">
-                        <button onClick={() => handleEdit(art.id)} className="bg-white text-gray-600 hover:bg-primary-50 hover:text-primary-600 px-3 py-1.5 rounded-md font-bold text-xs uppercase flex items-center gap-1 transition-colors border border-gray-200 hover:border-primary-200 shadow-sm">
-                          <span className="material-symbols-outlined text-[16px]">edit</span>
+                      <div className="flex items-center gap-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900/50 p-1">
+                        <button onClick={() => handleEdit(art.id)} className="text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-500 px-2 py-1.5 rounded transition-all" title="Modifier">
+                          <span className="material-symbols-outlined text-[18px]">edit</span>
                         </button>
-                        <button onClick={() => handleDelete(art.id)} className="bg-white text-red-500 hover:bg-red-50 hover:text-red-700 px-3 py-1.5 rounded-md font-bold text-xs uppercase flex items-center gap-1 transition-colors border border-gray-200 hover:border-red-200 shadow-sm">
-                          <span className="material-symbols-outlined text-[16px]">delete</span>
+                        <button onClick={() => handleDelete(art.id)} className="text-gray-400 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500 px-2 py-1.5 rounded transition-all" title="Supprimer">
+                          <span className="material-symbols-outlined text-[18px]">delete</span>
                         </button>
                       </div>
                     </div>
@@ -276,71 +262,75 @@ export default function ManagerAlerts() {
         )
       )}
 
-  // ================================================================
-    
       {activeTab === 'create' && (
-        <div className="bg-gray-100   p-6   fade-in max-w-3xl mx-auto rounded-md">
+        <div className="shadow-sm p-6 max-w-3xl mx-auto rounded-lg bg-white dark:bg-transparent border border-gray-100 dark:border-transparent transition-colors">
           {isLoading ? (
             <div className="flex justify-center py-10">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Image de Couverture (Optionnelle)</label>
+                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Image de Couverture (Optionnelle)</label>
                 {previewUrl ? (
-                  <div className="relative   bg-gray-100 rounded-md overflow-hidden border border-gray-300">
+                  <div className="relative bg-gray-50 dark:bg-gray-900 text-gray-200 rounded-md overflow-hidden border border-gray-200 dark:border-gray-600 h-48">
                     <img src={previewUrl} alt="Cover" className="w-full h-full object-cover" />
-                    <button type="button" onClick={handleRemoveImage} className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-xs font-bold rounded shadow-md transition-colors">
-                      Retirer l'image
+                    <button type="button" onClick={handleRemoveImage} className="absolute top-2 right-2 bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 text-xs font-bold rounded shadow-md flex items-center gap-1 transition-colors">
+                      <span className="material-symbols-outlined text-[16px]">delete</span> Retirer
                     </button>
                   </div>
                 ) : (
-                  <div onClick={() => fileInputRef.current.click()} className="h-32 w-full border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 flex flex-col items-center justify-center cursor-pointer text-gray-500 transition-colors rounded-md">
-                    <span className="material-symbols-outlined text-3xl mb-1 text-gray-400">add_photo_alternate</span>
-                    <span className="text-sm font-bold">Ajouter une image haute résolution</span>
+                  <div className="h-32 w-full border-2 border-dashed border-gray-200 dark:border-gray-700 text-gray-400 hover:text-primary-500 hover:border-primary-500 transition-all flex flex-col items-center justify-center cursor-pointer rounded-md bg-gray-50 dark:bg-gray-900/30">
+                    <ImageDown onClick={() => fileInputRef.current.click()} className="w-10 h-10 mb-2 opacity-50" />
+                    <span className="text-xs font-bold uppercase">Cliquer pour ajouter une image</span>
                   </div>
                 )}
                 <input type="file" ref={fileInputRef} accept="image/*" className="hidden" onChange={handleImageChange} />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Titre de l'alerte *</label>
-                <input type="text" required value={formData.title} onChange={handleTitleChange} className="w-full border border-gray-300 p-2.5 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-primary-500 rounded-md transition-colors" placeholder="Ex: Travaux sur l'avenue..." />
+                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Contenu *</label>
+                <textarea required rows="6" value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full border border-gray-200 dark:border-gray-600 p-3 text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/20 resize-y rounded transition-all shadow-inner" placeholder="Rédigez les détails de l'alerte ici..."></textarea>
               </div>
 
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Contenu (Description) *</label>
-                <textarea required rows="6" value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full border border-gray-300 p-3 text-sm bg-gray-50 focus:bg-white focus:outline-none focus:border-primary-500 resize-y rounded-md transition-colors" placeholder="Rédigez les détails de l'alerte ici..."></textarea>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Portée (Scope) *</label>
-                  <select value={formData.scope} onChange={(e) => setFormData({ ...formData, scope: e.target.value })} className="w-full border border-gray-300 p-2.5 text-sm bg-white focus:outline-none focus:border-primary-500 rounded-md">
+                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Portée (Scope) *</label>
+                  <select value={formData.scope} onChange={(e) => setFormData({ ...formData, scope: e.target.value })} className="w-full border border-gray-200 dark:border-gray-600 p-2.5 text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-primary-500 rounded cursor-pointer transition-colors">
                     <option value="local">Local (Mon secteur uniquement)</option>
                     <option value="global">Global (Toute la ville)</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Statut *</label>
-                  <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="w-full border border-gray-300 p-2.5 text-sm bg-white focus:outline-none focus:border-primary-500 rounded-md">
+                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Statut *</label>
+                  <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="w-full border border-gray-200 dark:border-gray-600 p-2.5 text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-primary-500 rounded cursor-pointer transition-colors">
                     <option value="published">Publié (Immédiat)</option>
                     <option value="draft">Brouillon (Draft)</option>
                   </select>
                 </div>
               </div>
 
-  // ================================================================
-              <div className="pt-6 border-t grid grid-cols-1  border-gray-200 flex justify-end gap-3 mt-6">
+              <div className="pt-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3 mt-2">
                 {isEditing && (
-                  <button type="button" onClick={videFormEditing} className="bg-white border  border-gray-300 text-gray-700 hover:bg-gray-50 font-bold py-2.5 px-6 uppercase text-sm rounded-md transition-colors shadow-sm">
+                  <button type="button" onClick={videFormEditing} className="bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-2.5 px-6 uppercase text-xs rounded transition-colors">
                     Annuler
                   </button>
                 )}
-                <button type="submit" disabled={isSubmitting} className="bg-primary-600 hover:bg-primary-700     text-white font-bold py-2.5 px-8 uppercase text-sm rounded-md transition-colors disabled:opacity-50 shadow-sm">
-                  {isSubmitting ? 'Traitement...' : isEditing ? 'Enregistrer les modifications' : "Publier l'Alerte"}
+                <button type="submit" disabled={isSubmitting} className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-2.5 px-8 uppercase text-xs rounded disabled:opacity-50 flex items-center gap-2 shadow-lg shadow-primary-500/20 transition-all">
+                  {isSubmitting ? (
+                    <>
+                      <span className="animate-spin material-symbols-outlined text-[16px]">sync</span> Traitement...
+                    </>
+                  ) : isEditing ? (
+                    <>
+                      <span className="material-symbols-outlined text-[16px]">save</span> Enregistrer les modifications
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-[16px]">send</span> Publier l'Alerte
+                    </>
+                  )}
                 </button>
               </div>
             </form>

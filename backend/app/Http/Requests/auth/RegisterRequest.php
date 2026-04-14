@@ -29,7 +29,7 @@ class RegisterRequest extends FormRequest
             'last_name' => 'required|string|max:50',
             'email' => 'required|email|unique:users,email',
             'password' => ['required', Password::min(8)->letters()->numbers()->symbols()],
-            'cin' => 'required|string',
+            'cin' => 'required|string|unique:users,cin',
             'telephone' => 'required|string',
             'sector_id' => 'required|integer|exists:sectors,id',
             'adresse' => 'nullable|string',
