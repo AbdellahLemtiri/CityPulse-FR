@@ -23,9 +23,9 @@ class StoreArticleRequest extends FormRequest
     {
         return [
             'content'   => 'required|string',
-            'scope'     => 'required|in:global,local',
             'sector_id' => 'nullable|exists:sectors,id',
             'status'    => 'required|in:draft,published',
+            'images'    => 'nullable|array',
         ];
     }
 }
