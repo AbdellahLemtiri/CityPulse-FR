@@ -20,13 +20,9 @@ class CommentController extends Controller
         $data = $request->validated();
         $modelType = 'App\\Models\\' . class_basename($data['commentable_type']);
         $modelId = $data['commentable_id'];
-
-        $comments = Comment::where('commentable_id', $modelId)
-
-            ->where('commentable_type', $modelType)
-            ->whereNull('parent_id')
+        $comments = Comment::where('commentable_id', $modelId)->where('commentable_type', $modelType)->whereNull('parent_id')
             ->with([
-                'user:id,first_name,last_name,role_id',
+                'user:id,first_name,last_name',
                 'replies'
             ])
             ->latest()
@@ -68,13 +64,10 @@ class CommentController extends Controller
     public function destroy(Comment $comment)
     {
         $UserId = Auth::id();
-
         if ($UserId !== $comment->user_id) {
             return response()->json(['message' => 'Non autorisé'], 403);
         }
-
         $comment->delete();
-
         return response()->json(['message' => 'Commentaire supprimé'], 200);
     }
 }
