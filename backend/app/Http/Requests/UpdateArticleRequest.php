@@ -23,9 +23,7 @@ class UpdateArticleRequest extends FormRequest
     {
         return [
             'title' => 'sometimes|string|max:255',
-            'slug' => 'sometimes|string|max:255|unique:articles,slug',
             'content' => 'sometimes|string',
-            'scope' => 'sometimes|in:global,local',
             'sector_id' => 'sometimes|exists:sectors,id',
             'status' => 'sometimes|in:draft,published',
         ];
