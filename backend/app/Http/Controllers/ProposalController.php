@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateProposalRequest;
 use App\Http\Resources\proposal\getProposalResource;
 use App\services\proposal\Storeservice;
 use Illuminate\Http\Request;
+
 class ProposalController extends Controller
 {
     /**
@@ -23,28 +24,28 @@ class ProposalController extends Controller
         $this->storeservice = new Storeservice();
     }
 
- public function index(Request $request)
-{
-    $user = Auth::user();
-    $role = $user->getRoleNames()->first();
+    public function index(Request $request)
+    {
+        $user = Auth::user();
+        $role = $user->getRoleNames()->first();
 
-     $query = Proposal::with(['user:id,first_name,last_name', 'sector:id,name', 'media'])
-        ->withCount('likes');
-        
+        $query = Proposal::with(['user:id,first_name,last_name','user.photo', 'sector:id,name', 'media'])
+            ->withCount('likes');
 
-     if ($request->has('my-proposals')) {
-        $query->where('user_id', $user->id);
-    } else {
-         $query->where('sector_id', $user->sector_id)
-              ->where('status', 'validated')->withExists(['likes as is_liked' => function ($q) {
-            $q->where('user_id', Auth::id());
-        }]);
+
+        if ($request->has('my-proposals')) {
+            $query->where('user_id', $user->id);
+        } else {
+            $query->where('sector_id', $user->sector_id)
+                ->where('status', 'validated')->withExists(['likes as is_liked' => function ($q) {
+                    $q->where('user_id', Auth::id());
+                }]);
+        }
+
+        $proposals = $query->latest()->paginate(10);
+
+        return response()->json(getProposalResource::collection($proposals), 200);
     }
-
-     $proposals = $query->get();
-
-     return response()->json(getProposalResource::collection($proposals), 200);
-}
 
 
 
@@ -61,8 +62,7 @@ class ProposalController extends Controller
         if (!$success) {
             return response()->json(['message' => 'Erreur lors de l\'envoi de la proposition'], 500);
         } else {
-            $proposal = getProposalResource::make($success);
-            return response()->json(['message' => 'Proposition envoyé avec succès', 'proposal' => $proposal], 201);
+            return response()->json(['message' => 'Proposition envoyé avec succès'], 201);
         }
     }
 
@@ -74,6 +74,29 @@ class ProposalController extends Controller
     public function edit(Proposal $proposal)
     {
         //
+    }
+
+    public function updateStatus(Request $request, Proposal $proposal)
+    {
+        $status = $request->validate([
+            'status' => 'required|in:validated,rejected,implemented,archived'   
+        ]);
+        $proposal->update($status);
+
+        return response()->json(['message' => 'Statut mis à jour avec succès', 'proposal' => $proposal], 200);
+
+
+    }
+
+
+
+    public function pendingProposals()
+    {
+        $user = Auth::user();
+
+        $proposals = Proposal::where('sector_id', $user->sector_id)
+            ->where('status', 'pending')->with('user:id,first_name,last_name');
+        return response()->json($proposals->get(), 200);
     }
 
     /**
