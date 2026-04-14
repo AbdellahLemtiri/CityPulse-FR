@@ -20,7 +20,7 @@ class ReplyCommentResorse extends JsonResource
             'body'          => $this->body,
             'created_at'    => $this->created_at->diffForHumans(),
             'author_name'   => $this->user->first_name . ' ' . $this->user->last_name,
-            'is_accessible' => $this->user->role_id === 1 || in_array($this->user->id, [2, 4]),
+            'is_accessible' => $this->user->hasRole(['admin', 'manager', 'journaliste']),
             'replies' => ReplyCommentResorse::collection($this->whenLoaded('replies')),
         ];
     }
