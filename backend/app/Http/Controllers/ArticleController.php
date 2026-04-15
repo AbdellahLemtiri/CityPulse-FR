@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\article\getDataRequest;
 use App\Services\Article\ArticleService;
-
+use App\Http\Resources\article\getArticleResource;
+use App\Http\Resources\Article\showEditor;
 class ArticleController extends Controller
 {
 
@@ -89,7 +90,7 @@ class ArticleController extends Controller
         $articles = Article::with(['media' => function ($query) {
             $query->latest();
         }])
-            ->select('id', 'content', 'scope', 'status', 'created_at', 'user_id')
+            ->select('id', 'content', 'scope', 'status', 'created_at', 'user_id', 'slug')
             ->where('user_id', $user->id)
             ->latest()
             ->paginate(10);
@@ -116,16 +117,10 @@ class ArticleController extends Controller
         return response()->json($article->load(['media', 'user', 'sector', 'comments.user']), 200);
     }
 
-    public function showEditor($id)
+    public function showEditor(Article $article)
     {
-        $article = DB::table('articles')->leftJoin('media', function ($join) {
-            $join->on('articles.id', '=', 'media.model_id')
-                ->where('media.model_type', '=', 'App\Models\Article');
-        })->select('articles.id', 'articles.content', 'articles.content', 'articles.scope', 'articles.status', 'media.file_path')
-            ->where('articles.id', $id)
-            ->first();
-
-        return response()->json($article, 200);
+        $article->load('media');
+        return response()->json(new showEditor($article), 200);
     }
 
 
