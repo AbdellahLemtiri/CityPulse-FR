@@ -16,6 +16,7 @@ use App\Http\Requests\article\getDataRequest;
 use App\Services\Article\ArticleService;
 use App\Http\Resources\article\getArticleResource;
 use App\Http\Resources\Article\showEditor;
+use App\Http\Resources\Article\IndexEditor;
 class ArticleController extends Controller
 {
 
@@ -83,39 +84,20 @@ class ArticleController extends Controller
 
 
 
-    public function getArticleByEditor()
+    public function getArticlesByEditor()
     {
 
         $user = Auth::user();
         $articles = Article::with(['media' => function ($query) {
             $query->latest();
         }])
-            ->select('id', 'content', 'scope', 'status', 'created_at', 'user_id', 'slug')
-            ->where('user_id', $user->id)
-            ->latest()
+            ->select('id', 'content', 'scope', 'status', 'created_at', 'user_id', 'slug')->where('user_id', $user->id)->latest()
             ->paginate(10);
-        $articles->getCollection()->transform(function ($article) {
-            $article->file_path = $article->media->first() ? $article->media->first()->file_path : null;
-            unset($article->media);
-            unset($article->user_id);
-            return $article;
-        });
-        return response()->json($articles, 200);
+
+        return response()->json(new IndexEditor($articles), 200);
     }
 
 
-    /**
-     * Display the specified resource.
-     */
-
-
-
-
-
-    public function show(Article $article)
-    {
-        return response()->json($article->load(['media', 'user', 'sector', 'comments.user']), 200);
-    }
 
     public function showEditor(Article $article)
     {
