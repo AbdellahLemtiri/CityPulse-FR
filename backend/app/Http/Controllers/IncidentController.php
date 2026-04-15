@@ -15,6 +15,7 @@ use App\Http\Requests\UpdateIncidentRequest;
 use App\Mail\PartnerIncidentMail;
 use Illuminate\Support\Facades\DB;
 use App\Models\CategoryIncident;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 
 class IncidentController extends Controller
@@ -43,8 +44,7 @@ class IncidentController extends Controller
                 ->paginate(10);
 
             return getIncidentResourse::collection($incidents);
-        } 
-        elseif ($user->hasRole('citoyen')) {
+        } elseif ($user->hasRole('citoyen')) {
             $incidents = $user->incidents()
                 ->with('category:id,name')
                 ->latest()
@@ -61,6 +61,7 @@ class IncidentController extends Controller
      */
     public function store(StoreIncidentRequest $request)
     {
+        Gate::authorize('create');
         $user = Auth::user();
         $data = $request->validated();
         $images = $request->file('images', []);
@@ -74,50 +75,27 @@ class IncidentController extends Controller
     }
 
 
-    public function qualifyIncident(Request $request, $id)
+    public function qualifyIncident(Request $request, $id, IncidentService $incidentService)
     {
+        Gate::authorize('qualifyIncident');
         $manager = Auth::guard('sanctum')->user();
+
         $request->validate([
             'category_id' => 'required|exists:category_incidents,id'
         ]);
 
-        return DB::transaction(function () use ($request, $id, $manager) {
-            $incident = Incident::findOrFail($id);
-            $category = CategoryIncident::findOrFail($request->category_id);
-            $partner = DB::table('category_incidents')->join('category_partner', 'category_incidents.id', '=', 'category_partner.category_incident_id')->join('partners', 'category_partner.partner_id', '=', 'partners.id')->where('category_incidents.id', $category->id)->where('partners.city_id', $manager->city_id)->first();
-
-
-            if (!$partner) {
-                return response()->json(['message' => 'Erreur : Aucun partenaire assigné à cette catégorie dans cette ville.'], 400);
-            }
-
-            $incident->update([
-                'category_id' => $category->id,
-                'partner_id' => $partner->id,
-                'status' => 'in_progress',
-                'qualified_at' => now(),
-            ]);
-
-            $user = User::find($incident->user_id);
-
-            $data = [
-                'id' => $incident->id,
-                'title' => $incident->title,
-            ];
-
-            $user->notify(new IncidentUpdatedNotification($data));
-
-            $incident->load("category");
-
-            Mail::to($partner->email)->send(new PartnerIncidentMail($incident, $partner, $manager));
-
+        try {
+             $incident = $incidentService->qualify($id, $request->category_id, $manager);
             return response()->json([
                 'message' => 'Incident qualifié et partenaire notifié avec succès !',
-                'incident' => $incident->load(['category', 'partner'])
+                'incident' => $incident
             ], 200);
-        });
+        } catch (\Exception $e) {
+             return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
+    
     public function rejectIncident(Request $request, $id)
     {
         $manager = Auth::guard('sanctum')->user();
