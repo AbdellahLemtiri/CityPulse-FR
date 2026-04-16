@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Http\Requests\users\searchUsers;
 use App\Http\Requests\users\strikUserRequest;
 use Illuminate\Support\Facades\Auth;
- use  App\Http\Resources\ModirationUserResource;
+use  App\Http\Resources\ModirationUserResource;
 
 class ModerationController extends Controller
 {
@@ -20,16 +20,14 @@ class ModerationController extends Controller
         $sectorId = $user->sector_id;
         $data = $request->validated();
 
-        
-        $users = User::role('citoyen') 
+
+        $users = User::role('citoyen')
             ->where('sector_id', $sectorId)
             ->where(function ($query) use ($data) {
                 $query->where('last_name', 'like', '%' . $data['search'] . '%')
                     ->orWhere('email', 'like', '%' . $data['search'] . '%')
                     ->orWhere('cin', 'like', '%' . $data['search'] . '%');
-            })
-            ->with('strikes')
-            ->get();
+            })->with('strikes')->get();
 
         return response()->json(ModirationUserResource::collection($users), 200);
     }
@@ -39,18 +37,25 @@ class ModerationController extends Controller
     {
         $data = $request->validated();
 
-        $user = User::with('strikes')->findOrFail($data['id']);
-
+        $user = User::where('uuid', $data['id'])->with('strikes')->firstOrFail();
         $user->strikes()->create([
             'reason' => $data['reason'],
 
         ]);
-
-
         if ($user->strikes()->count() >= 3) {
             $user->update(['is_banned' => true]);
         }
+        return response()->json(new ModirationUserResource($user), 200);
+    }
 
+    public function toggleBan(Request $request)
+    {
+    
+        $uuid = $request->validate([
+            'uuid' => 'required||string|exists:users,uuid',
+        ]);
+        $user = User::where('uuid', $uuid)->firstOrFail();
+        $user->update(['is_banned' => !$user->is_banned]);
         return response()->json(new ModirationUserResource($user), 200);
     }
 }
