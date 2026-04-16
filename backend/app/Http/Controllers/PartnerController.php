@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Partner;
 use App\Http\Requests\StorePartnerRequest;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Gate;
 class PartnerController extends Controller
 {
     /**
@@ -27,6 +27,7 @@ class PartnerController extends Controller
      */
     public function store(StorePartnerRequest $request)
     {
+        Gate::authorize('create', Partner::class);
         return DB::transaction(function () use ($request) {
 
             $data = $request->validated();
