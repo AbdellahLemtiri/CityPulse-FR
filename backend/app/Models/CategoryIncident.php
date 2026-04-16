@@ -23,3 +23,4 @@ class CategoryIncident extends Model
         return $this->belongsToMany(Partner::class, 'category_partner');
     }
 }
+    
