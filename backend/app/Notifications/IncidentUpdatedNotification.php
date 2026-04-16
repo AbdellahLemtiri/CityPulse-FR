@@ -7,8 +7,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
-// 💡 Zid implements ShouldBroadcast
-class IncidentUpdatedNotification extends Notification implements ShouldBroadcast
+ class IncidentUpdatedNotification extends Notification implements ShouldBroadcast
 {
     use Queueable;
 
@@ -21,7 +20,6 @@ class IncidentUpdatedNotification extends Notification implements ShouldBroadcas
 
     public function via(object $notifiable): array
     {
-
         return ['database', 'broadcast'];
     }
 
