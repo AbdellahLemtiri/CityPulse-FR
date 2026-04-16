@@ -29,7 +29,7 @@ class ArticlePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('journaliste') || $user->hasRole('manager');
     }
 
     /**
