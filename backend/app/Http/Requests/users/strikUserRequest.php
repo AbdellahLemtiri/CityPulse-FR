@@ -23,7 +23,7 @@ class strikUserRequest extends FormRequest
     {
         return [
             //
-            'id' => 'required|integer|exists:users,id',
+            'id' => 'required|string|exists:users,uuid',
             'reason' => 'required|string|max:255|min:3',
         ];
     }
