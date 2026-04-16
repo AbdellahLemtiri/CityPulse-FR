@@ -26,6 +26,9 @@ class UpdateArticleRequest extends FormRequest
             'content' => 'sometimes|string',
             'sector_id' => 'sometimes|exists:sectors,id',
             'status' => 'sometimes|in:draft,published',
+            'deleted_images' => 'nullable|array', 
+            'images.*' => 'image|max:5120', 
+            'deleted_images.*' => 'string',
         ];
     }
 }
