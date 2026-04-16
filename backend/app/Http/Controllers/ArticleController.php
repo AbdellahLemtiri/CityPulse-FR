@@ -17,6 +17,7 @@ use App\Services\Article\ArticleService;
 use App\Http\Resources\article\getArticleResource;
 use App\Http\Resources\Article\showEditor;
 use App\Http\Resources\Article\IndexEditor;
+
 class ArticleController extends Controller
 {
 
@@ -93,8 +94,7 @@ class ArticleController extends Controller
         }])
             ->select('id', 'content', 'scope', 'status', 'created_at', 'user_id', 'slug')->where('user_id', $user->id)->latest()
             ->paginate(10);
-
-        return response()->json(new IndexEditor($articles), 200);
+        return IndexEditor::collection($articles);
     }
 
 
@@ -117,8 +117,8 @@ class ArticleController extends Controller
         $data = $request->validated();
 
         $images = $request->file('images');
-
-        $article = $this->articleService->updateArticle($article, $data, $images);
+        $deletedImages = $request->input('deleted_images', []);
+        $article = $this->articleService->updateArticle($article, $data, $images, $deletedImages);
 
         return response()->json([
             'message' => 'Article modifié avec succès',
