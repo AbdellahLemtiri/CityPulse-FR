@@ -35,7 +35,6 @@ class IncidentController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $roleId = $user->role_id;
 
         if ($user->hasRole('manager')) {
             $incidents = Incident::where('sector_id', $user->sector_id)
@@ -61,7 +60,7 @@ class IncidentController extends Controller
      */
     public function store(StoreIncidentRequest $request)
     {
-        Gate::authorize('create');
+        Gate::authorize('create', Incident::class);
         $user = Auth::user();
         $data = $request->validated();
         $images = $request->file('images', []);
@@ -77,7 +76,6 @@ class IncidentController extends Controller
 
     public function qualifyIncident(Request $request, $id, IncidentService $incidentService)
     {
-        Gate::authorize('qualifyIncident');
         $manager = Auth::guard('sanctum')->user();
 
         $request->validate([
@@ -85,17 +83,17 @@ class IncidentController extends Controller
         ]);
 
         try {
-             $incident = $incidentService->qualify($id, $request->category_id, $manager);
+            $incident = $incidentService->qualify($id, $request->category_id, $manager);
             return response()->json([
                 'message' => 'Incident qualifié et partenaire notifié avec succès !',
                 'incident' => $incident
             ], 200);
         } catch (\Exception $e) {
-             return response()->json(['message' => $e->getMessage()], 400);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 
-    
+
     public function rejectIncident(Request $request, $id)
     {
         $manager = Auth::guard('sanctum')->user();
