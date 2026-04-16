@@ -26,6 +26,7 @@ class DutyPharmacyController extends Controller
 
     public function journalistIndex(Request $request)
     {
+        Gate::authorize('journalistIndex', DutyPharmacy::class);
         $user = Auth::user();
         $search = $request->query('search');
 
@@ -41,7 +42,7 @@ class DutyPharmacyController extends Controller
 
     public function store(StoreDutyPharmacyRequest $request)
     {
-        Gate::authorize('create');
+        Gate::authorize('create', DutyPharmacy::class);
         $data = $request->validated();
         $user = Auth::user();
         $data['city_id'] = $user->city_id;
@@ -69,7 +70,7 @@ class DutyPharmacyController extends Controller
     }
 
 
-    
+
      public function destroy(DutyPharmacy $dutyPharmacy)
     {
         Gate::authorize('delete', $dutyPharmacy);
