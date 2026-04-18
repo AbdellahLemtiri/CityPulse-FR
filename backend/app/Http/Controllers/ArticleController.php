@@ -85,15 +85,24 @@ class ArticleController extends Controller
 
 
 
-    public function getArticlesByEditor()
+    public function getArticlesByEditor(Request $request)
     {
-
         $user = Auth::user();
-        $articles = Article::with(['media' => function ($query) {
-            $query->latest();
+
+        $query = Article::with(['media' => function ($q) {
+            $q->latest();
         }])
-            ->select('id', 'content', 'scope', 'status', 'created_at', 'user_id', 'slug')->where('user_id', $user->id)->latest()
-            ->paginate(10);
+            ->select('id', 'content', 'scope', 'status', 'created_at', 'user_id', 'slug')
+            ->where('user_id', $user->id);
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('content', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $articles = $query->latest()->paginate(10);
+
         return IndexEditor::collection($articles);
     }
 
