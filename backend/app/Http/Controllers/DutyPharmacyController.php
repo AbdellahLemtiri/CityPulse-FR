@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreDutyPharmacyRequest;
 use App\Http\Requests\UpdateDutyPharmacyRequest;
 use Illuminate\Support\Facades\Gate;
+use App\Http\Resources\DutyPharmacyResource;
 
 class DutyPharmacyController extends Controller
 {
@@ -15,11 +16,11 @@ class DutyPharmacyController extends Controller
     {
         $cityId =  Auth::user()->city_id;
         $pharmacies = DutyPharmacy::where('city_id', $cityId)
-            ->where('end_date', '>=', now())
-            ->orderBy('name', 'asc')
+            ->where('end_date', '>=', now())->where('start_date', '<=', now())
+            ->orderBy('end_date', 'asc')
             ->get();
 
-        return response()->json($pharmacies);
+        return response()->json(DutyPharmacyResource::collection($pharmacies));
     }
 
 
