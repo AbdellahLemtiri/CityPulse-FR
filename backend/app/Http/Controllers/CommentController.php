@@ -52,7 +52,7 @@ class CommentController extends Controller
             'parent_id' => $validated['parent_id'] ?? null,
         ]);
         return response()->json([
-            'comment'   => $comment->load('user'),
+            'comment'   => new CommentResorse($comment->load('user')), 
             'parent_id' => $comment->parent_id
         ], 201);
     }

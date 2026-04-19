@@ -37,7 +37,8 @@ class ArticleController extends Controller
     public function index(getDataRequest $request)
     {
         $user = Auth::user();
-        $req = $request->validated();
+
+         $req = $request->validated();
 
         $articles = Article::select('id', 'content', 'slug', 'created_at', 'user_id', 'sector_id', 'city_id', 'status', 'scope')
             ->where('city_id', $user->city_id)
@@ -52,13 +53,18 @@ class ArticleController extends Controller
             }])
             ->where('status', 'published');
 
-        if ($req['type'] === 'local') {
+         if (isset($req['type']) && $req['type'] === 'local') {
             $articles->where('scope', 'local')->where('sector_id', $user->sector_id);
         }
-        if ($req['type'] === 'global') {
+
+        if (isset($req['type']) && $req['type'] === 'global') {
             $articles->where('scope', 'global')->where('city_id', $user->city_id)->whereNull('sector_id');
         }
-if($req->filled())
+
+         if ($request->filled('search')) {
+            $articles->where('content', 'like', '%' . $request->search . '%');
+        }
+
         $articles = $articles->latest()->paginate(5);
 
         return ArticleResource::collection($articles);

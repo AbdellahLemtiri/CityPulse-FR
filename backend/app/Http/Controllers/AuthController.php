@@ -15,6 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\Sector;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\profile\userProfileResource;
+
 class AuthController extends Controller
 {
     //
@@ -69,7 +70,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return response()->json(['message' => 'Deconnexion réussie']);
