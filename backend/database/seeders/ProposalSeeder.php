@@ -13,5 +13,7 @@ class ProposalSeeder extends Seeder
     public function run(): void
     {
         //
+
+        
     }
 }
