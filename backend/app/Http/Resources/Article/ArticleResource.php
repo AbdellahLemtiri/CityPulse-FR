@@ -15,6 +15,8 @@ class ArticleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $name = $this->user->first_name . ' ' . $this->user->last_name;
+        $bg = substr(md5($this->user->id), 0, 6);
         return [
             'id'             => $this->id,
             'title'          => $this->title,
@@ -22,7 +24,10 @@ class ArticleResource extends JsonResource
             'content'        => $this->content,
             'scope'          => $this->scope,
             'status'         => $this->status,
-            'created_at'     => date('Y-m-d  ', strtotime($this->created_at)),
+            'created_at'     => date('Y-m-d H:i  ', strtotime($this->created_at)),
+            'author_avatar' => $this->user->photo
+                ? asset('storage/' . $this->user->photo->file_path)
+                : "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=$bg&color=fff",
             'likes_count'    => (int) $this->likes_count,
             'comments_count' => (int) $this->comments_count,
             'is_liked'       => (bool) $this->is_liked,

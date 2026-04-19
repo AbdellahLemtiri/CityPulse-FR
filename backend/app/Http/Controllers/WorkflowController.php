@@ -48,10 +48,12 @@ class WorkflowController extends Controller
 
      public function removeWorkflow($category_id, $partner_id)
     {
-        $category = CategoryIncident::findOrFail($category_id);
-        
-         $category->partners()->detach($partner_id);
 
+        $category = CategoryIncident::findOrFail($category_id);
+         $category->partners()->detach($partner_id);
         return response()->json(['message' => 'Règle supprimée avec succès.'], 200);
+
     }
-}
+
+
+ }
