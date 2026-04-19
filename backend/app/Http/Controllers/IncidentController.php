@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CategoryIncident;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class IncidentController extends Controller
 {
@@ -37,20 +38,22 @@ class IncidentController extends Controller
         $user = Auth::user();
 
         if ($user->hasRole('manager')) {
-            $incidents = Incident::where('sector_id', $user->sector_id)
-                ->with(['category:id,name',])
-                ->latest()
-                ->paginate(10);
-
-            return getIncidentResourse::collection($incidents);
+            $query = Incident::where('sector_id', $user->sector_id);
         } elseif ($user->hasRole('citoyen')) {
-            $incidents = $user->incidents()
-                ->with('category:id,name')
-                ->latest()
-                ->paginate(10);
-
-            return getIncidentResourse::collection($incidents);
+            $query = $user->incidents();
+        } else {
+            $query = Incident::query();
         }
+
+        $query->with('category:id,name');
+
+        if ($request->filled('search')) {
+            $query->where('ref_num', 'like', '%' . $request->search . '%');
+        }
+
+        $incidents = $query->latest()->paginate(10);
+
+        return getIncidentResourse::collection($incidents);
     }
 
 
@@ -146,5 +149,17 @@ class IncidentController extends Controller
         //
         $incident->softDelete();
         return response()->json(['message' => 'Incident supprimé avec succès'], 200);
+    }
+
+    public function ResolveIncident(Incident $incident)
+    {
+        $incident->update(['status' => 'resolved', 'resolved_at' => now()]);
+        Notification::send($incident->user, new IncidentUpdatedNotification([
+            'id' => $incident->id,
+            'title' => $incident->title,
+        ]));
+
+
+        return response()->json(['message' => 'Incident resolu avec succès'], 200);
     }
 }

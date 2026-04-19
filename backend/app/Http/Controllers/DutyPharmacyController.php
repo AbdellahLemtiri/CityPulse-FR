@@ -15,7 +15,6 @@ class DutyPharmacyController extends Controller
     {
         $cityId =  Auth::user()->city_id;
         $pharmacies = DutyPharmacy::where('city_id', $cityId)
-            ->where('start_date', '<=', now())
             ->where('end_date', '>=', now())
             ->orderBy('name', 'asc')
             ->get();
@@ -60,7 +59,7 @@ class DutyPharmacyController extends Controller
 
 
 
-     public function update(UpdateDutyPharmacyRequest $request, DutyPharmacy $dutyPharmacy)
+    public function update(UpdateDutyPharmacyRequest $request, DutyPharmacy $dutyPharmacy)
     {
         Gate::authorize('update', $dutyPharmacy);
         $user = Auth::user();
@@ -71,7 +70,7 @@ class DutyPharmacyController extends Controller
 
 
 
-     public function destroy(DutyPharmacy $dutyPharmacy)
+    public function destroy(DutyPharmacy $dutyPharmacy)
     {
         Gate::authorize('delete', $dutyPharmacy);
         $user = Auth::user();
