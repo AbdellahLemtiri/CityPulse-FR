@@ -12,6 +12,7 @@ use App\Http\Requests\profile\UpdateProfileInfo;
 use App\Http\Requests\profile\UpdateProfileLocation;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Gate;
 
 class ProfileController extends Controller
 {
@@ -60,17 +61,22 @@ class ProfileController extends Controller
     public function updateLocation(UpdateProfileLocation $request)
     {
         $user = Auth::user();
-
-        if ($user->city_changed_at && $user->city_changed_at->addDays(30)->isFuture()) {
-             return response()->json([
-                'message' => "Vous ne pouvez changer de ville qu'une fois par mois. Réessayez dans jours."
+        if ($user->hasRole('citoyen')) {
+            if ($user->city_changed_at && $user->city_changed_at->addDays(30)->isFuture()) {
+                return response()->json([
+                    'message' => "Vous ne pouvez changer de ville qu'une fois par mois. Réessayez dans jours."
+                ], 403);
+            }
+            $data = $request->validated();
+            $user->update($data);
+            $user->update(['city_changed_at' => now()]);
+            $user = $user->load(['city', 'sector', 'photo']);
+            return response()->json($user, 200);
+        } else {
+            return response()->json([
+                'message' => "Non autorisé"
             ], 403);
         }
-        $data = $request->validated();
-        $user->update($data);
-        $user->update(['city_changed_at' => now()]);
-        $user = $user->load(['city', 'sector', 'photo']);
-        return response()->json($user, 200);
     }
 
     public function deleteAccount(Request $request)
@@ -79,13 +85,18 @@ class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
         $user = $request->user();
-        $user->tokens()->delete();
-        $user->delete();
-        return response()->json(['message' => 'Compte supprimé avec succès']);
+
+        if ($user->hasRole('citoyen')) {
+            $user->tokens()->delete();
+            $user->delete();
+            return response()->json(['message' => 'Compte supprimé avec succès']);
+        } else {
+            return response()->json(['message' => 'Non autorisé'], 403);
+        }
     }
 
 
-    
+
     public function updatePassword(Request $request)
     {
         $validated = $request->validate([
@@ -97,7 +108,4 @@ class ProfileController extends Controller
         ]);
         return response()->json(['message' => 'Mot de passe mis à jour avec succès']);
     }
-
-
-    
 }
