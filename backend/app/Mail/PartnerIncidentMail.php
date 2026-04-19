@@ -45,7 +45,7 @@ class PartnerIncidentMail extends Mailable
     public function build()
     {
         return $this->subject('Ordre d\'intervention : Nouvel Incident - CityPulse')
-            ->replyTo($this->manager->email, $this->manager->name)
+            ->replyTo($this->manager->email, $this->manager->first_name . ' ' . $this->manager->last_name)
             ->view('emails.partner_incident');
     }
 }
