@@ -58,7 +58,7 @@ class ArticleController extends Controller
         if ($req['type'] === 'global') {
             $articles->where('scope', 'global')->where('city_id', $user->city_id)->whereNull('sector_id');
         }
-
+if($req->filled())
         $articles = $articles->latest()->paginate(5);
 
         return ArticleResource::collection($articles);
