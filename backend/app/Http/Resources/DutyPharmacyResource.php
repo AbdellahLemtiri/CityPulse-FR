@@ -15,7 +15,12 @@ class DutyPharmacyResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            ''
+            'name' => $this->name,
+            'address' => $this->address,
+            'phone' => $this->phone,
+            'location_url' => $this->location_url,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,  
         ];
     }
 }
