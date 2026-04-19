@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Sector;
+use App\Models\Partner;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PartnerIncidentMail;
+use App\Notifications\IncidentUpdatedNotification;
+use App\Http\Resources\incident\getIncidentResourse;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 
 class IncidentService
 {
@@ -58,6 +66,42 @@ class IncidentService
             }
 
             return $incident;
+        });
+    }
+
+
+    public function qualify(int $incidentId, int $categoryId, User $manager)
+    {
+        return DB::transaction(function () use ($incidentId, $categoryId, $manager) {
+
+            $incident = Incident::findOrFail($incidentId);
+
+            Gate::authorize('qualifyIncident', $incident, Incident::class);
+
+            $partner = Partner::where('city_id', $manager->city_id)->whereHas('categories', function ($query) use ($categoryId) {
+                $query->where('category_incidents.id', $categoryId);
+            })->first();
+
+            if (!$partner) {
+                throw new \Exception(' Aucun partenaire assigné à cette catégorie dans cette ville.');
+            }
+
+            $incident->update([
+                'category_id' => $categoryId,
+                'partner_id' => $partner->id,
+                'status' => 'in_progress',
+                'qualified_at' => now(),
+            ]);
+
+
+
+            Notification::send($incident->user, new IncidentUpdatedNotification([
+                'id' => $incident->id,
+                'title' => $incident->title,
+            ]));
+            $incident->load('category', "media");
+            Mail::to($partner->email)->send(new PartnerIncidentMail($incident, $partner, $manager));
+            return $incident->load('partner');
         });
     }
 }
