@@ -61,6 +61,15 @@ class SectorController extends Controller
         });
     }
 
+
+    public function toggleStatus(Request $request, Sector $sector)
+    {
+        $sector->update(['status' => !$sector->status]);
+        return response()->json([
+            'message' => 'Secteur mis à jour avec succès',
+         ], 200);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -75,6 +84,7 @@ class SectorController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        
     }
 
     /**
