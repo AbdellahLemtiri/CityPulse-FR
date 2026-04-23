@@ -1,31 +1,26 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from 'react';
+import axiosClient from '../config/axios-client';
 
 const StateContext = createContext({
-    user: null,
-    token: null,
-    setUser: () => {},
-    setToken: () => {}
+  user: null,
+  setUser: () => {},
+  isCheckingAuth: true,
 });
 
 export const ContextProvider = ({ children }) => {
-    const [user, setUser] = useState({});
-    
-     const [token, _setToken] = useState(localStorage.getItem('ACCESS_TOKEN'));
+  const [user, setUser] = useState(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-     const setToken = (token) => {
-        _setToken(token);
-        if (token) {
-            localStorage.setItem('ACCESS_TOKEN', token);
-        } else {
-            localStorage.removeItem('ACCESS_TOKEN');
-        }
-    };
-
-    return (
-        <StateContext.Provider value={{ user, token, setUser, setToken }}>
-            {children}
-        </StateContext.Provider>
-    );
+  useEffect(() => {
+    axiosClient.get('/user').then(({ data }) => {
+        setUser(data);
+      }).catch(() => {
+        setUser(null);
+      }).finally(() => {
+        setIsCheckingAuth(false);  
+      });
+  }, []);
+  return <StateContext.Provider value={{ user, setUser,isCheckingAuth }}>{children}</StateContext.Provider>;
 };
 
- export const useStateContext = () => useContext(StateContext);
+export const useStateContext = () => useContext(StateContext);

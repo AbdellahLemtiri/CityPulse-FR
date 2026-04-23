@@ -1,168 +1,204 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ImageDown, Compass } from 'lucide-react';
+import axiosClient from '../config/axios-client';
+import toast from 'react-hot-toast';
+import { useStateContext } from '../contexts/ContextProvider';
 
 export default function JournalisteEditor() {
-  // States dial l-Article
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
-    title: '',
     content: '',
-    category: 'Culture',
-    scope: 'global',
-    sector_id: '',
-    status: 'draft', 
-    });
+    status: 'draft',
+  });
+  const { slug } = useParams();
+  const isEditMode = !!slug;
+  const { user } = useStateContext();
 
-  const [coverImage, setCoverImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null); 
+  const [mediaList, setMediaList] = useState([]);
+  const [deletedImages, setDeletedImages] = useState([]);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [fetching, setFetching] = useState(isEditMode);
 
-  // US.56: Image de couverture
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setCoverImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      const newMediaItems = files.map((file) => ({
+        type: 'new',
+        url: URL.createObjectURL(file),
+        file: file,
+      }));
+      setMediaList((prev) => [...prev, ...newMediaItems]);
     }
   };
 
-  const handleAction = (statusTarget) => {
-    if (!formData.title || !formData.content) {
-      alert("Veuillez remplir le titre et le contenu de l'article.");
+  const handleRemoveImage = (indexToRemove) => {
+    const itemToRemove = mediaList[indexToRemove];
+
+    if (itemToRemove.type === 'old') {
+      setDeletedImages((prev) => [...prev, itemToRemove.url]);
+    }
+
+    setMediaList((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchArticle = async () => {
+        try {
+          const response = await axiosClient.get(`editor/article/${slug}`);
+          const data = response.data;
+          setFormData({
+            content: data.content,
+            status: data.status,
+          });
+
+          if (data.images && Array.isArray(data.images)) {
+            const existingMedia = data.images.map((url) => ({
+              type: 'old',
+              url: url,
+              file: null,
+            }));
+            setMediaList(existingMedia);
+          }
+        } catch (error) {
+          toast.error("Erreur de chargement de l'article");
+          navigate('/editor/articles');
+        } finally {
+          setFetching(false);
+        }
+      };
+      fetchArticle();
+    }
+  }, [slug, navigate, isEditMode]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.content.trim()) {
+      toast.error("Le contenu de l'alerte est obligatoire.");
       return;
     }
 
     setIsSubmitting(true);
+    try {
+      const dataToSubmit = new FormData();
+      dataToSubmit.append('content', formData.content);
+      dataToSubmit.append('status', formData.status);
 
-    // Hna ghadi t-koun l'API: axiosClient.post('/articles', {...formData, status: statusTarget})
+      mediaList.forEach((item) => {
+        if (item.type === 'new') {
+          dataToSubmit.append('images[]', item.file);
+        }
+      });
 
-    setTimeout(() => {
-      alert(`Article ${statusTarget === 'published' ? 'PUBLIÉ' : 'SAUVEGARDÉ COMME BROUILLON'} avec succès !`);
+      deletedImages.forEach((url) => {
+        dataToSubmit.append('deleted_images[]', url);
+      });
 
-      // Reset
-      setFormData({ title: '', content: '', category: 'Culture', scope: 'global', sector_id: '', status: 'draft' });
-      setCoverImage(null);
-      setPreviewUrl(null);
-      document.getElementById('cover-upload').value = '';
+      if (isEditMode) {
+        dataToSubmit.append('_method', 'PUT');
+        await axiosClient.post(`/editor/articles/${slug}`, dataToSubmit, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        toast.success('Article modifié avec succès !');
+      } else {
+        await axiosClient.post('/editor/articles', dataToSubmit, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        toast.success('Article créé avec succès !');
+      }
+
+      navigate('/editor/articles');
+    } catch (error) {
+      console.log(error);
+      toast.error("Une erreur est survenue lors de l'enregistrement.");
+    } finally {
       setIsSubmitting(false);
-    }, 800);
+    }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 max-w-6xl mx-auto">
-      {/* --- COLONNE GAUCHE : RÉDACTION (US.56) --- */}
-      <div className="w-full lg:w-2/3 flex flex-col gap-4">
-        {/* Cover Image Upload */}
-        <div className="bg-white border border-gray-300 p-4 shadow-sm">
-          <label className="block text-xs font-bold text-gray-700 uppercase mb-2">Image de Couverture (Optionnelle)</label>
-          {previewUrl ? (
-            <div className="relative h-48 w-full bg-gray-100 border border-gray-300">
-              <img src={previewUrl} alt="Cover" className="w-full h-full object-cover" />
-              <button
-                onClick={() => {
-                  setCoverImage(null);
-                  setPreviewUrl(null);
-                  document.getElementById('cover-upload').value = '';
-                }}
-                className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 text-xs font-bold">
-                Retirer
-              </button>
-            </div>
-          ) : (
-            <div
-              onClick={() => document.getElementById('cover-upload').click()}
-              className="h-32 w-full border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 flex flex-col items-center justify-center cursor-pointer text-gray-500">
-              <span className="material-symbols-outlined text-3xl mb-1">add_photo_alternate</span>
-              <span className="text-sm font-bold">Ajouter une image haute résolution</span>
-            </div>
-          )}
-          <input type="file" id="cover-upload" accept="image/*" className="hidden" onChange={handleImageChange} />
+    <div className="max-w-4xl mx-auto text-gray-800 dark:text-gray-200 transition-colors duration-300 pb-10">
+      <div className="mb-6 mt-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-wide">
+            {isEditMode ? 'Modifier' : 'Rédiger'} {user?.role === 'journaliste' ? 'une actualité' : 'une alerte'}
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Préparez l'information à diffuser aux citoyens.</p>
         </div>
-
-        {/* Titre et Contenu */}
-        <div className="bg-white border border-gray-300 p-4 shadow-sm flex-1 flex flex-col">
-          <input
-            type="text"
-            value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            placeholder="Saisissez le titre de l'article ici..."
-            className="w-full text-xl font-bold border-b border-gray-300 pb-3 mb-4 outline-none placeholder-gray-400"
-          />
-
-          <textarea
-            value={formData.content}
-            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-            placeholder="Rédigez le contenu de votre article ici..."
-            className="w-full flex-1 min-h-[400px] border-none outline-none resize-none text-gray-800 leading-relaxed"></textarea>
-        </div>
+        <button onClick={() => navigate('/editor/articles')} className="text-gray-500 hover:text-gray-900 dark:hover:text-white font-bold text-xs uppercase flex items-center gap-1 transition-colors">
+          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          Retour
+        </button>
       </div>
 
-      {/* --- COLONNE DROITE : PARAMÈTRES (US.57, US.58, US.59) --- */}
-      <div className="w-full lg:w-1/3 flex flex-col gap-6">
-        {/* Catégorisation */}
-        <div className="bg-white border border-gray-300 p-4 shadow-sm">
-          <h3 className="text-sm font-bold text-gray-800 uppercase mb-3 border-b border-gray-200 pb-2">Catégorisation</h3>
-          <select
-            value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            className="w-full border border-gray-300 p-2 text-sm bg-gray-50 outline-none focus:border-secondary-500">
-            <option value="Culture">Culture & Patrimoine</option>
-            <option value="Sport">Sport & Loisirs</option>
-            <option value="Santé">Santé & Bien-être</option>
-            <option value="Urgence">Urgence & Sécurité</option>
-            <option value="Institutionnel">Actualité Institutionnelle</option>
-          </select>
-        </div>
-
-        {/* Ciblage d'Audience (Scope Isolation) */}
-        <div className="bg-white border border-gray-300 p-4 shadow-sm">
-          <h3 className="text-sm font-bold text-gray-800 uppercase mb-3 border-b border-gray-200 pb-2">Audience Cible</h3>
-
-          <div className="space-y-3">
-            <label className="flex items-start gap-2 cursor-pointer">
-              <input type="radio" name="scope" value="global" checked={formData.scope === 'global'} onChange={() => setFormData({ ...formData, scope: 'global', sector_id: '' })} className="mt-1" />
-              <div>
-                <p className="text-sm font-bold text-gray-800">Global (Toute la ville)</p>
-                <p className="text-xs text-gray-500">L'article apparaîtra sur le fil d'actualité de tous les citoyens de Safi.</p>
-              </div>
-            </label>
-
-            <label className="flex items-start gap-2 cursor-pointer mt-2">
-              <input type="radio" name="scope" value="local" checked={formData.scope === 'local'} onChange={() => setFormData({ ...formData, scope: 'local' })} className="mt-1" />
-              <div>
-                <p className="text-sm font-bold text-gray-800">Local (Quartier spécifique)</p>
-                <p className="text-xs text-gray-500">Seuls les résidents du secteur choisi recevront une notification.</p>
-              </div>
-            </label>
-
-            {formData.scope === 'local' && (
-              <select
-                value={formData.sector_id}
-                onChange={(e) => setFormData({ ...formData, sector_id: e.target.value })}
-                className="w-full border border-gray-300 p-2 text-sm bg-gray-50 outline-none mt-2">
-                <option value="">-- Sélectionnez un secteur --</option>
-                <option value="1">Quartier Plateau</option>
-                <option value="2">Ville Nouvelle</option>
-                <option value="3">Hay Salam</option>
-                <option value="4">Sidi Bouzid</option>
-              </select>
-            )}
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm rounded-lg p-6 transition-colors">
+        {fetching ? (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
-        </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Images d'illustration </label>
 
-        {/* Actions (Workflow) */}
-        <div className="bg-white border border-gray-300 p-4 shadow-sm">
-          <h3 className="text-sm font-bold text-gray-800 uppercase mb-3 border-b border-gray-200 pb-2">Publication</h3>
-          <div className="flex flex-col gap-3">
-            <button onClick={() => handleAction('draft')} disabled={isSubmitting} className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 text-sm uppercase transition-colors">
-              Enregistrer (Brouillon)
-            </button>
-            <button
-              onClick={() => handleAction('published')}
-              disabled={isSubmitting}
-              className="w-full bg-secondary-600 hover:bg-secondary-700 text-white font-bold py-2 text-sm uppercase transition-colors">
-              Publier l'Article
-            </button>
-          </div>
-        </div>
+              <div className="flex flex-wrap gap-4 mb-3">
+                {mediaList.map((item, index) => (
+                  <div key={index} className="relative w-32 h-32 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-600 group">
+                    <img src={item.url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                    <button type="button" onClick={() => handleRemoveImage(index)} className="absolute inset-0 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 transition-opacity">
+                      <span className="material-symbols-outlined">delete</span>
+                    </button>
+                  </div>
+                ))}
+
+                <div onClick={() => fileInputRef.current.click()} className="cursor-pointer   rounded-lx w-32 h-32 flex items-center justify-center text-gray-400 hover:text-primary-500 hover:border-primary-500 transition-colors">
+                  <ImageDown className="w-10 h-10" />
+                </div>
+              </div>
+              <input type="file" ref={fileInputRef} accept="image/*" multiple className="hidden" onChange={handleImageChange} />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Contenu *</label>
+              <textarea required rows="8" value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="w-full border border-gray-200 dark:border-gray-600 p-4 text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/20 resize-y rounded  shadow-inner" placeholder="Rédigez l'information complète ici..."></textarea>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-5">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Statut de l'alerte *</label>
+                <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className="w-full border border-gray-200 dark:border-gray-600 p-3 text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-primary-500 rounded-lg cursor-pointer transition-colors">
+                  <option value="published">Publier (Visible immédiatement)</option>
+                  <option value="draft">Brouillon (Non visible)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3 mt-4">
+              <button type="button" onClick={() => navigate('/editor/articles')} className="bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold py-2.5 px-6 uppercase text-xs rounded-lg transition-colors">
+                Annuler
+              </button>
+              <button type="submit" disabled={isSubmitting} className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-2.5 px-8 uppercase text-xs rounded-lg disabled:opacity-50 flex items-center gap-2 shadow-sm ">
+                {isSubmitting ? (
+                  <>
+ Traitement...
+                  </>
+                ) : formData.status === 'published' ? (
+                  <>
+                    <span className="material-symbols-outlined text-[16px]">send</span> {isEditMode ? 'Mettre à jour' : "Publier l'Alerte"}
+                  </>
+                ) : (
+                  <>
+                    Sauvegarder 
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );
