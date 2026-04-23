@@ -1,183 +1,164 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-// --- MOCK DATA ---
-const mockArticles = [
-  {
-    id: 1,
-    title: "Le Festival de la Céramique de Safi attire des milliers de visiteurs",
-    category: "Culture",
-    scope: "global",
-    status: "published",
-    created_at: "2026-03-14",
-    image: "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?q=80&w=200"
-  },
-  {
-    id: 2,
-    title: "Ouverture d'un nouveau terrain de proximité",
-    category: "Sport",
-    scope: "local",
-    sector_id: "Quartier Plateau",
-    status: "published",
-    created_at: "2026-03-10",
-    image: "https://images.unsplash.com/photo-1518605368461-1e1e1141505c?q=80&w=200"
-  },
-  {
-    id: 3,
-    title: "Campagne de don de sang à l'hôpital Mohammed V",
-    category: "Santé",
-    scope: "global",
-    status: "draft",
-    created_at: "2026-03-15",
-    image: null
-  }
-];
+import axiosClient from '../config/axios-client';
+import 'moment/locale/fr';
+import { toast } from 'react-hot-toast';
 
 export default function JournalisteArticles() {
-  const [articles, setArticles] = useState(mockArticles);
+  const [articles, setArticles] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lastPage, setLastPage] = useState(1);
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const fetchArticles = async (page = 1) => {
+    setIsLoading(true);
+    try {
+      const response = await axiosClient.get(`/editor/articles?page=${page}&search=${searchQuery}`);
 
-  // Supprimer un article
-  const handleDelete = (id) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible.")) {
-      // API: axiosClient.delete(`/articles/${id}`)
-      setArticles(articles.filter(article => article.id !== id));
-      alert("Article supprimé avec succès.");
+      const articles = response.data.data;
+
+      const current = response.data.meta.current_page;
+      const last = response.data.meta.last_page;
+
+      setCurrentPage(current);
+      setLastPage(last);
+
+      setArticles(articles);
+    } catch (error) {
+      console.error('Erreur Backend :', error);
+      toast.error("Impossible de charger l'historique.", { style: { background: '#333', color: '#fff' } });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Modifier un article (Simulation)
-  const handleEdit = (id) => {
-    alert(`Redirection vers l'éditeur pour l'article ID: ${id}`);
-    // F l-bessa7 ghadi t-dir: navigate(`/journaliste/rediger/${id}`)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery) {
+         fetchArticles();
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    fetchArticles(currentPage);
+  }, [currentPage]);
+
+  const handleDelete = async (slug) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette alerte ?')) {
+    }
+    try {
+      await axiosClient.delete(`/editor/articles/${slug}`);
+      setArticles(articles.filter((article) => article.slug !== slug));
+
+      toast.success('Alerte supprimée !');
+    } catch (error) {
+      console.error('Erreur Backend :', error);
+      toast.error("Impossible de supprimer l'article.");
+    }
+  };
+
+  const handleEdit = (slug) => {
+    navigate(`/editor/rediger/${slug}`);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= lastPage) {
+      setCurrentPage(newPage);
+    }
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
-      
-      {/* HEADER DE LA PAGE */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
+    <div className="max-w-6xl mx-auto text-gray-800 dark:text-gray-200  duration-300 pb-10">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-8 mt-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 uppercase tracking-wide">
-            Mes Articles
-          </h2>
-          <p className="text-sm text-gray-600 mt-1">
-            Gérez vos publications, brouillons et alertes.
-          </p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-wide">Mes Alertes & Articles</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Gérez vos publications, modifiez les brouillons ou créez de nouvelles alertes.</p>
         </div>
-        <Link 
-          to="/journaliste/rediger"
-          className="bg-secondary-600 hover:bg-secondary-700 text-white font-bold py-2 px-6 shadow-sm transition-colors flex items-center justify-center gap-2"
-        >
-          <span className="material-symbols-outlined text-[20px]">edit_document</span>
-          Nouvel Article
+        <Link to="/editor/rediger" className="bg-primary-600 text-white font-bold py-2.5 px-6 rounded-lg text-sm uppercase flex items-center justify-center gap-2 ">
+          <span className="material-symbols-outlined text-[18px]">edit_document</span>
+          Rédiger
         </Link>
       </div>
 
-      {/* TABLEAU ADMINISTRATIF DES ARTICLES */}
-      <div className="bg-white border border-gray-300 shadow-sm overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-100 border-b border-gray-300 text-sm text-gray-700 uppercase tracking-wider">
-              <th className="p-4 border-r border-gray-200 w-16 text-center">Image</th>
-              <th className="p-4 border-r border-gray-200">Article</th>
-              <th className="p-4 border-r border-gray-200">Audience</th>
-              <th className="p-4 border-r border-gray-200">Statut</th>
-              <th className="p-4 border-r border-gray-200">Date</th>
-              <th className="p-4 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {articles.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="p-8 text-center text-gray-500 font-bold">
-                  Aucun article trouvé. Commencez à rédiger !
-                </td>
-              </tr>
-            ) : (
-              articles.map(article => (
-                <tr key={article.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
-                  
-                  {/* IMAGE (Thumbnail) */}
-                  <td className="p-3 border-r border-gray-200 text-center">
-                    {article.image ? (
-                      <img src={article.image} alt="Cover" className="w-12 h-12 object-cover border border-gray-300 mx-auto" />
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-5 ">
+        <div className="    p-5 rounded-xl mb-6  flex flex-col sm:flex-row gap-4 items-end">
+          <div className="flex-1 w-full">
+            <label className="block text-xs font-bold text-gray-400 uppercase  mb-2">Rechercher un par content : </label>
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-500 text-[20px]">search</span>
+              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Tapez des mot de content ..."  className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-red-500 " />
+            </div>
+          </div>
+        </div>
+        {isLoading && (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+          </div>
+        )}
+
+        {!isLoading && articles.length === 0 ? (
+          <div className="p-8 text-center text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-900 rounded-lg">Aucune publication pour le moment.</div>
+        ) : (
+          <>
+            <ul className="divide-y divide-gray-100 dark:divide-gray-700">
+              {articles.map((art) => (
+                <li key={art.slug} className="p-2 flex flex-col md:flex-row md:items-center justify-between  rounded-lg gap-4 ">
+                  <div className="flex items-center gap-4">
+                    {art.images && art.images.length > 0 ? (
+                      <img src={art.images[0]} alt="Cover" className="w-20 h-20 object-cover rounded-l border border-gray-200 dark:border-gray-600" />
                     ) : (
-                      <div className="w-12 h-12 bg-gray-200 border border-gray-300 flex items-center justify-center mx-auto text-gray-400">
-                        <span className="material-symbols-outlined text-xl">image</span>
+                      <div className="w-20 h-20 bg-gray-100 dark:bg-gray-900 text-gray-400 rounded-l flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                        <span className="material-symbols-outlined">description</span>
                       </div>
                     )}
-                  </td>
-
-                  {/* TITRE & CATÉGORIE */}
-                  <td className="p-3 border-r border-gray-200">
-                    <p className="font-bold text-gray-900 text-sm line-clamp-2 mb-1">{article.title}</p>
-                    <span className="text-xs text-gray-500 uppercase font-bold border border-gray-300 px-2 py-0.5 bg-gray-50">
-                      {article.category}
-                    </span>
-                  </td>
-
-                  {/* AUDIENCE (Scope) */}
-                  <td className="p-3 border-r border-gray-200">
-                    <div className="flex flex-col items-start">
-                      <span className={`px-2 py-1 text-[10px] font-bold uppercase border ${
-                        article.scope === 'global' 
-                        ? 'bg-blue-50 text-blue-700 border-blue-200' 
-                        : 'bg-purple-50 text-purple-700 border-purple-200'
-                      }`}>
-                        {article.scope}
-                      </span>
-                      {article.scope === 'local' && (
-                        <span className="text-[10px] text-gray-500 mt-1">{article.sector_id}</span>
-                      )}
+                    <div className="border-l-2 border-primary-500 pl-3 py-1 max-w-lg">
+                      <p className="font-bold text-gray-800 dark:text-gray-200 text-sm line-clamp-2">{art.content}</p>
                     </div>
-                  </td>
+                  </div>
 
-                  {/* STATUT */}
-                  <td className="p-3 border-r border-gray-200">
-                    <span className={`px-2 py-1 text-[11px] font-bold uppercase border flex items-center gap-1 w-max ${
-                      article.status === 'published' 
-                      ? 'bg-green-50 text-green-700 border-green-300' 
-                      : 'bg-gray-100 text-gray-600 border-gray-300'
-                    }`}>
-                      <span className="material-symbols-outlined text-[14px]">
-                        {article.status === 'published' ? 'public' : 'draft'}
-                      </span>
-                      {article.status === 'published' ? 'Publié' : 'Brouillon'}
-                    </span>
-                  </td>
+                  <div className="flex items-center gap-4 self-end md:self-auto">
+                    <div className="flex items-center gap-3 border rounded-lg border-gray-200 dark:border-gray-700 pr-4 bg-gray-50 dark:bg-gray-900/50 ">
+                      <span className={`px-2 py-1.5 text-[10px] font-bold uppercase rounded-lg border-r  `}>{art.status === 'published' ? 'Publié' : 'Brouillon'}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">{moment(art.created_at).fromNow()}</span>
+                    </div>
 
-                  {/* DATE */}
-                  <td className="p-3 border-r border-gray-200 text-sm text-gray-600">
-                    {new Date(article.created_at).toLocaleDateString('fr-FR')}
-                  </td>
-
-                  {/* ACTIONS */}
-                  <td className="p-3 text-center">
-                    <div className="flex justify-center gap-2">
-                      <button 
-                        onClick={() => handleEdit(article.id)}
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 px-3 py-1.5 text-xs font-bold transition-colors"
-                        title="Modifier"
-                      >
-                        Éditer
+                    <div className="flex items-center gap-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900/50 p-1">
+                      <button onClick={() => handleEdit(art.slug)} className="text-gray-400 hover:text-primary-500 px-2 py-1.5 rounded-lg " title="Modifier">
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
                       </button>
-                      <button 
-                        onClick={() => handleDelete(article.id)}
-                        className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 text-xs font-bold transition-colors"
-                        title="Supprimer"
-                      >
-                        Supprimer
+                      <button onClick={() => handleDelete(art.slug)} className="text-gray-400 hover:text-red-500 px-2 py-1.5 rounded-lg " title="Supprimer">
+                        <span className="material-symbols-outlined text-[18px]">delete</span>
                       </button>
                     </div>
-                  </td>
+                  </div>
+                </li>
+              ))}
+            </ul>
 
-                </tr>
-              ))
+            {lastPage > 1 && (
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="flex items-center gap-1 px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-600 ">
+                  <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+                  Précédent
+                </button>
+
+                <span className="text-sm font-bold text-gray-500 dark:text-gray-400">
+                  Page <span className="text-gray-900 dark:text-white">{currentPage}</span> sur <span className="text-gray-900 dark:text-white">{lastPage}</span>
+                </span>
+
+                <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === lastPage} className="flex items-center gap-1 px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-600 ">
+                  Suivant
+                  <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+                </button>
+              </div>
             )}
-          </tbody>
-        </table>
+          </>
+        )}
       </div>
-
     </div>
   );
 }
