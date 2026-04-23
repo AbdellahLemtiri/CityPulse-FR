@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  <?php
 
     // cénario 1: Le Système de Domotique (Smart Home)
@@ -288,4 +289,7 @@
 
 
     ?>
+=======
+<?php
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 

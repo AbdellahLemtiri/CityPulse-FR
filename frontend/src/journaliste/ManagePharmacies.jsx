@@ -8,17 +8,30 @@ export default function ManagePharmacies() {
   const [pharmacies, setPharmacies] = useState([]);
   const [loading, setLoading] = useState(true);
   
+<<<<<<< HEAD
    const [searchTerm, setSearchTerm] = useState('');
+=======
+  // 🚨 State jdad dyal Search w Pagination
+  const [searchTerm, setSearchTerm] = useState('');
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   const navigate = useNavigate();
 
+<<<<<<< HEAD
    useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
       setCurrentPage(1);  
+=======
+  // 🧠 Galeb d-l-m3llmiya (Debounce): Kan-tsennawh y-sali ktaba b 500ms 3ad n-siftou l-API
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1); // N-rddouh l-page 1 ila qleb 3la 7aja jdida
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
     }, 500);
     return () => clearTimeout(timer);
   }, [searchTerm]);
@@ -26,13 +39,23 @@ export default function ManagePharmacies() {
   const fetchMyPharmacies = async () => {
     setLoading(true);
     try {
+<<<<<<< HEAD
        const response = await axiosClient.get('/pharmacies', {
+=======
+      // Kan-siftou page w search l-Laravel
+      const response = await axiosClient.get('/pharmacies', {
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         params: {
           page: currentPage,
           search: debouncedSearch
         }
       });
+<<<<<<< HEAD
        setPharmacies(response.data.data);
+=======
+      // 🚨 Red l-bal: Laravel kay-sift d-data west 'data' mnin kan-dirou paginate()
+      setPharmacies(response.data.data);
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
       setTotalPages(response.data.last_page);
     } catch (error) {
       toast.error('Erreur de chargement');
@@ -41,7 +64,12 @@ export default function ManagePharmacies() {
     }
   };
 
+<<<<<<< HEAD
    useEffect(() => {
+=======
+  // Kan-3aytou l-API kola merra t-beddlat l-page awla s-search
+  useEffect(() => {
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
     fetchMyPharmacies();
   }, [currentPage, debouncedSearch]);
 
@@ -50,7 +78,11 @@ export default function ManagePharmacies() {
     try {
       await axiosClient.delete(`/pharmacies/${id}`);
       toast.success('Garde supprimée !');
+<<<<<<< HEAD
       fetchMyPharmacies(); 
+=======
+      fetchMyPharmacies(); // N-3awdou n-fetchiw bach n-qaddou l-pagination
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
     } catch (error) {
       toast.error('Erreur lors de la suppression');
     }
@@ -61,9 +93,16 @@ export default function ManagePharmacies() {
   };
 
   return (
+<<<<<<< HEAD
     <div className="bg-white dark:bg-gray-800 rounded-2xl  border border-gray-200 dark:border-gray-700 overflow-hidden">
       
        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+=======
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      
+      {/* HEADER + SEARCH BAR */}
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <CalendarClock className="text-primary-500" />
@@ -71,25 +110,43 @@ export default function ManagePharmacies() {
           </h2>
           <button
             onClick={() => navigate('/editor/pharmacies/create')}
+<<<<<<< HEAD
             className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded-xl  ransition-colors flex items-center gap-2 active:scale-95"
+=======
+            className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded-xl shadow-md transition-colors flex items-center gap-2 active:scale-95"
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
           >
             Planifier <CalendarPlus size={20} />
           </button>
         </div>
 
+<<<<<<< HEAD
          <div className="relative max-w-md">
+=======
+        {/* INPUT RECHERCHE */}
+        <div className="relative max-w-md">
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input 
             type="text" 
             placeholder="Rechercher une pharmacie..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+<<<<<<< HEAD
          className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-50 dark:bg-gray-900 text-white rounded-lg focus:outline-none focus:border-red-500 " 
+=======
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500/50"
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
           />
         </div>
       </div>
 
+<<<<<<< HEAD
        <div className="overflow-x-auto min-h-[300px]">
+=======
+      {/* TABLEAU */}
+      <div className="overflow-x-auto min-h-[300px]">
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         {loading ? (
           <div className="flex justify-center items-center h-40">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>

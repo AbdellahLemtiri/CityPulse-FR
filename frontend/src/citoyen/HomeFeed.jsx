@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import axiosClient from '../config/axios-client';
+<<<<<<< HEAD
 import { ScrollText, ArrowBigLeftDash, ArrowBigRightDash, Copy, SendHorizontal } from 'lucide-react';
 import toast from 'react-hot-toast';
+=======
+import { ScrollText, ArrowBigLeftDash, ArrowBigRightDash} from 'lucide-react';
+
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 import CommentItem from './CommentItem.jsx';
 import { useStateContext } from '../contexts/ContextProvider';
 export default function HomeFeed() {
@@ -15,7 +20,7 @@ export default function HomeFeed() {
   const [replyingToId, setReplyingToId] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
   const [comments, setComments] = useState([]);
   const commentInputRef = useRef(null);
   const [seeLink, setSeeLink] = useState(null);
@@ -23,9 +28,12 @@ export default function HomeFeed() {
   const [slugActual, setSlugActual] = useState(null);
   const tabs = ['Tout', 'Officiel', 'Quartier'];
   const [fullscreenImage, setFullscreenImage] = useState(null);
+<<<<<<< HEAD
   const [isFetchComment, setIsFetchComment] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+=======
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
   const ImageCarousel = ({ images, onImageClick }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -89,7 +97,11 @@ export default function HomeFeed() {
     try {
       // console.log(selectTab);
       // console.log(typeParam);
+<<<<<<< HEAD
       const response = await axiosClient.get('/articles', { params: { type: typeParam, page: pageNum , search: searchQuery} });
+=======
+      const response = await axiosClient.get('/articles', { params: { type: typeParam, page: pageNum } });
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
       console.log(typeParam);
 
       const metaData = response.data.meta;
@@ -117,7 +129,11 @@ export default function HomeFeed() {
   };
   const handleCopyLink = () => {
     navigator.clipboard.writeText(link);
+<<<<<<< HEAD
     toast.success('Lien copié avec succès !');
+=======
+    // toast.success("Lien copié avec succès !"); // Kay-tle3 l-Toast
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
     setSeeLink(false);
   };
   const handlLikeart = (clickedPost) => {
@@ -225,14 +241,24 @@ export default function HomeFeed() {
     const shareUrl = `${window.location.origin}/article/${slug}`;
     setLink(shareUrl);
     setSeeLink(true);
+<<<<<<< HEAD
   };
   // console.log(comments);
+=======
+
+    // navigator.clipboard.writeText(shareUrl);
+
+    // toast.success("Lien de l'article copié !");
+  };
+  console.log(comments);
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 
   const hiddLinkDiv = () => {
     setLink(null);
     setSeeLink(null);
     setSlugActual(null);
   };
+<<<<<<< HEAD
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -242,6 +268,8 @@ export default function HomeFeed() {
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);
+=======
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
   return (
     <>
       <div className="sticky relative     w-full top-[40px] md:top-[64px] z-30 rounded-b-lg pt-2 pb-2 px-2 md:px-0 mb-4 bg-gray-50 dark:bg-gray-800">
@@ -335,7 +363,11 @@ export default function HomeFeed() {
                   </button>
                 </div>
                 {seeLink && slugActual === post.slug && (
+<<<<<<< HEAD
                   <div className="absolute bottom-16 right-0 mt-2 w-72 p-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-xl z-50 animate-fade-in-up">
+=======
+                  <div className="absolute bottom-32 right-0 mt-2 w-72 p-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-xl z-50 animate-fade-in-up">
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
                     <button onClick={hiddLinkDiv} className="flex items-center justify-end">
                       <span className="material-symbols-outlined text-gray-500 dark:text-gray-400">close</span>
                     </button>
@@ -345,7 +377,11 @@ export default function HomeFeed() {
                       <input type="text" value={link} className="flex-1 bg-transparent text-sm text-gray-600 dark:text-gray-300 px-2 outline-none truncate" readOnly />
 
                       <button onClick={handleCopyLink} className="flex items-center justify-center w-8 h-8 rounded-md bg-white dark:bg-gray-800 text-gray-500 hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/30 border border-gray-200 dark:border-gray-700 transition-all active:scale-95" title="Copier le lien">
+<<<<<<< HEAD
                         <Copy />
+=======
+                        <span className="material-symbols-outlined text-[18px]">content_copy</span>
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
                       </button>
                     </div>
                   </div>

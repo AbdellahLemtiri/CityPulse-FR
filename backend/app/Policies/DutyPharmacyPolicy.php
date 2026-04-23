@@ -29,7 +29,11 @@ class DutyPharmacyPolicy
      */
     public function create(User $user): bool
     {
+<<<<<<< HEAD
         return $user->hasRole('journaliste') ;
+=======
+        return false;
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
     }
 
     /**
@@ -37,12 +41,16 @@ class DutyPharmacyPolicy
      */
     public function update(User $user, DutyPharmacy $dutyPharmacy): bool
     {
+<<<<<<< HEAD
         return $user->id === $dutyPharmacy->user_id;
     }
 
     public function journalistIndex(User $user): bool
     {
         return $user->hasRole('journaliste');
+=======
+        return false;
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
     }
 
     /**
@@ -50,7 +58,11 @@ class DutyPharmacyPolicy
      */
     public function delete(User $user, DutyPharmacy $dutyPharmacy): bool
     {
+<<<<<<< HEAD
         return  $user->id === $dutyPharmacy->user_id;
+=======
+        return false;
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
     }
 
     /**

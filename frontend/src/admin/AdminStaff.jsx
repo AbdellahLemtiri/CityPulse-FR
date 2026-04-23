@@ -165,6 +165,7 @@ export default function AdminStaff() {
             {Array.isArray(staffList) &&
               staffList.map((staff) => (
                 <tr key={staff.id} className={`border-b border-gray-700 text-sm  ${staff.is_banned ? 'bg-red-900/10' : 'hover:bg-gray-700/50'}`}>
+<<<<<<< HEAD
                   <td className="p-4  font-bold text-gray-200">
                     {staff.first_name} {staff.last_name}
                   </td>
@@ -174,13 +175,32 @@ export default function AdminStaff() {
                   </td>
 
                   <td className="p-4  font-bold text-gray-300 flex items-center gap-2">
+=======
+                  <td className="p-4 border-r border-gray-700 font-bold text-gray-200">
+                    {staff.first_name} {staff.last_name}
+                  </td>
+                  <td className="p-4 border-r border-gray-700 text-gray-400">{staff.email}</td>
+                  <td className="p-4 border-r border-gray-700">
+                    <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded border ${staff.role === 'Journaliste' ? 'bg-purple-900/30 text-purple-400 border-purple-800/50' : 'bg-indigo-900/30 text-indigo-400 border-indigo-800/50'}`}>{staff.role}</span>
+                  </td>
+
+                  <td className="p-4 border-r border-gray-700 font-bold text-gray-300 flex items-center gap-2">
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
                     <span className="material-symbols-outlined text-[16px] text-gray-500">location_on</span>
                     {staff.sector || '-'}
                   </td>
 
+<<<<<<< HEAD
                   <td className="p-4  text-center">{!staff.is_banned ? <span className="text-green-400 font-bold uppercase text-[10px] bg-green-900/30 border border-green-800/50 rounded px-2 py-1 tracking-wider">Actif</span> : <span className="text-red-400 font-bold uppercase text-[10px] bg-red-900/30 border border-red-800/50 rounded px-2 py-1 tracking-wider">Bloqué</span>}</td>
                   <td className="p-4 text-center flex justify-center items-center gap-3">
                     
+=======
+                  <td className="p-4 border-r border-gray-700 text-center">{!staff.is_banned ? <span className="text-green-400 font-bold uppercase text-[10px] bg-green-900/30 border border-green-800/50 rounded px-2 py-1 tracking-wider">Actif</span> : <span className="text-red-400 font-bold uppercase text-[10px] bg-red-900/30 border border-red-800/50 rounded px-2 py-1 tracking-wider">Bloqué</span>}</td>
+                  <td className="p-4 text-center flex justify-center items-center gap-3">
+                    <button onClick={() => handleOpenEdit(staff)} className="text-primary-400 hover:text-primary-300 font-bold text-xs uppercase ">
+                      Éditer
+                    </button>
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
                     <span className="text-gray-600">|</span>
                     <button onClick={() => toggleStatus(staff.id)} className={`${!staff.is_banned ? 'text-red-400 hover:text-red-300' : 'text-green-400 hover:text-green-300'} font-bold text-xs uppercase `}>
                       {!staff.is_banned ? 'Bloquer' : 'Activer'}
@@ -195,7 +215,12 @@ export default function AdminStaff() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
           <div className="bg-gray-800 border border-gray-600 rounded-lg w-full max-w-2xl flex flex-col shadow-2xl max-h-[90vh] overflow-y-auto">
+<<<<<<< HEAD
              <div className="bg-gray-900 p-4 border-b border-gray-700 flex justify-between items-center text-white rounded-t-lg sticky top-0 z-10">
+=======
+            {/* Header Modal */}
+            <div className="bg-gray-900 p-4 border-b border-gray-700 flex justify-between items-center text-white rounded-t-lg sticky top-0 z-10">
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
               <h3 className="font-bold uppercase text-sm flex items-center gap-2 tracking-wide">
                 <span className="material-symbols-outlined text-[20px]">manage_accounts</span>
                 {isEditing ? 'Modifier les accès du membre' : 'Créer un nouveau compte Staff'}

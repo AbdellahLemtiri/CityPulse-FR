@@ -60,7 +60,7 @@
                 <li><strong>Catégorie :</strong> <span class="badge">{{ $incident->category->name }}</span></li>
                 <li><strong>Problème :</strong> {{ $incident->title }}</li>
                 <li><strong>Adresse :</strong> {{ $incident->address }}</li>
-                <li><strong>Date de déclaration :</strong>  </li>
+ 
             </ul>
 
             <p><strong>Description citoyenne :</strong></p>

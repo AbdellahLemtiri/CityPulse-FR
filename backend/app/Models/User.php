@@ -80,8 +80,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Incident::class);
     }
-  
-
+ 
     public function strikes(): HasMany
     {
         return $this->hasMany(Strike::class);
@@ -106,5 +105,5 @@ class User extends Authenticatable
             }
         });
     }
-    
+ 
 }

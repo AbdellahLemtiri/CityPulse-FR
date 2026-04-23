@@ -33,13 +33,21 @@ import AdminBanMonitor from './admin/AdminBanMonitor';
 function App() {
   return (
     <Routes>
+<<<<<<< HEAD
       <Route path="/article/:slug" element={<SharedArticle />} />
+=======
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
       <Route path="/" element={<Welcome />} />
       <Route element={<GuestRoute />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+<<<<<<< HEAD
         <Route path="/forgotPassword" element={<ForgotPassword />} />
       </Route>
+=======
+      </Route>
+      <Route path="/article/:slug" element={<SharedArticle />} />
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
       <Route element={<ProtectedRoute />}>
         <Route element={<BaseLayout />}>
           <Route index element={<Navigate to="/homefeed" replace />} />
@@ -78,6 +86,16 @@ function App() {
         </Route>
       </Route>
 
+<<<<<<< HEAD
+=======
+      {/* <Route path="/editor" element={<ProtectedRoute allowedRoles={['journaliste']} />}>
+        <Route element={<JournalisteLayout />}>
+          <Route index element={<Navigate to="rediger" replace />} />
+          <Route path="rediger" element={<JournalisteEditor />} />
+          <Route path="articles" element={<JournalisteArticles />} />
+        </Route>
+      </Route> */}
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
       <Route path="*" element={<NotFound />} />
       <Route path="/404" element={<NotFound />} />
     </Routes>

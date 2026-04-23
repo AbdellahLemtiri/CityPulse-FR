@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // const students = [
 //   { id: 1, name: "Ali", score: 12, status: "en cours" },
 //   { id: 2, name: "Sara", score: 16, status: "validé" },
@@ -72,3 +73,14 @@
 
 
 let c = "aaaaaaavcceeedsqds";
+=======
+const students = [
+  { id: 1, name: "Ali", score: 12, status: "en cours" },
+  { id: 2, name: "Sara", score: 16, status: "validé" },
+  { id: 3, name: "Omar", score: 8, status: "rattrapage" },
+  { id: 4, name: "Aida", score: 14, status: "validé" }
+];
+
+
+for(let i  = 0 ;i<students.len)
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8

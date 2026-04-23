@@ -4,6 +4,7 @@ import Pusher from 'pusher-js';
 import toast, { Toaster } from 'react-hot-toast';
 import { useStateContext } from '../../contexts/ContextProvider';
 import axiosClient from '../../config/axios-client';
+<<<<<<< HEAD
 
 window.Pusher = Pusher;
 window.Echo = new Echo({
@@ -16,12 +17,25 @@ window.Echo = new Echo({
   wssPort: 8080,
 
   cluster: 'mt1',
+=======
+window.Echo = new Echo({
+  broadcaster: 'reverb',
+  key: import.meta.env.VITE_REVERB_APP_KEY || 'xadhdnbkzigazsdx91hw',
+  wsHost: import.meta.env.VITE_REVERB_HOST || 'localhost',
+
+  wsPort: import.meta.env.VITE_REVERB_PORT || 8080,
+  wssPort: import.meta.env.VITE_REVERB_PORT || 8080,
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 
   forceTLS: false,
   disableStats: true,
   enabledTransports: ['ws', 'wss'],
 
+<<<<<<< HEAD
   authEndpoint: `http://127.0.0.1:8000/api/broadcasting/auth`,
+=======
+  authEndpoint: `http://localhost:8000/api/broadcasting/auth`,
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 
   authorizer: (channel, options) => {
     return {
@@ -48,6 +62,47 @@ export default function TopHeader() {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const { user } = useStateContext();
+<<<<<<< HEAD
+=======
+
+  let userId = null;
+  if (user) {
+    userId = user.id;
+  }
+
+  useEffect(() => {
+    if (!userId) return;
+
+    axiosClient.get('/notifications').then((res) => {
+      const formattedNotifs = res.data.map((n) => ({
+        id: n.id,
+        ...n.data,
+        read_at: n.read_at,
+      }));
+      setNotifications(formattedNotifs);
+
+      const unread = formattedNotifs.filter((n) => n.read_at === null).length;
+      setUnreadCount(unread);
+    });
+  }, [userId]);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleToggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+    if (!showDropdown && unreadCount > 0) {
+      setUnreadCount(0);
+      axiosClient.post('/notifications/mark-as-read');
+    }
+  };
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 
   let userId = null;
   if (user) {
@@ -123,7 +178,11 @@ export default function TopHeader() {
     }
   };
   return (
+<<<<<<< HEAD
     <header className="sticky  top-0 z-40 bg-white/90 overflow-visible dark:bg-gray-900 px-4 md:px-8 py-3 md:py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+=======
+    <header className="sticky top-0 z-40 bg-white/90 overflow-visible dark:bg-gray-900 px-4 md:px-8 py-3 md:py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
       <div className="flex items-center gap-2">
         <div className="md:hidden w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center shadow-sm"></div>
         <span className="md:hidden text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
@@ -144,10 +203,17 @@ export default function TopHeader() {
           </button>
 
           {showDropdown && (
+<<<<<<< HEAD
             <div className="absolute right-0 mt-3 w-80 md:w-96 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl z-50 overflow-hidden animate-fade-in-up">
               <div className="bg-gray-50 dark:bg-gray-900/80 p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                 <h3 className="font-bold text-sm text-gray-900 dark:text-white uppercase tracking-wider">Notifications</h3>
                 {notifications.length > 0 && <span className="text-[10px] bg-primary-900/30 text-primary-400 px-2 py-1 rounded-lg font-bold uppercase">{notifications.length} Récentes</span>}
+=======
+            <div className="absolute right-0 mt-3 w-80 md:w-96 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in-up">
+              <div className="bg-gray-50 dark:bg-gray-900/80 p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h3 className="font-bold text-sm text-gray-900 dark:text-white uppercase tracking-wider">Notifications</h3>
+                {notifications.length > 0 && <span className="text-[10px] bg-primary-900/30 text-primary-400 px-2 py-1 rounded font-bold uppercase">{notifications.length} Récentes</span>}
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
               </div>
 
               <div className="max-h-[350px] overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700 custom-scrollbar">
@@ -172,7 +238,13 @@ export default function TopHeader() {
                 )}
               </div>
 
+<<<<<<< HEAD
          
+=======
+              <div className="p-3 bg-gray-50 dark:bg-gray-900/80 border-t border-gray-200 dark:border-gray-700 text-center">
+                <button className="text-[11px] font-bold text-primary-500 hover:text-primary-400 uppercase tracking-wider transition-colors">Voir tout l'historique</button>
+              </div>
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
             </div>
           )}
         </div>

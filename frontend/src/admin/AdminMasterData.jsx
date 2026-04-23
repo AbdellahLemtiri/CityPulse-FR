@@ -43,6 +43,7 @@ export default function AdminMasterData() {
     }
   };
 
+  // 2. Gestion des Modals
   const openModal = (type, isEdit = false, data = null) => {
     setModalConfig({ isOpen: true, type, isEdit, id: data ? data.id : null });
 
@@ -101,6 +102,13 @@ export default function AdminMasterData() {
     }
   };
 
+<<<<<<< HEAD
+=======
+  const toggleCategoryStatus = async (id) => {
+    console.log('Toggle category:', id);
+  };
+
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
   const handleAddRule = async () => {
     if (!selectedCategoryIdWorkflow || !selectedPartnerIdWorkflow) {
       toast.error('Veuillez sélectionner une catégorie et un partenaire.', { style: { background: '#333', color: '#fff' } });
@@ -161,6 +169,7 @@ export default function AdminMasterData() {
           <div className="flex items-center justify-center min-h-screen bg-gray-900">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
           </div>
+<<<<<<< HEAD
         ) : (
           activeTab === 'sectors' && (
             <div className="bg-gray-800 border border-gray-700 shadow-sm rounded-lg overflow-hidden animate-fade-in">
@@ -197,6 +206,34 @@ export default function AdminMasterData() {
                         </td>
                         <button onClick={() => openModal('sector', true, sec)} className="px-3 py-1 text-xs font-bold uppercase text-primary-400 hover:text-primary-600 ">
                           chnage status
+=======
+        ):activeTab === 'sectors' && (
+          <div className="bg-gray-800 border border-gray-700 shadow-sm rounded-lg overflow-hidden animate-fade-in">
+            <div className="p-4 bg-gray-800/50 border-b border-gray-700 flex justify-between items-center">
+              <h3 className="font-bold uppercase text-sm text-gray-200">Secteurs (Arrondissements)</h3>
+              <button onClick={() => openModal('sector')} className="text-xs bg-primary-600 hover:bg-primary-500 text-white px-3 py-1.5 font-bold uppercase rounded ">
+                + Ajouter
+              </button>
+            </div>
+            <table className="w-full text-left border-collapse text-sm">
+              <tbody>
+                {sectors.length === 0 ? (
+                  <tr>
+                    <td colSpan="2" className="p-8 text-center text-gray-500 font-bold bg-gray-800">
+                      Aucun secteur trouvé.
+                    </td>
+                  </tr>
+                ) : (
+                  sectors.map((sec) => (
+                    <tr key={sec.id} className="border-b border-gray-700 hover:bg-gray-700/50 ">
+                      <td className="p-4 font-bold text-gray-200 flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gray-700 border border-gray-600 rounded flex items-center justify-center overflow-hidden">{sec.logo ? <img src={`http://localhost:8000/storage/${sec.logo.file_path}`} alt="logo" className="w-full h-full object-cover" /> : <span className="material-symbols-outlined text-gray-500 text-sm">image</span>}</div>
+                        {sec.name}
+                      </td>
+                      <td className="p-4 text-right">
+                        <button onClick={() => openModal('sector', true, sec)} className="px-3 py-1 text-xs font-bold uppercase text-primary-400 hover:text-primary-300">
+                          Éditer
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
                         </button>
                       </tr>
                     ))
@@ -384,6 +421,13 @@ export default function AdminMasterData() {
                     <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Description</label>
                       <textarea rows="3" value={sectorData.description} onChange={(e) => setSectorData({ ...sectorData, description: e.target.value })} className="w-full border border-gray-600 rounded p-2.5 text-sm bg-gray-900 text-white focus:outline-none focus:border-primary-500" />
+<<<<<<< HEAD
+=======
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Image de couverture</label>
+                      <input type="file" accept="image/*" onChange={(e) => setSectorData({ ...sectorData, logo: e.target.files[0] })} className="w-full border border-gray-600 rounded p-1.5 text-sm bg-gray-900 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600 cursor-pointer" />
+>>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
                     </div>
                   </>
                 )}
