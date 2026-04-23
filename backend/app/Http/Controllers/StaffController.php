@@ -55,7 +55,7 @@ class StaffController extends Controller
         $user->load(['sector', 'city']);
 
         return response()->json([
-            StaffResource::collection($user)             
+            StaffResource::make($user) , 'message' => 'Staff created successfully'        
         ], 201);
     }
 
