@@ -29,7 +29,7 @@ class DutyPharmacyPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('journaliste') ;
     }
 
     /**
@@ -37,7 +37,12 @@ class DutyPharmacyPolicy
      */
     public function update(User $user, DutyPharmacy $dutyPharmacy): bool
     {
-        return false;
+        return $user->id === $dutyPharmacy->user_id;
+    }
+
+    public function journalistIndex(User $user): bool
+    {
+        return $user->hasRole('journaliste');
     }
 
     /**
@@ -45,7 +50,7 @@ class DutyPharmacyPolicy
      */
     public function delete(User $user, DutyPharmacy $dutyPharmacy): bool
     {
-        return false;
+        return  $user->id === $dutyPharmacy->user_id;
     }
 
     /**
