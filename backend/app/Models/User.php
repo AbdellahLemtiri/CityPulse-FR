@@ -80,10 +80,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Incident::class);
     }
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class);
-    }
+  
 
     public function strikes(): HasMany
     {
