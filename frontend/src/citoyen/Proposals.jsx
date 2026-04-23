@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react';
 import axiosClient from '../config/axios-client';
-
+import { Lightbulb, ImageDown,Eye } from 'lucide-react';
+import toast from 'react-hot-toast';
 export default function Proposals() {
   const [proposals, setProposals] = useState([]);
   const [myProposals, setMyProposals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('quartier');
+  const [tab, setTab] = useState('quartier');
+
   const [images, setImages] = useState([]);
   const currentProposals = activeTab === 'mes_idees' ? myProposals : proposals;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [isDetailsOpen, setIsDetailOpen] = useState(false);
-   const [fetchMyProposals, setFetchMyProposals] = useState(false);
+  const [fetchMyProposals, setFetchMyProposals] = useState(false);
   // const [isMyProposalTab, setIsMyProposalTab] = useState(false);
+  const [isLoding, setIsLoding] = useState(true);
   const [formData, setFormData] = useState({
     title: '',
     location_name: '',
@@ -25,8 +29,11 @@ export default function Proposals() {
   const [isVoting, setIsVoting] = useState(false);
 
   const fetchProposals = async () => {
+    setProposals([]);
+    if (!activeTab) return;
+    setIsLoding(true);
+    setTab('null');
     let url = '/proposals';
-
     if (fetchMyProposals) {
       url = '/proposals?my-proposals=1';
     }
@@ -42,6 +49,13 @@ export default function Proposals() {
       setFetchMyProposals(false);
     } catch (error) {
       console.error('Erreur récupération propositions', error);
+    } finally {
+      if (fetchMyProposals) {
+        setTab('mes_idees');
+      } else {
+        setTab('quartier');
+      }
+      setIsLoding(false);
     }
   };
   const handelTabChange = (tab) => {
@@ -66,31 +80,19 @@ export default function Proposals() {
     });
 
     try {
-      const response = await axiosClient.post('/proposals', formDataToSend);
-
-      const newProposal = {
-        id: response.data.proposal.id,
-        title: response.data.proposal.title,
-        location_name: response.data.proposal.location_name,
-        image: response.data.proposal.images,
-        description: response.data.proposal.description,
-        images: response.data.proposal.images,
-        is_voted: false,
-        votes_count: 0,
-        created_at: response.data.proposal.created_at,
-      };
-      console.log(newProposal);
-
-      setMyProposals([newProposal, ...myProposals]);
+      const response = await axiosClient.post('/proposals', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       setActiveTab('mes_idees');
-
-      alert('Votre idée a été soumise ! Elle sera visible par le quartier après validation du Manager.');
-
-      setFormData({ title: '', location_name: '', description: '', images: [] });
+      setFetchMyProposals(true);
+      toast.success('Votre idée a été soumise ! Elle sera visible par le quartier après validation du Manager.');
+      resetForm();
       setIsModalOpen(false);
     } catch (error) {
       console.error('Erreur création', error);
-      alert("Une erreur s'est produite.");
+      toast.error("Une erreur s'est produite.");
     } finally {
       setIsSubmitting(false);
     }
@@ -123,7 +125,7 @@ export default function Proposals() {
       setProposalToVote(null);
     } catch (error) {
       console.error('Erreur de vote', error);
-      alert("Erreur lors de l'enregistrement du vote.");
+      toast.error("Erreur lors de l'enregistrement du vote.");
     } finally {
       setIsVoting(false);
     }
@@ -132,7 +134,7 @@ export default function Proposals() {
     const files = Array.from(e.target.files);
 
     if (images.length + files.length > 2) {
-      alert('Vous ne pouvez télécharger que 2 images maximum.');
+      toast.error('Vous ne pouvez télécharger que 2 images maximum.');
       return;
     }
 
@@ -153,13 +155,12 @@ export default function Proposals() {
     setImages([]);
   };
 
-
-  const removeImageFOrForm = (index)=>{
+  const removeImageFOrForm = (index) => {
     const images = formData.images;
     images.splice(index, 1);
     setFormData({ ...formData, images });
     setImages(images);
-  }
+  };
   const detailsProposal = (proposal) => {
     setSelectedProposal(proposal);
     setIsModalOpen(true);
@@ -174,50 +175,51 @@ export default function Proposals() {
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Budget Participatif</h2>
                 <p className="text-sm text-gray-500">Proposez et votez pour l'amélioration de votre quartier.</p>
               </div>
-              <button onClick={() => setIsModalOpen(true)} className="bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold py-2 px-4 rounded-xl shadow-sm  flex items-center gap-2">
-                <span className="material-symbols-outlined text-[20px]">lightbulb</span> Soumettre une idée
-              </button>
-            </div>
-            <div className="flex border-b border-gray-200 dark:border-gray-700 ">
-              <button onClick={() => setActiveTab('quartier')} className={`pb-3 px-4 text-sm font-bold  ${activeTab === 'quartier' ? 'border-b-2 border-primary-600 text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
-                Projets du Quartier
-              </button>
               <button
                 onClick={() => {
-                  handelTabChange('mes_idees');
-                  setFetchMyProposals(true);
+                  setIsModalOpen(true);
+                  (resetForm(), setActiveTab(null));
                 }}
-                className={`pb-3 px-4 text-sm font-bold  ${activeTab === 'mes_idees' ? 'border-b-2 border-primary-600 text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
-                Mes Propositions
+                className="bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold py-2 px-4 rounded-xl shadow-sm  flex items-center gap-2">
+                <Lightbulb />
+                Proposez
               </button>
-            </div>{' '}
+            </div>
+            {!selectedProposal && (
+              <div className="flex border-b border-gray-200 dark:border-gray-700 ">
+                <button onClick={() => setActiveTab('quartier')} className={`pb-3 px-4 text-sm font-bold  ${activeTab === 'quartier' ? 'border-b-2 border-primary-600 text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
+                  Projets du Quartier
+                </button>
+                <button
+                  onClick={() => {
+                    handelTabChange('mes_idees');
+                    setFetchMyProposals(true);
+                  }}
+                  className={`pb-3 px-4 text-sm font-bold  ${activeTab === 'mes_idees' ? 'border-b-2 border-primary-600 text-primary-600 dark:text-primary-400' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
+                  Mes Propositions
+                </button>
+              </div>
+            )}
           </>
         ) : (
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
-            <button
-              onClick={() => {
-                setIsModalOpen(false);
-                resetForm();
-              }}
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-              <span className="  px-2 py-1 rounded-lg bg-primary-500/40 text-white">Annuler</span>
-            </button>
+          <div className="px-6 py-4      border-b  border-gray-200 dark:border-gray-700  ">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary-500">add_circle</span>
-              Nouvelle Proposition
+              Nouvelle Proposition <Lightbulb className="text-primary-500" />
             </h2>
           </div>
         )}
 
-        {loading && (
+        {isLoding && (
           <div className="flex justify-center py-10">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
         )}
-        {!isModalOpen && 
+        {!isModalOpen &&
+          (tab === 'mes_idees' || tab === 'quartier') &&
+          !selectedProposal &&
           (currentProposals.length === 0 ? (
-            <div className="text-center mt-8 py-12 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700">
-              <span className="material-symbols-outlined text-4xl text-gray-400 mb-2">inbox</span>
+            <div className=" flex flex-col items-center text-center mt-8 py-8 bg-gray-50 dark:bg-gray-800/50 rounded-lg  ">
+              <Lightbulb />
               <h3 className="text-gray-600 dark:text-gray-300 font-bold">{activeTab === 'mes_idees' ? "Vous n'avez encore proposé aucune idée." : 'Aucune proposition trouvée.'}</h3>
               <p className="text-sm text-gray-500 mt-1">{activeTab === 'mes_idees' ? "Participez à l'amélioration de Safi !" : "Soyez le premier à proposer une idée d'aménagement !"}</p>
             </div>
@@ -235,12 +237,13 @@ export default function Proposals() {
                       <span className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-2">{proposal.created_at}</span>
                     </div>
                     <div className="flex justify-between items-start gap-4">
-                      <div className="w-40 h-40 rounded-md overflow-hidden shrink-0 hidden sm:block">
-                        <img src={proposal.images?.[0] && `http://127.0.0.1:8000/storage/${proposal.images[0]}`} alt="Projet" className="w-full h-full object-cover" />
-                      </div>
+                      {proposal.images.length > 0 && (
+                        <div className="w-40 h-40 rounded-md mb-4 overflow-hidden shrink-0 hidden sm:block">
+                          <img src={proposal.images?.[0] && ` ${proposal.images[0]}`} alt="Projet" className="w-full h-full object-cover" />
+                        </div>
+                      )}
 
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">{proposal.title}</h3>
                         <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mb-3 font-medium">
                           <span className="material-symbols-outlined text-[16px]">pin_drop</span>
                           {proposal.location_name}
@@ -258,7 +261,7 @@ export default function Proposals() {
                       </div>
                       <div className="flex gap-2">
                         <button onClick={() => setSelectedProposal(proposal)} className="px-4 py-2 rounded-lg font-bold text-sm shadow-sm  flex items-center gap-2 bg-primary-600/95 text-white hover:bg-primary-500">
-                          <span className="material-symbols-outlined text-[18px]">visibility</span> Voir
+                         <Eye /> detail
                         </button>
                         {activeTab === 'quartier' && (
                           <button onClick={() => setProposalToVote(proposal)} className={`px-4 py-2 rounded-lg font-bold text-sm shadow-sm  flex items-center gap-2 ${proposal.is_voted ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 border border-primary-200 dark:border-primary-800' : 'bg-primary-600 text-white hover:bg-primary-500'}`}>
@@ -281,23 +284,25 @@ export default function Proposals() {
         {isModalOpen && (
           <div className="bg-white mt-4 dark:bg-gray-900 w-full max-w-lg rounded-lg  dark:border-gray-700 overflow-hidden ">
             <form onSubmit={handleSubmit} className="p-6 space-y-4   ">
-              <div>
-                <label className="block text-sm  font-bold text-gray-700 dark:text-gray-300 mb-1">Titre de l'idée *</label>
-                <input type="text" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" />
-              </div>
-
+              {' '}
+              {images.length < 2 && (
+                <>
+                  {' '}
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">photo de la propostion ou le localisation optionnel: max 2 images</label>
+                  <div onClick={() => document.getElementById('incident-image-input').click()} className="  rounded-xl   hover:border-primary-500 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-900  cursor-pointer  text-gray-400 hover:text-primary-500">
+                    <ImageDown className="w-10 h-10" />
+                  </div>
+                </>
+              )}
               <div>
                 <label className="block text-sm  font-bold text-gray-700 dark:text-gray-300 mb-1">Localisation précise *</label>
                 <input type="text" required value={formData.location_name} onChange={(e) => setFormData({ ...formData, location_name: e.target.value })} className="w-full bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" />
                 <p className="text-[10px] mt-1 text-gray-500">Décrivez l'endroit avec des mots simples.</p>
               </div>
-
               <div>
                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Description détaillée *</label>
                 <textarea required rows="4" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="w-full bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50  focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" placeholder="Expliquez pourquoi cette idée est utile pour le quartier..."></textarea>
               </div>
-              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">photo de la propostion ou le localisation (optionnel) : max 2 images</label>
-
               <div className="grid grid-cols-4 gap-3">
                 {images.map((img, index) => (
                   <div key={index} className="aspect-square relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 group">
@@ -308,15 +313,9 @@ export default function Proposals() {
                   </div>
                 ))}
               </div>
-              {images.length < 2 && (
-                <div onClick={() => document.getElementById('incident-image-input').click()} className="aspect-square rounded-xl border-2  border-gray-300 dark:border-gray-600 hover:border-primary-500 dark:hover:border-primary-500 bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center cursor-pointer  text-gray-400 hover:text-primary-500">
-                  <span className="material-symbols-outlined text-2xl">add_a_photo</span>
-                </div>
-              )}
               <div>
                 <input type="file" accept="image/*" id="incident-image-input" multiple onChange={handleImageUpload} className="hidden" multiple />
               </div>
-
               <div className="pt-4 flex gap-3">
                 <button
                   type="button"
@@ -343,12 +342,13 @@ export default function Proposals() {
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
-
+            <div className="flex items-center gap-2 mb-4"> <img src={`${selectedProposal.imageAuthor}`} alt={selectedProposal.author_name} className="w-10 h-10 rounded-xl mr-2" /> <div className="flex flex-col"> <span className="text-sm text-gray-200  " > {selectedProposal.author_name} </span> <span className="text-xs text-gray-500">{selectedProposal.created_at}</span> </div></div>
+            
             <p className="text-sm text-gray-500 mb-4">{selectedProposal.location_name}</p>
-
+     
             <div className="flex gap-2 mb-4">
               {selectedProposal.images?.map((img, idx) => (
-                <img key={idx} src={`http://127.0.0.1:8000/storage/${img}`} alt={`Image ${idx}`} className="w-32 h-32 object-cover rounded-md" />
+                <img key={idx} src={`${img}`} alt={`Image ${idx}`} className="w-32 h-32 object-cover  " />
               ))}
             </div>
 
