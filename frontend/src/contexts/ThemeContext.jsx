@@ -3,25 +3,30 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-   const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem("color-theme") === "dark";
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("color-theme");
+    
+     if (savedTheme === null) {
+      return true;
+    }
+    
+     return savedTheme === "dark";
   });
 
   useEffect(() => {
     const root = window.document.documentElement;
+    
     if (isDarkMode) {
       root.classList.add("dark");
       localStorage.setItem("color-theme", "dark");
-    } 
-    else {
+    } else {
       root.classList.remove("dark");
       localStorage.setItem("color-theme", "light");
     }
   }, [isDarkMode]);
 
-  // Fonction li kat-beddel l-mode
   const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
+    setIsDarkMode(prev => !prev);
   };
 
   return (
@@ -31,4 +36,10 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
- export const useTheme = () => useContext(ThemeContext);
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
+  return context;
+};
