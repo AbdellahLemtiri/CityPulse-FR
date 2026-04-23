@@ -5,6 +5,7 @@ import GuestRoute from './components/auth/GuestRoute';
 import NotFound from './components/404/NotFound';
 import Welcome from './Welcome';
 import Login from './auth/Login';
+import ForgotPassword from './auth/ForgotPassword';
 import Register from './auth/Register';
 import Dashboard from './Dashboard';
 import HomeFeed from './citoyen/HomeFeed';
@@ -32,11 +33,12 @@ import AdminBanMonitor from './admin/AdminBanMonitor';
 function App() {
   return (
     <Routes>
+      <Route path="/article/:slug" element={<SharedArticle />} />
       <Route path="/" element={<Welcome />} />
       <Route element={<GuestRoute />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-                <Route path="/article/:slug" element={<SharedArticle />} />
+        <Route path="/forgotPassword" element={<ForgotPassword />} />
       </Route>
       <Route element={<ProtectedRoute />}>
         <Route element={<BaseLayout />}>
@@ -68,7 +70,7 @@ function App() {
             <Route path="rediger/:slug" element={<JournalisteEditor />} />
             <Route path="pharmacies/create" element={<AddDutyPharmacy />} />
             <Route path="Pharmacies" element={<ManagePharmacies />} />
-            <Route path="pharmacies/  /:id" element={<AddDutyPharmacy />} />
+            <Route path="pharmacies/edit/:id" element={<AddDutyPharmacy />} />
           </Route>
 
           <Route path="/profil" element={<Profil />} />
@@ -76,13 +78,6 @@ function App() {
         </Route>
       </Route>
 
-      {/* <Route path="/editor" element={<ProtectedRoute allowedRoles={['journaliste']} />}>
-        <Route element={<JournalisteLayout />}>
-          <Route index element={<Navigate to="rediger" replace />} />
-          <Route path="rediger" element={<JournalisteEditor />} />
-          <Route path="articles" element={<JournalisteArticles />} />
-        </Route>
-      </Route> */}
       <Route path="*" element={<NotFound />} />
       <Route path="/404" element={<NotFound />} />
     </Routes>
