@@ -3,11 +3,6 @@ import axiosClient from '../config/axios-client';
 import { useState, useEffect, useRef } from 'react';
 import { ScrollText, ArrowBigLeftDash, ArrowBigRightDash } from 'lucide-react';
 
-<<<<<<< HEAD
-=======
-// import { formatDistanceToNow } from "date-fns";
-// import { fr } from "date-fns/locale";
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 import CommentItem from './CommentItem.jsx';
 export default function SharedArticle() {
   const { slug } = useParams();

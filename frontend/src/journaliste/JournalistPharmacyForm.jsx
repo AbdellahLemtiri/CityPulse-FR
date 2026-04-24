@@ -1,15 +1,8 @@
 import { useState, useEffect } from 'react';
-<<<<<<< HEAD
 import { useParams, useNavigate } from 'react-router-dom'; 
 import axiosClient from '../config/axios-client';
 import toast from 'react-hot-toast';
 import { Pill, MapPin, Phone, Calendar, Link as LinkIcon,Moon, PlusCircle, Save } from 'lucide-react';
-=======
-import { useParams, useNavigate } from 'react-router-dom'; // 👈 1. Zidna had l-Hooks
-import axiosClient from '../config/axios-client';
-import toast from 'react-hot-toast';
-import { Pill, MapPin, Phone, Calendar, Link as LinkIcon, PlusCircle, Save } from 'lucide-react';
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 
 export default function AddDutyPharmacy() {
   const { id } = useParams();
@@ -97,13 +90,8 @@ export default function AddDutyPharmacy() {
   return (
     <div className=" mx-auto      overflow-hidden">
       <div className="  px-6 py-4   flex items-center gap-3">
-<<<<<<< HEAD
         <div className="bg-green-100 dark:bg-primary-800 p-2 rounded-lg text-green-600 dark:text-primary-300">
           <Moon size={24} />
-=======
-        <div className="bg-primary-100 dark:bg-primary-800 p-2 rounded-lg text-primary-600 dark:text-primary-300">
-          <Pill size={24} />
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         </div>
         <div>
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">{isEditMode ? 'Modifier la Pharmacie' : 'Nouvelle Pharmacie de Garde'}</h2>
@@ -116,24 +104,15 @@ export default function AddDutyPharmacy() {
           <div>
             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Nom de la pharmacie *</label>
             <div className="relative">
-<<<<<<< HEAD
               <Moon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="Ex: Pharmacie Centrale" className=" w-full bg-gray-50 py-3  dark:text-white  border dark:bg-slate-800 border-gray-200 dark:border-gray-600 focus:border-primary-600 dark:focus:border-primary-600  rounded-lg px-12   text-gray-900 dark:text-white outline-none resize-none border-gray-200 dark:border-slate-700" />
-=======
-              <Pill className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="Ex: Pharmacie Centrale" className="w-full px-10 bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" />
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
             </div>
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Téléphone *</label>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-<<<<<<< HEAD
               <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="05 24..." className=" w-full bg-gray-50 py-3  dark:text-white  border dark:bg-slate-800 border-gray-200 dark:border-gray-600 focus:border-primary-600 dark:focus:border-primary-600  rounded-lg px-12   text-gray-900 dark:text-white outline-none resize-none border-gray-200 dark:border-slate-700" />
-=======
-              <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="05 24..." className="w-full px-10 bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" />
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
             </div>
           </div>
         </div>
@@ -142,11 +121,7 @@ export default function AddDutyPharmacy() {
           <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Lien Google Maps (Optionnel)</label>
           <div className="relative">
             <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-<<<<<<< HEAD
             <input type="url" name="location_url" value={formData.location_url} onChange={handleChange} placeholder="https://maps.google.com/" className=" w-full bg-gray-50 py-3  dark:text-white  border dark:bg-slate-800 border-gray-200 dark:border-gray-600 focus:border-primary-600 dark:focus:border-primary-600  rounded-lg px-12   text-gray-900 dark:text-white outline-none resize-none border-gray-200 dark:border-slate-700" />
-=======
-            <input type="url" name="location_url" value={formData.location_url} onChange={handleChange} placeholder="https://maps.google.com/" className="w-full px-10 bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" />
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
           </div>
         </div>
 
@@ -154,11 +129,7 @@ export default function AddDutyPharmacy() {
           <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Adresse complète *</label>
           <div className="relative">
             <MapPin className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-<<<<<<< HEAD
             <textarea name="address" value={formData.address} onChange={handleChange} required rows="2" placeholder="Quartier, Rue, N°..." className=" w-full bg-gray-50 py-3  dark:text-white  border dark:bg-slate-800 border-gray-200 dark:border-gray-600 focus:border-primary-600 dark:focus:border-primary-600  rounded-lg px-12   text-gray-900 dark:text-white outline-none resize-none border-gray-200 dark:border-slate-700"></textarea>
-=======
-            <textarea name="address" value={formData.address} onChange={handleChange} required rows="2" placeholder="Quartier, Rue, N°..." className="w-full px-10 bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-nonee"></textarea>
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
           </div>
         </div>
 
@@ -167,11 +138,7 @@ export default function AddDutyPharmacy() {
             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">
               <Calendar className="w-4 h-4 text-primary-500" /> Début de la garde *
             </label>
-<<<<<<< HEAD
             <input type="datetime-local" name="start_date" value={formData.start_date} onChange={handleChange} required className="²w-full px-10 bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" />
-=======
-            <input type="datetime-local" name="start_date" value={formData.start_date} onChange={handleChange} required className="w-full px-10 bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" />
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">

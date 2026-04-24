@@ -100,7 +100,7 @@ export default function Signalements() {
       formData.append('address', address);
       images.forEach((img) => {
         formData.append('images[]', img.file);
-        console.log(img.file instanceof File);
+        // console.log(img.file instanceof File);
       });
 
       if (mediaBlobUrl) {
@@ -185,13 +185,12 @@ export default function Signalements() {
       )}
       {tab === 'mesSignalements' && (
         <>
-        {incidents.length===0 && (
-          <div className="flex justify-center py-10">
-            <span className="text-gray-500 dark:text-gray-400">Aucun signalement pour le moment.</span>
-          </div>
-        )}
+          {incidents.length === 0 && (
+            <div className="flex justify-center py-10">
+              <span className="text-gray-500 dark:text-gray-400">Aucun signalement pour le moment.</span>
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-1 gap-4 md:gap-6">
-
             {incidents.map((incident) => {
               const badge = getStatusBadge(incident.status);
               return (
@@ -360,44 +359,98 @@ export default function Signalements() {
         </>
       )}
       {selectedIncident && tab === 'detailTab' && (
-        <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl border flex flex-col flex-start   border-gray-200 dark:border-gray-700 shadow-md">
-          <div className="flex justify-between items-start ">
-            <div className="">
-              {' '}
-           <span className="text-sm mb-2 mt-2 font-bold ">    REF NUM : <span  className="text-sm mb-2 mt-2 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600">{selectedIncident.ref_num} </span>{' '}</span>
-            <h2 className="text-2xl mt-2 font-bold">{selectedIncident.title}</h2> </div>
-
-           
-            <button onClick={() =>{setTab('mesSignalements') ;setSelectedIncident(null)}} className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
+        <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl border flex flex-col flex-start border-gray-200 dark:border-gray-700 shadow-md">
+          {/* HEADER */}
+          <div className="flex justify-between items-start">
+            <div>
+              <span className="text-sm mb-2 mt-2 font-bold">
+                REF NUM : <span className="text-sm mb-2 mt-2 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600">{selectedIncident.ref_num}</span>
+              </span>
+              <h2 className="text-2xl mt-2 font-bold">{selectedIncident.title}</h2>
+            </div>
+            <button
+              onClick={() => {
+                setTab('mesSignalements');
+                setSelectedIncident(null);
+              }}
+              className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
               <span className="material-symbols-outlined">close</span>
             </button>
           </div>
 
-          <span className="flex  border-b border-gray-200 dark:border-gray-700 pb-2 items-center gap-2 font-bold text-gray-700 mb-4 dark:text-gray-200">
-            signaler le : <span> {selectedIncident.created_at}</span>{' '}
-          </span>
-          <span className="flex items-center gap-2 font-bold text-gray-700 dark:text-gray-200">description de l'incident : </span>
-          <p className="text-gray-700 dark:text-gray-300 mb-2  ">{selectedIncident.description}</p>
-          <p className="text-sm text-gray-500  ">{selectedIncident.adresse}</p>
-          <div className="flex gap-2 mb-4  grid grid-cols-3">
-            {selectedIncident.images.map((img, idx) => (
-              <img src={img} key={idx} alt="Preuve" className="w-40 h-40 rounded-lg" />
-            ))}
+          <div className="my-8 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <h3 className="text-sm font-bold text-gray-500 mb-4">Suivi de l'intervention :</h3>
+
+            {selectedIncident.status === 'rejected' ? (
+              <div className="flex items-center gap-2 text-red-500 bg-red-50 p-3 rounded-lg">
+                <span className="material-symbols-outlined">cancel</span>
+                <span className="font-bold">Incident rejeté par le responsable.</span>
+
+                <span className="">Reject reason</span>
+                <p className="text-xs">{selectedIncident.reject_reason}</p>
+              </div>
+            ) : (
+              <div className="flex items-center w-full relative">
+                <div className="flex flex-col items-center relative z-10 w-1/4">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${selectedIncident.status ? 'bg-green-500' : 'bg-gray-300'}`}>
+                    <span className="material-symbols-outlined text-sm">check</span>
+                  </div>
+                  <p className="text-xs font-bold mt-2 text-center text-gray-700 dark:text-gray-300">Envoyé</p>
+                </div>
+
+                <div className={`absolute left-[12.5%] right-[62.5%] top-4 h-1 -z-0 ${selectedIncident.status === 'validated' || selectedIncident.status === 'in_progress' || selectedIncident.status === 'resolved' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+
+                <div className="flex flex-col items-center relative z-10 w-1/4">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${selectedIncident.status === 'validated' || selectedIncident.status === 'in_progress' || selectedIncident.status === 'resolved' ? 'bg-green-500' : 'bg-gray-300'}`}>
+                    <span className="material-symbols-outlined text-sm">fact_check</span>
+                  </div>
+                  <p className="text-xs font-bold mt-2 text-center text-gray-700 dark:text-gray-300">Validé</p>
+                </div>
+
+                <div className={`absolute left-[37.5%] right-[37.5%] top-4 h-1 -z-0 ${selectedIncident.status === 'in_progress' || selectedIncident.status === 'resolved' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+
+                <div className="flex flex-col items-center relative z-10 w-1/4">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${selectedIncident.status === 'in_progress' ? 'bg-orange-500 animate-pulse' : selectedIncident.status === 'resolved' ? 'bg-green-500' : 'bg-gray-300'}`}>
+                    <span className="material-symbols-outlined text-sm">engineering</span>
+                  </div>
+                  <p className="text-xs font-bold mt-2 text-center text-gray-700 dark:text-gray-300">En cours</p>
+                </div>
+
+                <div className={`absolute left-[62.5%] right-[12.5%] top-4 h-1 -z-0 ${selectedIncident.status === 'resolved' ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+
+                <div className="flex flex-col items-center relative z-10 w-1/4">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white ${selectedIncident.status === 'resolved' ? 'bg-green-500' : 'bg-gray-300'}`}>
+                    <span className="material-symbols-outlined text-sm">done_all</span>
+                  </div>
+                  <p className="text-xs font-bold mt-2 text-center text-gray-700 dark:text-gray-300">Résolu</p>
+                </div>
+              </div>
+            )}
           </div>
-          {selectedIncident.audio ? (
-            <div className="flex flex-start items-center  w-full  ">
-              <audio controls className=" bg-gray-100 dark:bg-gray-800  h-10">
-                <source className="  bg-gray-100 dark:bg-gray-800" src={selectedIncident.audio} />
+
+          <span className="flex border-b border-gray-200 dark:border-gray-700 pb-2 items-center gap-2 font-bold text-gray-700 mb-4 dark:text-gray-200">
+            Signaler le : <span>{selectedIncident.created_at}</span>
+          </span>
+
+          <span className="flex items-center gap-2 font-bold text-gray-700 dark:text-gray-200">Description : </span>
+          <p className="text-gray-700 dark:text-gray-300 mb-2">{selectedIncident.description}</p>
+
+          {selectedIncident.adresse && (
+            <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+              <span className="material-symbols-outlined text-sm">location_on</span>
+              {selectedIncident.adresse}
+            </div>
+          )}
+
+          <div className="flex gap-2 mb-4 grid grid-cols-3">{selectedIncident.images && selectedIncident.images.map((img, idx) => <img src={img} key={idx} alt="Preuve" className="w-40 h-40 object-cover rounded-lg border border-gray-200" />)}</div>
+
+          {selectedIncident.audio && (
+            <div className="flex flex-start items-center w-full mb-4">
+              <audio controls className="bg-gray-100 dark:bg-gray-800 h-10 w-full max-w-md rounded-full">
+                <source src={selectedIncident.audio} />
                 Votre navigateur ne supporte pas l'audio.
               </audio>
             </div>
-          ) : (
-            ''
-          )}
-
-
-          {selectedIncident.adresse && (
-            <div className="flex items-center gap-2 font-bold text-gray-700 dark:text-gray-200">Adresse : {selectedIncident.adresse} </div>
           )}
         </div>
       )}

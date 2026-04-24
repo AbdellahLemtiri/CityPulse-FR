@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Sector;
-<<<<<<< HEAD
 use App\Models\Partner;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
@@ -16,8 +15,6 @@ use App\Notifications\IncidentUpdatedNotification;
 use App\Http\Resources\incident\getIncidentResourse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
-=======
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 
 class IncidentService
 {
@@ -71,7 +68,6 @@ class IncidentService
             return $incident;
         });
     }
-<<<<<<< HEAD
 
 
     public function qualify(int $incidentId, int $categoryId, User $manager)
@@ -108,6 +104,4 @@ class IncidentService
             return $incident->load('partner');
         });
     }
-=======
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 }

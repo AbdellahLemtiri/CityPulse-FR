@@ -7,21 +7,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast, Toaster } from 'react-hot-toast';
 export default function Login() {
   const navigate = useNavigate();
-<<<<<<< HEAD
   const { setUser } = useStateContext();
-=======
-  const{ setUser }= useStateContext();
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
   const validateEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(email);
@@ -75,10 +67,6 @@ export default function Login() {
       toast.success('Connexion effectuée avec succès !');
       navigate('/homefeed');
     } catch (err) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
       if (err.response) {
         if (err.response.status === 401) {
           toast.error('Identifiants incorrects (Email ou mot de passe)');
@@ -97,24 +85,15 @@ export default function Login() {
 
   return (
     <div className="font-sans min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden bg-[#F8FAFC] dark:bg-[#020617] text-[#0F172A] dark:text-white ">
-<<<<<<< HEAD
       <div className="absolute top-0 left-0 w-full h-64  pointer-events-none" />
-=======
-      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#EA580C]/10 to-transparent pointer-events-none" />
-      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-blue-500/10 rounded-lg blur-3xl pointer-events-none" />
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 
       <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-lg 2xl border border-gray-100 dark:border-slate-800 p-8 md:p-10 relative z-10  ">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold tracking-tight">
-<<<<<<< HEAD
             Bienvenue sur{' '}
             <h1 className="text-3xl font-bold tracking-tight">
               City<span className="text-orange-600">Pulse</span>
             </h1>
-=======
-            Bienvenue sur <span className="text-[#EA580C]">CityPulse</span>
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
           </h1>
           <p className="text-gray-400 text-sm mt-2">Votre portail citoyen intelligent.</p>
         </div>
@@ -130,10 +109,6 @@ export default function Login() {
             </div>
             {errors.email && <div className="text-red-600 text-xs ml-1 mt-1">{errors.email}</div>}
           </div>
-<<<<<<< HEAD
-=======
-
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
           <div className="space-y-1">
             <div className="flex justify-between items-center ml-1">
               <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Mot de passe</label>
@@ -147,7 +122,6 @@ export default function Login() {
               </button>
             </div>
             {errors.password && <div className="text-red-600 text-xs ml-1 mt-1">{errors.password}</div>}
-<<<<<<< HEAD
           </div>
           <div className="mt-8 flex justify-center items-center">
             <button type="submit" disabled={isLoading} className="w-full bg-[#EA580C] hover:bg-orange-700 text-white font-bold py-3  rounded-lg shadow-lg shadow-orange-500/20 transition-transform active:scale-[0.98] flex items-center justify-center gap-2   disabled:opacity-70 disabled:cursor-not-allowed ">
@@ -161,32 +135,14 @@ export default function Login() {
               {!isLoading && <DoorOpen />}
             </button>
           </div>{' '}
-=======
-          </div>
-          <div className="mt-8 flex justify-center items-center">
-            <button type="submit" disabled={isLoading} className="w-full bg-[#EA580C] hover:bg-orange-700 text-white font-bold py-3  rounded-lg shadow-lg shadow-orange-500/20 transition-transform active:scale-[0.98] flex items-center justify-center gap-2   disabled:opacity-70 disabled:cursor-not-allowed ">
-              {isLoading ? (
-                <div className="flex justify-center  ">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                </div>
-              ) : (
-                'Se Connecter'
-              )}
-              {!isLoading && <DoorOpen />}
-            </button>
-          </div>
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         </form>
         <p className="text-sm mt-3 text-gray-500">
           <Link to="/forgotPassword" className="text-[#EA580C] font-bold hover:underline ml-1">
             mot de pass oublie ?
 
-<<<<<<< HEAD
 
           </Link>
         </p>
-=======
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         <div className="mt-8 pt-6 border-t border-gray-100 dark:border-slate-800 text-center">
           <p className="text-sm text-gray-500">
             Nouveau citoyen ?

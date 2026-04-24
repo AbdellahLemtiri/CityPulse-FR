@@ -217,11 +217,7 @@ export default function Profil() {
     <div className="max-w-3xl mx-auto p-4 md:p-0 pb-24 md:pb-8">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 mt-4">Profil & Paramètres</h2>
 
-<<<<<<< HEAD
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6   flex items-center gap-6 transition-colors">
-=======
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6 shadow-sm flex items-center gap-6 transition-colors">
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         {loading ? (
           <div className="flex justify-center py-10">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
@@ -236,12 +232,8 @@ export default function Profil() {
 
         <input
           type="file"
-<<<<<<< HEAD
           id="filephotoInput" extension="jpg,png,jpeg,svg" 
           accept="image/*"
-=======
-          id="filephotoInput"
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
           className="hidden"
           onChange={(e) => {
             handleChangeImage(e.target.files[0]);
@@ -255,11 +247,7 @@ export default function Profil() {
         </div>
       </div>
 
-<<<<<<< HEAD
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700   mb-6 transition-colors overflow-hidden">
-=======
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm mb-6 transition-colors overflow-hidden">
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
           <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <span className="material-symbols-outlined text-primary-500 text-[20px]">person</span>
@@ -288,13 +276,9 @@ export default function Profil() {
                     </p>
                   </div>
                   <div>
-<<<<<<< HEAD
                     <div className="flex gap-2">
                       <p className="text-xs text-gray-500 dark:text-gray-400">CIN</p> <span className="text-xs text-gray-500 dark:text-gray-400">({'non modifiable '})</span>{' '}
                     </div>
-=======
-                    <p className="text-xs text-gray-500 dark:text-gray-400">CIN</p>
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
                     <p className="font-bold text-gray-900 dark:text-white">{user.cin}</p>
                   </div>
                   <div>
@@ -324,87 +308,12 @@ export default function Profil() {
                 <button type="submit" disabled={loading} className="px-4 py-2 rounded-lg text-sm font-bold bg-primary-600 text-white hover:bg-primary-500 disabled:opacity-50">
                   Enregistrer
                 </button>
-<<<<<<< HEAD
-=======
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm mb-6 transition-colors overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
-          <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <MapPin className="text-primary-500 " />
-            Ma Localisation
-          </h3>
-          {!isEditingLocation && (
-            <button onClick={handleEditLocationClick} className="text-primary-600 dark:text-primary-400 font-bold text-sm hover:underline">
-              <UserPen className=" " />
-            </button>
-          )}
-        </div>
-
-        <div className="p-6">
-          {!isEditingLocation ? (
-            <>
-              {loadingLocation ? (
-                <div className="flex justify-center py-6">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500"></div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-4">
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Ville</p>
-                    <p className="font-bold text-gray-900 dark:text-white">{user.city_name}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Quartier</p>
-                    <p className="font-bold text-gray-900 dark:text-white">{user.sector_name}</p>
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <form onSubmit={handleLocationSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <select name="city_id" value={locationData.city_id} onChange={handleCityChange} className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none" required>
-                  <option disabled selected value="">
-                    Sélectionner une ville
-                  </option>
-                  {cities.map((city) => (
-                    <option key={city.id} value={city.id}>
-                      {city.name}
-                    </option>
-                  ))}
-                </select>
-
-                <select name="sector_id" value={locationData.sector_id} onChange={(e) => setLocationData({ ...locationData, sector_id: e.target.value })} className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none disabled:opacity-50" disabled={sectors.length === 0} required>
-                  <option disabled selected value="">
-                    Sélectionner un quartier
-                  </option>
-                  {sectors.map((sector) => (
-                    <option key={sector.id} value={sector.id}>
-                      {sector.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setIsEditingLocation(false)} className="px-4 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  Annuler
-                </button>
-                <button type="submit" disabled={loadingLocation || !locationData.city_id || !locationData.sector_id} className="px-4 py-2 rounded-lg text-sm font-bold bg-primary-600 text-white hover:bg-primary-500 disabled:opacity-50">
-                  Enregistrer
-                </button>
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
               </div>
             </form>
           )}
         </div>
       </div>
 
-<<<<<<< HEAD
       {user.role === 'citoyen' && (
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700   mb-6 transition-colors overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
@@ -480,9 +389,6 @@ export default function Profil() {
       )}
 
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700   transition-colors overflow-hidden mb-6">
-=======
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-colors overflow-hidden mb-6">
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
           <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <span className="material-symbols-outlined text-gray-500 text-[20px]">settings</span>
@@ -521,7 +427,6 @@ export default function Profil() {
             )}
           </div>
 
-<<<<<<< HEAD
           <div className="p-6">
             {!isEditingPassword ? (
               <div className="flex items-center justify-between">
@@ -574,77 +479,6 @@ export default function Profil() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6   animate-scale-in">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-full bg-primary-600 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0 text-primary-600 dark:text-primary-500">
-=======
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm mb-6 transition-colors overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
-          <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary-500 text-[20px]">lock</span>
-            Sécurité & Mot de passe
-          </h3>
-          {!isEditingPassword && (
-            <button onClick={() => setIsEditingPassword(true)} className="text-primary-600 dark:text-primary-400 font-bold text-sm hover:underline">
-              <UserPen className="w-5 h-5" />
-            </button>
-          )}
-        </div>
-
-        <div className="p-6">
-          {!isEditingPassword ? (
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-bold text-gray-900 dark:text-white">Mot de passe</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Dernière modification : il y a longtemps</p>
-              </div>
-              <span className="text-2xl text-gray-400 tracking-widest">••••••••</span>
-            </div>
-          ) : (
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Mot de passe actuel</label>
-                <input type="password" value={passwordData.current_password} onChange={(e) => setPasswordData({ ...passwordData, current_password: e.target.value })} className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500/50" required />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Nouveau mot de passe</label>
-                  <input type="password" value={passwordData.password} onChange={(e) => setPasswordData({ ...passwordData, password: e.target.value })} className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500/50" required />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Confirmer le mot de passe</label>
-                  <input type="password" value={passwordData.password_confirmation} onChange={(e) => setPasswordData({ ...passwordData, password_confirmation: e.target.value })} className="w-full bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-500/50" required />
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <button type="button" onClick={() => setIsEditingPassword(false)} className="px-4 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                  Annuler
-                </button>
-                <button type="submit" className="px-4 py-2 rounded-lg text-sm font-bold bg-primary-600 text-white hover:bg-primary-500">
-                  Mettre à jour
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
-
-      <div className="bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-200 dark:border-red-900/30 p-6 mb-6">
-        <h3 className="text-lg font-bold text-red-600 dark:text-red-500 flex items-center gap-2 mb-2">
-          <span className="material-symbols-outlined">warning</span>
-          Zone de danger
-        </h3>
-        <p className="text-sm text-red-600/80 dark:text-red-400/80 mb-4">Une fois que vous supprimez votre compte, il n'y a pas de retour en arrière. Veuillez être certain.</p>
-        <button onClick={() => setShowDeleteModal(true)} className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
-          Supprimer mon compte
-        </button>
-      </div>
-      {/* ////////// ///////////////*/}
-
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md p-6 shadow-2xl animate-scale-in">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0 text-red-600 dark:text-red-500">
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
                 <span className="material-symbols-outlined text-[28px]">delete_forever</span>
               </div>
               <div>
@@ -656,11 +490,7 @@ export default function Profil() {
             <form onSubmit={handleDeleteAccount}>
               <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">Pour confirmer, veuillez saisir votre mot de passe actuel. Toutes vos données seront effacées de SafiPulse.</p>
 
-<<<<<<< HEAD
               <input type="password" placeholder="Votre mot de passe" value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-900 dark:text-white outline-none mb-6 focus:ring-2 focus:ring-primary-500/50" required />
-=======
-              <input type="password" placeholder="Votre mot de passe" value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-900 dark:text-white outline-none mb-6 focus:ring-2 focus:ring-red-500/50" required />
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
 
               <div className="flex gap-3">
                 <button
@@ -672,11 +502,7 @@ export default function Profil() {
                   className="flex-1 px-4 py-2.5 rounded-lg font-bold text-gray-700 dark:text-gray-300 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
                   Annuler
                 </button>
-<<<<<<< HEAD
                 <button type="submit" disabled={!deletePassword} className="flex-1 px-4 py-2.5 rounded-lg font-bold text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 transition-colors">
-=======
-                <button type="submit" disabled={!deletePassword} className="flex-1 px-4 py-2.5 rounded-lg font-bold text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 transition-colors">
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
                   Confirmer
                 </button>
               </div>
@@ -685,11 +511,7 @@ export default function Profil() {
         </div>
       )}
 
-<<<<<<< HEAD
       <button onClick={handleLogout} className="w-full bg-primary-50 dark:bg-primary-500/10 border border-primary-100 dark:border-primary-500/20 text-primary-600 dark:text-primary-400 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-primary-100 dark:hover:bg-primary-500/20 transition-colors">
-=======
-      <button onClick={handleLogout} className="w-full bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 text-red-600 dark:text-red-400 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors">
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
         <span className="material-symbols-outlined">logout</span>
         Se déconnecter
       </button>

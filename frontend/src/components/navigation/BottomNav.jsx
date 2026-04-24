@@ -3,7 +3,6 @@ import { Users, Database, BrickWallShield, Newspaper, UserCog, Lightbulb, MapPin
 import { useStateContext } from '../../contexts/ContextProvider';
 
 export default function BottomNav() {
-<<<<<<< HEAD
   const { user } = useStateContext();
   const role = user?.role;
 
@@ -12,21 +11,6 @@ export default function BottomNav() {
     gridClass = 'grid-cols-5';
   } else if (role === 'manager') {
     gridClass = 'grid-cols-6';
-=======
-
-const { user } = useStateContext();
-const role = user?.role;
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-   let gridClass = 'grid-cols-4'; 
-  if (role === 'admin') {
-    gridClass = 'grid-cols-5'; 
-  } else if (role === 'manager') {
-    gridClass = 'grid-cols-6'; 
->>>>>>> 2d33e1a36791c1f8586616795c6c96920fc697e8
   }
 
   const mobileNavClass = ({ isActive }) => `flex flex-col items-center justify-center gap-1 relative transition-colors ${isActive ? 'text-primary-600 dark:text-primary-500 font-bold' : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'}`;
