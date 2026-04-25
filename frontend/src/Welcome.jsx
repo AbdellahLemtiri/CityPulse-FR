@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Footer from "./components/Welcome/Footer";
 import About from "./components/Welcome/About";
-import NavBar from "./components/Welcome/NavBar";
-import Safigram from "./components/Welcome/Safigram";
+ import Safigram from "./components/Welcome/Safigram";
 import Activities from "./components/Welcome/Activities";
 import News from "./components/Welcome/News";
 import Report from "./components/Welcome/Report";
@@ -49,12 +48,7 @@ export default function Welcome() {
   }, []);
   return (
     <div className="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col selection:bg-primary-500 selection:text-white dark:bg-slate-950 dark:text-slate-100  duration-300 scroll-smooth">
-      <NavBar
-        isDarkMode={isDarkMode}
-        toggleTheme={toggleTheme}
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-      />
+    
       <main className="flex-grow pt-20">
         <Hero />
         <About />

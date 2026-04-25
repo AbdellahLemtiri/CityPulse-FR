@@ -314,7 +314,7 @@ export default function Proposals() {
                 ))}
               </div>
               <div>
-                <input type="file" accept="image/*" id="incident-image-input" multiple onChange={handleImageUpload} className="hidden" multiple />
+                <input type="file" accept="image/*" id="incident-image-input"  onChange={handleImageUpload} className="hidden" multiple />
               </div>
               <div className="pt-4 flex gap-3">
                 <button

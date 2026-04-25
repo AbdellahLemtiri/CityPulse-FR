@@ -273,7 +273,7 @@ export default function ManagerIncidents() {
                   <tr>
                     <td colSpan="6" className="text-center py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
                       <button onClick={handleLoadMore} disabled={loadingMore} className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-bold py-2 px-6 rounded text-sm disabled:opacity-50 flex items-center justify-center mx-auto gap-2 transition-colors">
-                        {loadingMore &&!isLoading ? <></> : ' plus '}
+                        {loadingMore && !isLoading ? <></> : ' plus '}
                       </button>
                     </td>
                   </tr>
@@ -410,12 +410,18 @@ export default function ManagerIncidents() {
                     <div>
                       <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase mb-2">Assigner la catégorie</label>
                       <select value={selectedCategoryId} onChange={(e) => setSelectedCategoryId(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 rounded p-2 text-sm text-gray-900 dark:text-white outline-none">
-                        <option value="">-- Choisir la catégorie --</option>
-                        {categories.map((cat) => (
-                          <option key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </option>
-                        ))}
+                        <option value="" selected disabled>
+                          -- Choisir la catégorie --
+                        </option>
+                        {categories.length === 0 ? (
+                          <option value="" disabled >Aucune catégorie disponible</option>
+                        ) : (
+                          categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>
+                              {cat.name}
+                            </option>
+                          ))
+                        )}
                       </select>
                     </div>
 

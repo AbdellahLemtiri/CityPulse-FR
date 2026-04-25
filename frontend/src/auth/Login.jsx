@@ -57,11 +57,11 @@ export default function Login() {
 
     setIsLoading(true);
     try {
-      await axiosClient.get('http://localhost:8000/sanctum/csrf-cookie');
       const response = await axiosClient.post('/login', {
         email: email,
         password: password,
       });
+      localStorage.setItem('ACCESS_TOKEN', response.data.token);
 
       setUser(response.data.user);
       toast.success('Connexion effectuée avec succès !');
@@ -139,8 +139,6 @@ export default function Login() {
         <p className="text-sm mt-3 text-gray-500">
           <Link to="/forgotPassword" className="text-[#EA580C] font-bold hover:underline ml-1">
             mot de pass oublie ?
-
-
           </Link>
         </p>
         <div className="mt-8 pt-6 border-t border-gray-100 dark:border-slate-800 text-center">

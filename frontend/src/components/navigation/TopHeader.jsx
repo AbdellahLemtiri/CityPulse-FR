@@ -6,22 +6,23 @@ import { useStateContext } from '../../contexts/ContextProvider';
 import axiosClient from '../../config/axios-client';
 
 window.Pusher = Pusher;
+window.Pusher = Pusher;
+
 window.Echo = new Echo({
   broadcaster: 'reverb',
 
-  key: 'xadhdnbkzigazsdx91hw',
+  key: import.meta.env.VITE_REVERB_APP_KEY,
+  wsHost: import.meta.env.VITE_REVERB_HOST,
+  wsPort: import.meta.env.VITE_REVERB_PORT ,
+  wssPort: import.meta.env.VITE_REVERB_PORT,
 
-  wsHost: '127.0.0.1',
-  wsPort: 8080,
-  wssPort: 8080,
+  forceTLS: import.meta.env.VITE_REVERB_SCHEME === 'https',
 
-  cluster: 'mt1',
-
-  forceTLS: false,
   disableStats: true,
   enabledTransports: ['ws', 'wss'],
+  cluster: 'mt1',
 
-  authEndpoint: `http://127.0.0.1:8000/api/broadcasting/auth`,
+  authEndpoint: `${import.meta.env.VITE_API_BASE_URL}/broadcasting/auth`,
 
   authorizer: (channel, options) => {
     return {
@@ -77,9 +78,7 @@ export default function TopHeader() {
 
     window.Echo.private(channelName)
       .notification((notification) => {
-        console.log('🎉 NOTIFICATION REÇUE :', notification);
-
-        toast.success(notification.message || 'Nouvelle notification !', {
+        toast.success(notification.message, {
           duration: 5000,
           position: 'top-right',
           icon: '🔔',
@@ -144,13 +143,13 @@ export default function TopHeader() {
           </button>
 
           {showDropdown && (
-            <div className="absolute right-0 mt-3 w-80 md:w-96 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl z-50 overflow-hidden animate-fade-in-up">
-              <div className="bg-gray-50 dark:bg-gray-900/80 p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <div className="absolute  right-0 mt-3 w-80 md:w-96 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl z-50 overflow-hidden animate-fade-in-up">
+              <div className="bg-gray-50 dark:bg-gray-900/80 p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center ">
                 <h3 className="font-bold text-sm text-gray-900 dark:text-white uppercase tracking-wider">Notifications</h3>
                 {notifications.length > 0 && <span className="text-[10px] bg-primary-900/30 text-primary-400 px-2 py-1 rounded-lg font-bold uppercase">{notifications.length} Récentes</span>}
               </div>
 
-              <div className="max-h-[350px] overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700 custom-scrollbar">
+              <div className="max-h-[350px] overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700 custom-scrollbar overflow-hidden">
                 {notifications.length === 0 ? (
                   <div className="p-8 text-center flex flex-col items-center text-gray-500 dark:text-gray-500">
                     <span className="material-symbols-outlined text-4xl mb-2 opacity-50">notifications_paused</span>
@@ -171,8 +170,6 @@ export default function TopHeader() {
                   ))
                 )}
               </div>
-
-         
             </div>
           )}
         </div>

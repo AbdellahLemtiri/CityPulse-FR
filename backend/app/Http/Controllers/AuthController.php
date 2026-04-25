@@ -40,11 +40,15 @@ class AuthController extends Controller
         ]);
 
         $user->assignRole('citoyen');
-        $request->session()->regenerate();
+        // $request->session()->regenerate();
+
+        $token = $user->createToken('CityPulseToken')->plainTextToken;
+
         $user->load(['sector', 'city', 'photo']);
         return response()->json([
             'message' => 'Compte créé avec succès',
             'user' => new userProfileResource($user),
+            'token' => $token
         ], 201);
     }
 
@@ -56,14 +60,16 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email ou mot de passe incorrect'], 401);
         }
 
-        $request->session()->regenerate();
+        // $request->session()->regenerate();
 
         $user = User::where('email', $data['email'])->firstOrFail();
         $user->load(['sector', 'city', 'photo']);
+        $token = $user->createToken('CityPulseToken')->plainTextToken;
 
         return response()->json([
             'message' => 'Connexion réussie',
             'user' => new userProfileResource($user),
+            'token' => $token
         ]);
     }
 
