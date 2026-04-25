@@ -24,7 +24,7 @@ export default function BaseLayout() {
     );
   } 
    if (!user && !isCheckingAuth) {
-    return <Navigate to="/" />;
+    return <Navigate to="/login" />;
   }
 
   return (
