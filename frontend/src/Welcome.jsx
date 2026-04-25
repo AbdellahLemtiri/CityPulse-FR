@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Footer from "./components/Welcome/Footer";
 import About from "./components/Welcome/About";
- import Safigram from "./components/Welcome/Safigram";
-import Activities from "./components/Welcome/Activities";
 import News from "./components/Welcome/News";
 import Report from "./components/Welcome/Report";
 import Hero from "./components/Welcome/Hero";
@@ -52,8 +50,7 @@ export default function Welcome() {
       <main className="flex-grow pt-20">
         <Hero />
         <About />
-        <Safigram />
-        <Activities />
+    
         <News />
         <Report />
       </main>
