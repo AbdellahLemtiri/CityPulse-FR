@@ -400,7 +400,7 @@ export default function Profil() {
           <div className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-xl transition-colors cursor-pointer" onClick={toggleTheme}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center text-gray-600 dark:text-gray-400">
-                <span className="material-symbols-outlined">{isDarkMode ? <Moon /> : <Sun />}</span>
+                <span className="">{isDarkMode ? <Moon /> : <Sun />}</span>
               </div>
               <div>
                 <p className="font-bold text-gray-900 dark:text-white text-sm">Mode Sombre</p>

@@ -28,7 +28,7 @@ export default function Sidebar() {
         {role === 'citoyen' && (
           <>
             <NavLink to="/pharmacies" className={navClass}>
-              <Moon size={20} /> <span>Pharmacies de Garde</span>
+              <Moon size={20} /> <span>Ph. de Garde</span>
             </NavLink>
             <NavLink to="/signalements" className={navClass}>
               <MapPinned size={20} /> <span>Mes Signalements</span>

@@ -6,10 +6,8 @@ export default function Report() {
     id="report"
       className="py-24 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800  duration-300">
       <div className="container mx-auto px-4 max-w-6xl">
-        {/* --- PARTIE 1 : Contenu original --- */}
-        <div className="flex flex-col md:flex-row items-center gap-16 mb-24">
-          {/* Colonne 1 : Le Texte et les catégories */}
-          <div className="md:w-1/2">
+         <div className="flex flex-col md:flex-row items-center gap-16 mb-24">
+           <div className="md:w-1/2">
             <span className="inline-block py-1 px-3 rounded-2xl bg-primary-100 dark:bg-primary-600/20 text-primary-600 dark:text-primary-500 text-xs font-bold uppercase mb-4 border border-primary-200 dark:border-primary-500/30">
               Espace Citoyen
             </span>
