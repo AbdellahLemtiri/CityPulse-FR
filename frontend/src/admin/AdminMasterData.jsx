@@ -43,7 +43,6 @@ export default function AdminMasterData() {
     }
   };
 
-  // 2. Gestion des Modals
   const openModal = (type, isEdit = false, data = null) => {
     setModalConfig({ isOpen: true, type, isEdit, id: data ? data.id : null });
 
@@ -135,6 +134,16 @@ export default function AdminMasterData() {
     }
   };
 
+  const toggleSectorStatus = async (id) => {
+    setSectors((prevSectors) => prevSectors.map((sec) => (sec.id === id ? { ...sec, status: !sec.status } : sec)));
+
+    try {
+      await axiosClient.put(`/admin/sectors/${id}/toggle`);
+      toast.success('Statut mis à jour !');
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 pb-10 p-4">
       <div className="max-w-6xl mx-auto">
@@ -167,38 +176,43 @@ export default function AdminMasterData() {
             <div className="bg-gray-800 border border-gray-700 shadow-sm rounded-lg overflow-hidden animate-fade-in">
               <div className="p-4 bg-gray-800/50 border-b border-gray-700 flex justify-between items-center">
                 <h3 className="font-bold uppercase text-sm text-gray-200">Secteurs (Arrondissements)</h3>
-                <button onClick={() => openModal('sector')} className="text-xs bg-primary-600 hover:bg-primary-500 text-white px-3 py-1.5 font-bold uppercase rounded ">
+                <button onClick={() => openModal('sector')} className="text-xs bg-primary-600 hover:bg-primary-500 text-white px-3 py-1.5 font-bold uppercase rounded transition-colors">
                   + Ajouter
                 </button>
               </div>
+
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
-                  <tr className="border-b border-gray-700">
+                  <tr className="border-b border-gray-700 bg-gray-900/30">
                     <th className="p-4 font-bold text-gray-200">Nom</th>
                     <th className="p-4 font-bold text-gray-200">Statut</th>
-                    <th className="p-4 font-bold text-gray-200">Actions</th>
+                    <th className="p-4 font-bold text-gray-200 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sectors.length === 0 ? (
                     <tr>
-                      <td colSpan="2" className="p-8 text-center text-gray-500 font-bold bg-gray-800">
+                      <td colSpan="3" className="p-8 text-center text-gray-500 font-bold bg-gray-800">
                         Aucun secteur trouvé.
                       </td>
                     </tr>
                   ) : (
                     sectors.map((sec) => (
-                      <tr key={sec.id} className="border-b border-gray-700 hover:bg-gray-700/50 ">
-                        <td className="p-4 font-bold text-gray-200 flex items-center gap-3">{sec.name}</td>
-                        <td className="p-4 text-right">{sec.status === true ? <span className="px-3 py-1 text-xs font-bold uppercase text-primary-400 hover:text-primary-600">Actif</span> : <span className="px-3 py-1 text-xs font-bold uppercase text-red-400 hover:text-red-600">Inactif</span>}</td>
+                      <tr key={sec.id} className="border-b border-gray-700 hover:bg-gray-700/30 transition-colors">
+                        <td className="p-4 font-semibold text-gray-200">{sec.name}</td>
+
+                        <td className="p-4">{sec.status ? <span className="text-[10px] bg-green-900/30 text-green-400 px-2 py-1 rounded border border-green-800 uppercase font-bold">Actif</span> : <span className="text-[10px] bg-red-900/30 text-red-400 px-2 py-1 rounded border border-red-800 uppercase font-bold">Inactif</span>}</td>
+
                         <td className="p-4 text-right">
-                          <button onClick={() => openModal('sector', true, sec)} className="px-3 py-1 text-xs font-bold uppercase text-primary-400 hover:text-primary-600">
-                            Éditer
-                          </button>
+                          <div className="flex justify-end gap-2">
+                            <button onClick={() => openModal('sector', true, sec)} className="text-xs font-bold uppercase text-primary-400 hover:text-white transition-colors">
+                              Éditer
+                            </button>
+                            <button onClick={() => toggleSectorStatus(sec.id)} className="text-xs font-bold uppercase text-gray-400 hover:text-white transition-colors border-l border-gray-600 pl-2">
+                              Status
+                            </button>
+                          </div>
                         </td>
-                        <button onClick={() => openModal('sector', true, sec)} className="px-3 py-1 text-xs font-bold uppercase text-primary-400 hover:text-primary-600 ">
-                          chnage status
-                        </button>
                       </tr>
                     ))
                   )}
