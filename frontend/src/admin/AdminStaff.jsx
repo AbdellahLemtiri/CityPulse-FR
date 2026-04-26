@@ -125,9 +125,7 @@ export default function AdminStaff() {
     }
   };
 
-
-
-    const handleApplyBan = async (userToStrike) => {
+  const handleApplyBan = async (userToStrike) => {
     try {
       const response = await axiosClient.post(`/admin/users/ban`, { uuid: userToStrike.uuid });
       toast.success('Banissement appliqué avec succès !');
@@ -201,7 +199,6 @@ export default function AdminStaff() {
 
                   <td className="p-4  text-center">{!staff.is_banned ? <span className="text-green-400 font-bold uppercase text-[10px] bg-green-900/30 border border-green-800/50 rounded px-2 py-1 tracking-wider">Actif</span> : <span className="text-red-400 font-bold uppercase text-[10px] bg-red-900/30 border border-red-800/50 rounded px-2 py-1 tracking-wider">Bloqué</span>}</td>
                   <td className="p-4 text-center flex justify-center items-center gap-3">
-                    
                     <span className="text-gray-600">|</span>
                     <button onClick={() => toggleStatus(staff.id)} className={`${!staff.is_banned ? 'text-red-400 hover:text-red-300' : 'text-green-400 hover:text-green-300'} font-bold text-xs uppercase `}>
                       {!staff.is_banned ? 'Bloquer' : 'Activer'}
@@ -216,7 +213,7 @@ export default function AdminStaff() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
           <div className="bg-gray-800 border border-gray-600 rounded-lg w-full max-w-2xl flex flex-col shadow-2xl max-h-[90vh] overflow-y-auto">
-             <div className="bg-gray-900 p-4 border-b border-gray-700 flex justify-between items-center text-white rounded-t-lg sticky top-0 z-10">
+            <div className="bg-gray-900 p-4 border-b border-gray-700 flex justify-between items-center text-white rounded-t-lg sticky top-0 z-10">
               <h3 className="font-bold uppercase text-sm flex items-center gap-2 tracking-wide">
                 <span className="material-symbols-outlined text-[20px]">manage_accounts</span>
                 {isEditing ? 'Modifier les accès du membre' : 'Créer un nouveau compte Staff'}
