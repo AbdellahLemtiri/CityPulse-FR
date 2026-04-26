@@ -81,8 +81,10 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/staff', [StaffController::class, 'index']);
     Route::post('/staff', [StaffController::class, 'store']);
     Route::post('/sectors', [SectorController::class, 'store']);
+    Route::get('/categories', CategoryIncidentController::class, 'index');
     Route::put('/sectors/{sector}', [SectorController::class, 'update']);
-    Route::apiResource('/categories', CategoryIncidentController::class);
+    Route::put('/sectors/{sector}/toggle', [SectorController::class, 'toggleStatus']);
+
     Route::apiResource('/partners', PartnerController::class);
 
     Route::get('/workflows', [WorkflowController::class, 'getWorkflows']);
@@ -106,8 +108,7 @@ Route::middleware(['auth:sanctum', 'role:manager','not_banned'])->prefix('manage
     Route::get('/users', [ModerationController::class, 'SerchUser']);
     Route::post('/users/strike', [ModerationController::class, 'strikeUser']);
 
-    Route::get('/pending-proposals', [ProposalController::class, 'pendingProposals']);
-    Route::patch('/proposals/{proposal}/status', [ProposalController::class, 'updateStatus']);
+ 
 });
 
 /*
