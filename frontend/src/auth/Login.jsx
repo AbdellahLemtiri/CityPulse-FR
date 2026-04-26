@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, UserKey, DoorOpen } from 'lucide-react';
-
+import Logo  from '../components/logos/logo'; 
 import axiosClient from './../config/axios-client';
 import { useStateContext } from './../contexts/ContextProvider';
 import { useNavigate, Link } from 'react-router-dom';
@@ -90,11 +90,12 @@ export default function Login() {
       <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-lg 2xl border border-gray-100 dark:border-slate-800 p-8 md:p-10 relative z-10  ">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold tracking-tight">
-            Bienvenue sur{' '}
-            <h1 className="text-3xl font-bold tracking-tight">
-              City<span className="text-orange-600">Pulse</span>
-            </h1>
-          </h1>
+            Bienvenue 
+         
+          </h1>    <div className="p-6 flex items-center justify-center border-b border-transparent dark:border-gray-800/50">
+         <Logo className="w-40 h-auto drop-shadow-sm" />
+         
+      </div>
           <p className="text-gray-400 text-sm mt-2">Votre portail citoyen intelligent.</p>
         </div>
 
