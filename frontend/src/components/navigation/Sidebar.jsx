@@ -1,9 +1,9 @@
 import { NavLink, Navigate } from 'react-router-dom';
 import { useStateContext } from '../../contexts/ContextProvider';
 import { Users, Database, BrickWallShield, Newspaper, Moon, MapPinned, UserCog, FolderClock, PencilLine, ScrollText } from 'lucide-react';
+import Logo  from '../logos/logo'; // <-- Import s7i7
 
 export default function Sidebar() {
-
   const { user } = useStateContext();
   const role = user?.role;
 
@@ -11,16 +11,15 @@ export default function Sidebar() {
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-800 h-full fixed left-0 top-0 z-50 transition-colors duration-300">
-      <div className="p-6 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/20">
-          <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-        </div>
-        <span className="text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-          <span className="text-primary-500">Pulse</span>
-        </span>
+      
+       <div className="p-6 flex items-center justify-center border-b border-transparent dark:border-gray-800/50">
+         <Logo className="w-40 h-auto drop-shadow-sm" />
+         
       </div>
 
       <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
+        <hr className="my-4 border-gray-200 dark:border-gray-700" />
+
         <NavLink to="/homefeed" className={navClass}>
           <Newspaper size={20} /> <span>Fil d'actualité</span>
         </NavLink>
@@ -55,9 +54,6 @@ export default function Sidebar() {
             <NavLink to="/manager/incidents" className={navClass}>
               <FolderClock size={20} /> <span>Gestion des Incidents</span>
             </NavLink>
-            {/* <NavLink to="/manager/idees" className={navClass}>
-              <Lightbulb size={20} /> <span>Animation Territoriale</span>
-            </NavLink> */}
             <NavLink to="/editor/articles" className={navClass}>
               <ScrollText size={20} /> <span>Mes Articles</span>
             </NavLink>
@@ -73,7 +69,7 @@ export default function Sidebar() {
               <ScrollText size={20} /> <span>Mes Articles</span>
             </NavLink>
             <NavLink to="/editor/Pharmacies" className={navClass}>
-              <ScrollText size={20} /> <span>pharmacies </span>
+              <ScrollText size={20} /> <span>Pharmacies</span>
             </NavLink>
           </>
         )}
@@ -84,6 +80,7 @@ export default function Sidebar() {
           <UserCog size={20} /> <span>Mon Profil</span>
         </NavLink>
       </nav>
-    </aside>
+
+     </aside>
   );
 }
