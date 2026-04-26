@@ -81,7 +81,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/staff', [StaffController::class, 'index']);
     Route::post('/staff', [StaffController::class, 'store']);
     Route::post('/sectors', [SectorController::class, 'store']);
-    Route::get('/categories', CategoryIncidentController::class, 'index');
+    Route::get('/categories', [CategoryIncidentController::class, 'index']);
     Route::put('/sectors/{sector}', [SectorController::class, 'update']);
     Route::put('/sectors/{sector}/toggle', [SectorController::class, 'toggleStatus']);
 
