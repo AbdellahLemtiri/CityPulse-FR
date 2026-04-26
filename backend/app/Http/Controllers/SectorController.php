@@ -62,7 +62,7 @@ class SectorController extends Controller
     }
 
 
-    public function toggleStatus(Request $request, Sector $sector)
+    public function toggleStatus(Sector $sector)
     {
         $sector->update(['status' => !$sector->status]);
         return response()->json([
