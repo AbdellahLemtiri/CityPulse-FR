@@ -1,7 +1,7 @@
 import { NavLink, Navigate } from 'react-router-dom';
 import { useStateContext } from '../../contexts/ContextProvider';
 import { Users, Database, BrickWallShield, Newspaper, Moon, MapPinned, UserCog, FolderClock, PencilLine, ScrollText } from 'lucide-react';
-import Logo  from '../logos/logo'; 
+import Logo  from '../logos/Logo'; 
 
 export default function Sidebar() {
   const { user } = useStateContext();

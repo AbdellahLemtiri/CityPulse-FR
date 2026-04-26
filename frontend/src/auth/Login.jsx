@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, UserKey, DoorOpen } from 'lucide-react';
-import Logo  from '../components/logos/logo'; 
+import Logo  from '../components/logos/Logo'; 
 import axiosClient from './../config/axios-client';
 import { useStateContext } from './../contexts/ContextProvider';
 import { useNavigate, Link } from 'react-router-dom';
