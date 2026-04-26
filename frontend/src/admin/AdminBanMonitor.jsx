@@ -32,24 +32,24 @@ export default function AdminBanMonitor() {
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
-  const handleApplyBan = async (userToStrike) => {
-    try {
-      const response = await axiosClient.post(`/admin/users/ban`, { uuid: userToStrike.uuid });
-      toast.success('Banissement appliqué avec succès !');
-    } catch (error) {
-      toast.error("Une erreur est survenue lors de l'application de l'avertissement.");
-    } finally {
-      setUserToStrike(null);
-    }
-    try {
-      const response = await axiosClient.get(`/manager/users?search=${query}`);
-      setFilteredUsers(response.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const handleApplyBan = async (userToStrike) => {
+      try {
+        const response = await axiosClient.post(`/admin/users/ban`, { uuid: userToStrike.uuid });
+        toast.success('Banissement appliqué avec succès !');
+      } catch (error) {
+        toast.error("Une erreur est survenue lors de l'application de l'avertissement.");
+      } finally {
+        setUserToStrike(null);
+      }
+      try {
+        const response = await axiosClient.get(`/manager/users?search=${query}`);
+        setFilteredUsers(response.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (searchQuery) {
