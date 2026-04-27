@@ -26,7 +26,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Data publique
 Route::get('/cities', [cityController::class, 'index']);
-Route::get('/sectors/city', [SectorController::class, 'index']);
+
 Route::get('/articles/shared/{slug}', [ArticleController::class, 'showBySlug']);
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetCode']);
 Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyCode']);

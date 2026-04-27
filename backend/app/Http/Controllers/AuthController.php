@@ -65,7 +65,6 @@ class AuthController extends Controller
         $user = User::where('email', $data['email'])->firstOrFail();
         $user->load(['sector', 'city', 'photo']);
         $token = $user->createToken('CityPulseToken')->plainTextToken;
-
         return response()->json([
             'message' => 'Connexion réussie',
             'user' => new userProfileResource($user),

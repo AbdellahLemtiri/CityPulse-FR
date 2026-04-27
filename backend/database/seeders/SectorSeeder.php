@@ -10,27 +10,62 @@ class SectorSeeder extends Seeder
 {
     public function run(): void
     {
-        $safi = City::where('name', 'Safi')->first();
-        if (!$safi) {
-            $safi = City::create(['name' => 'Safi']);
-        }
-
-        $safiSectors = [
-            ['name' => '1ère Annexe Administrative - Ancienne Médina', 'description' => 'المدينة العتيقة، واد الباشا، الكورس', 'city_id' => $safi->id],
-            ['name' => '2ème Annexe Administrative - Biada', 'description' => 'بياضة، درب مولاي الحسن', 'city_id' => $safi->id],
-            ['name' => '3ème Annexe Administrative - Zaouia', 'description' => 'الزاوية، حي المطار، جنان الشقوري', 'city_id' => $safi->id],
-            ['name' => '4ème Annexe Administrative - Kaouki', 'description' => 'حي كاوكي، حي السلام، وريدة', 'city_id' => $safi->id],
-            ['name' => '5ème Annexe Administrative - Sidi Bouzid', 'description' => 'سيدي بوزيد، قرية الشمس', 'city_id' => $safi->id],
-            ['name' => '6ème Annexe Administrative - Miftah El Kheir', 'description' => 'مفتاح الخير، حي العودة، شنقيط', 'city_id' => $safi->id],
-            ['name' => '7ème Annexe Administrative - Azib Derai', 'description' => 'عزيب الدرعي، حي أموني، لالة هنية الحمرية', 'city_id' => $safi->id],
-            ['name' => '8ème Annexe Administrative - Quartier Anas', 'description' => 'حي أنس، برج الناظور', 'city_id' => $safi->id],
+        $data = [
+            'Safi' => [
+                ['name' => '1ère Annexe - Ancienne Médina', 'description' => 'المدينة العتيقة، واد الباشا، الكورس'],
+                ['name' => '2ème Annexe - Biada', 'description' => 'بياضة، درب مولاي الحسن'],
+                ['name' => '3ème Annexe - Zaouia', 'description' => 'الزاوية، حي المطار، جنان الشقوري'],
+                ['name' => '4ème Annexe - Kaouki', 'description' => 'حي كاوكي، حي السلام، وريدة'],
+                ['name' => '5ème Annexe - Sidi Bouzid', 'description' => 'سيدي بوزيد، قرية الشمس'],
+                ['name' => '6ème Annexe - Miftah El Kheir', 'description' => 'مفتاح الخير، حي العودة، شنقيط'],
+                ['name' => '7ème Annexe - Azib Derai', 'description' => 'عزيب الدرعي، حي أموني، لالة هنية الحمرية'],
+                ['name' => '8ème Annexe - Quartier Anas', 'description' => 'حي أنس، برج الناظور'],
+            ],
+            'Casablanca' => [
+                ['name' => 'Maârif', 'description' => 'المعاريف'],
+                ['name' => 'Anfa', 'description' => 'أنفا'],
+                ['name' => 'Sidi Belyout', 'description' => 'سيدي بليوط'],
+                ['name' => 'Hay Hassani', 'description' => 'حي الحسني'],
+                ['name' => 'Ain Chock', 'description' => 'عين الشق'],
+                ['name' => 'Sidi Moumen', 'description' => 'سيدي مومن'],
+                ['name' => 'Bernoussi', 'description' => 'البرنوصي'],
+            ],
+            'Marrakech' => [
+                ['name' => 'Guéliz', 'description' => 'جليز'],
+                ['name' => 'Médina', 'description' => 'المدينة'],
+                ['name' => 'Ennakhil', 'description' => 'النخيل'],
+                ['name' => 'Ménara', 'description' => 'المنارة'],
+                ['name' => 'Sidi Youssef Ben Ali', 'description' => 'سيدي يوسف بن علي'],
+            ],
+            'Rabat' => [
+                ['name' => 'Agdal-Ryad', 'description' => 'أكدال الرياض'],
+                ['name' => 'Hassan', 'description' => 'حسان'],
+                ['name' => 'Youssoufia', 'description' => 'اليوسفية'],
+                ['name' => 'Yaâcoub El Mansour', 'description' => 'يعقوب المنصور'],
+                ['name' => 'Souissi', 'description' => 'السويسي'],
+            ],
+            'Tanger' => [
+                ['name' => 'Tanger-Médina', 'description' => 'طنجة المدينة'],
+                ['name' => 'Beni Makada', 'description' => 'بني مكادة'],
+                ['name' => 'Charf-Mghogha', 'description' => 'الشرف مغوغة'],
+                ['name' => 'Charf-Souani', 'description' => 'الشرف السواني'],
+            ],
         ];
 
-        foreach ($safiSectors as $sector) {
-            Sector::firstOrCreate(
-                ['name' => $sector['name'], 'city_id' => $sector['city_id']],
-                $sector
-            );
+        foreach ($data as $cityName => $sectors) {
+             $city = City::firstOrCreate(['name' => $cityName]);
+
+            foreach ($sectors as $sector) {
+                Sector::firstOrCreate(
+                    [
+                        'name' => $sector['name'],
+                        'city_id' => $city->id
+                    ],
+                    [
+                        'description' => $sector['description']
+                    ]
+                );
+            }
         }
     }
 }

@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'first_name' => 'Ahmed',
-                'last_name' => 'hemdoui',
+                'last_name' => 'bojouni',
                 'email' => 'manager1@safipulse.ma',
                 'role' => 'manager'
             ],  [
@@ -63,8 +63,8 @@ class DatabaseSeeder extends Seeder
                 'role' => 'journaliste'
             ],
             [
-                'first_name' => 'Abdellah',
-                'last_name' => 'lemtiri',
+                'first_name' => 'lemtiri',
+                'last_name' => 'Abdellah',
                 'email' => 'Abdellah@gmail.com',
                 'role' => 'citoyen'
             ],
@@ -83,25 +83,25 @@ class DatabaseSeeder extends Seeder
             [
                 'first_name' => 'Meryem',
                 'last_name' => 'walidiz',
-                'email' => 'citoyen2@gmail.com',
+                'email' => 'Meryem@gmail.com',
                 'role' => 'citoyen'
             ],
             [
                 'first_name' => 'Omar',
                 'last_name' => 'mahdi',
-                'email' => 'citoyen3@gmail.com',
+                'email' => 'Omar@gmail.com',
                 'role' => 'citoyen'
             ],
             [
                 'first_name' => 'ahmed',
                 'last_name' => 'abderrahim',
-                'email' => 'citoyen4@gmail.com',
+                'email' => 'ahmed@gmail.com',
                 'role' => 'citoyen'
             ],
             [
                 'first_name' => 'Hanaa',
                 'last_name' => 'lamliti',
-                'email' => 'citoyen5@gmail.com',
+                'email' => 'Hanaa@gmail.com',
                 'role' => 'citoyen'
             ],
         ];

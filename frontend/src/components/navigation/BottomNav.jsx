@@ -1,16 +1,15 @@
-import { NavLink, Navigate } from 'react-router-dom';
-import { Users, Database, BrickWallShield, Newspaper, UserCog, Lightbulb, MapPinned, FolderClock, PencilLine, ScrollText } from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+import { Users, Database, BrickWallShield, Newspaper, Moon, MapPinned, UserCog, FolderClock, ScrollText } from 'lucide-react';
 import { useStateContext } from '../../contexts/ContextProvider';
 
 export default function BottomNav() {
   const { user } = useStateContext();
   const role = user?.role;
 
-  let gridClass = 'grid-cols-4';
-  if (role === 'admin') {
+   let gridClass = 'grid-cols-4';
+  
+   if (role === 'admin' || role === 'manager') {
     gridClass = 'grid-cols-5';
-  } else if (role === 'manager') {
-    gridClass = 'grid-cols-6';
   }
 
   const mobileNavClass = ({ isActive }) => `flex flex-col items-center justify-center gap-1 relative transition-colors ${isActive ? 'text-primary-600 dark:text-primary-500 font-bold' : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'}`;
@@ -25,9 +24,9 @@ export default function BottomNav() {
 
         {role === 'citoyen' && (
           <>
-            <NavLink to="/idees" className={mobileNavClass}>
-              <Lightbulb className="w-6 h-6" />
-              <span className="text-[10px] font-medium text-center leading-tight">Idées</span>
+            <NavLink to="/pharmacies" className={mobileNavClass}>
+              <Moon className="w-6 h-6" />
+              <span className="text-[10px] font-medium text-center leading-tight">Pharmacies</span>
             </NavLink>
             <NavLink to="/signalements" className={mobileNavClass}>
               <MapPinned className="w-6 h-6" />
@@ -59,13 +58,9 @@ export default function BottomNav() {
               <FolderClock className="w-6 h-6" />
               <span className="text-[10px] font-medium text-center leading-tight">Incidents</span>
             </NavLink>
-            <NavLink to="/manager/idees" className={mobileNavClass}>
-              <Lightbulb className="w-6 h-6" />
-              <span className="text-[10px] font-medium text-center leading-tight">Events</span>
-            </NavLink>
-            <NavLink to="/manager/alertes" className={mobileNavClass}>
-              <PencilLine className="w-6 h-6" />
-              <span className="text-[10px] font-medium text-center leading-tight">Alertes</span>
+            <NavLink to="/editor/articles" className={mobileNavClass}>
+              <ScrollText className="w-6 h-6" />
+              <span className="text-[10px] font-medium text-center leading-tight">Articles</span>
             </NavLink>
             <NavLink to="/manager/moderation" className={mobileNavClass}>
               <BrickWallShield className="w-6 h-6" />
@@ -76,13 +71,13 @@ export default function BottomNav() {
 
         {role === 'journaliste' && (
           <>
-            <NavLink to="/journaliste/rediger" className={mobileNavClass}>
-              <PencilLine className="w-6 h-6" />
-              <span className="text-[10px] font-medium text-center leading-tight">Rédiger</span>
-            </NavLink>
-            <NavLink to="/journaliste/articles" className={mobileNavClass}>
+            <NavLink to="/editor/articles" className={mobileNavClass}>
               <ScrollText className="w-6 h-6" />
               <span className="text-[10px] font-medium text-center leading-tight">Articles</span>
+            </NavLink>
+            <NavLink to="/editor/Pharmacies" className={mobileNavClass}>
+              <ScrollText className="w-6 h-6" />
+              <span className="text-[10px] font-medium text-center leading-tight">Pharmacies</span>
             </NavLink>
           </>
         )}

@@ -34,7 +34,6 @@ class UserFactory extends Factory
             'password' => Hash::make('Password@1'),
             'city_id' =>1,
             'sector_id' =>1,
-             'xp_points' => fake()->numberBetween(0, 500),
             'is_banned' => false,
         ];
     }
