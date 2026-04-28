@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Pharmacy;
+use App\Models\DutyPharmacy;
 use Carbon\Carbon;
 
-class PharmacySeeder extends Seeder
+class DutyPharmacySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -91,7 +91,7 @@ class PharmacySeeder extends Seeder
         ];
 
         foreach ($pharmacies as $pharmacy) {
-            Pharmacy::create($pharmacy);
+            DutyPharmacy::create($pharmacy);
         }
     }
 }

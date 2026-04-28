@@ -4,7 +4,8 @@ import Pusher from 'pusher-js';
 import toast, { Toaster } from 'react-hot-toast';
 import { useStateContext } from '../../contexts/ContextProvider';
 import axiosClient from '../../config/axios-client';
-
+import { Bell,BellCheck,Info  } from 'lucide-react';
+import Logo  from '../logos/Logo'; 
 window.Pusher = Pusher;
 window.Pusher = Pusher;
 
@@ -125,9 +126,7 @@ export default function TopHeader() {
     <header className="sticky  top-0 z-40 bg-white/90 overflow-visible dark:bg-gray-900 px-4 md:px-8 py-3 md:py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
       <div className="flex items-center gap-2">
         <div className="md:hidden w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center shadow-sm"></div>
-        <span className="md:hidden text-xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-          City<span className="text-primary-500">Pulse</span>
-        </span>
+       <Logo  />
 
         <h1 className="hidden md:block text-xl font-bold text-gray-900 dark:text-white  tracking-wider">
           <span className="text-[#EA580C]">Bonjour </span> {user?.first_name} {user?.last_name}
@@ -137,7 +136,7 @@ export default function TopHeader() {
       <div className="flex items-center gap-5">
         <div className="relative" ref={dropdownRef}>
           <button onClick={handleToggleDropdown} className="relative p-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none">
-            <span className="material-symbols-outlined text-[26px]">notifications</span>
+              <Bell />
 
             {unreadCount > 0 && <span className="absolute top-1 right-1 flex items-center justify-center w-5 h-5 text-[11px] font-bold text-white bg-red-500 border-2 border-white dark:border-gray-900 rounded-full animate-bounce">{unreadCount}</span>}
           </button>
@@ -152,16 +151,14 @@ export default function TopHeader() {
               <div className="max-h-[350px] overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700 custom-scrollbar overflow-hidden">
                 {notifications.length === 0 ? (
                   <div className="p-8 text-center flex flex-col items-center text-gray-500 dark:text-gray-500">
-                    <span className="material-symbols-outlined text-4xl mb-2 opacity-50">notifications_paused</span>
-                    <p className="text-sm font-medium">Vous êtes à jour !</p>
+<BellCheck />                    <p className="text-sm font-medium">Vous êtes à jour !</p>
                     <p className="text-xs mt-1">Aucune nouvelle notification.</p>
                   </div>
                 ) : (
                   notifications.map((notif, index) => (
                     <div key={index} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer flex gap-3 items-start">
                       <div className="w-8 h-8 rounded-full bg-primary-900/30 text-primary-400 flex items-center justify-center flex-shrink-0 mt-1">
-                        <span className="material-symbols-outlined text-[18px]">info</span>
-                      </div>
+  <Info />                      </div>
                       <div>
                         <p className="text-sm text-gray-800 dark:text-gray-200 font-bold mb-0.5">{notif.title || 'Mise à jour Système'}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 leading-snug">{notif.message}</p>
