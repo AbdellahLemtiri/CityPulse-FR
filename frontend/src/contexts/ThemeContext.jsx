@@ -22,7 +22,7 @@ export const ThemeProvider = ({ children }) => {
     } else {
       root.classList.remove('dark');
       localStorage.setItem('theme', 'light');
-    }²
+    }
   }, [isDarkMode]);
 
   const toggleTheme = () => {
