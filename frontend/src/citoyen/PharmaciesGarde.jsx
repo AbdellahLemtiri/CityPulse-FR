@@ -108,7 +108,7 @@ export default function PharmaciesGarde() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
         </div>
       ) : pharmacies.length === 0 ? (
-        <div className="bg-white dark:bg-gray-700s rounded-lg p-8 text-center border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center border dark:border-gray-700 border-gray-200">
           <Clock className="w-12 h-12 text-gray-400 mx-auto mb-3" />
           <p className="text-gray-500">Aucune pharmacie de garde pour le moment.</p>
         </div>
