@@ -18,7 +18,7 @@ class IndexEditor extends JsonResource
             'slug' => $this->slug,
             'content' => $this->content,
             'status' => $this->status,
-            'images' => $this->media->map(fn($m) => asset('storage/' . $m->file_path))->values(),
+            'images' => $this->media->map(fn($m) => $m->file_path)->values(),
             'created_at' => $this->created_at,
         ];
     }

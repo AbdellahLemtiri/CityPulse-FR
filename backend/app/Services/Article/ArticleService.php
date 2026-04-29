@@ -2,7 +2,7 @@
 
 namespace App\Services\Article;
 
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use App\Models\Article;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
@@ -17,7 +17,6 @@ class ArticleService
     {
         //
     }
-
 
     public function createArticle(array $data, $user, $images = null)
     {
@@ -40,31 +39,32 @@ class ArticleService
         return $article->load('media');
     }
 
-    public function updateArticle(Article $article, array $data, $images = null)
+    public function updateArticle(Article $article, array $data, $images = null, $deletedImages = [])
     {
         $article->update($data);
+
         if (!empty($deletedImages)) {
             foreach ($deletedImages as $imageUrl) {
+                $media = $article->media()->where('file_path', $imageUrl)->first();
 
-                $pathParts = explode('storage/', $imageUrl);
+                if ($media) {
+                    $relativePath = str_replace(config('app.url') . '/', '', $media->file_path);
 
-                if (count($pathParts) > 1) {
-                    $relativePath = $pathParts[1];
-
-                    $media = $article->media()->where('file_path', $relativePath)->first();
-
-                    if ($media) {
-                        Storage::disk('public')->delete($media->file_path);
-                        $media->delete();
+                    if (File::exists(public_path($relativePath))) {
+                        File::delete(public_path($relativePath));
                     }
+                    $media->delete();
                 }
             }
         }
+
         if ($images) {
-
             foreach ($article->media as $media) {
-                Storage::disk('public')->delete($media->file_path);
+                $relativePath = str_replace(config('app.url') . '/', '', $media->file_path);
 
+                if (File::exists(public_path($relativePath))) {
+                    File::delete(public_path($relativePath));
+                }
                 $media->delete();
             }
 
@@ -77,10 +77,12 @@ class ArticleService
     private function uploadImages(Article $article, array $images)
     {
         foreach ($images as $file) {
-            $path = $file->store('articles', 'public');
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+
+            $file->move(public_path('uploads/articles'), $filename);
 
             $article->media()->create([
-                'file_path' => $path,
+                'file_path' => config('app.url') . '/uploads/articles/' . $filename,
                 'file_type' => 'image',
                 'is_public' => true,
             ]);

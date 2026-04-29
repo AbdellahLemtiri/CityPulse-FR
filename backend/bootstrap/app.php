@@ -1,4 +1,7 @@
 <?php
+putenv('CLOUDINARY_URL=cloudinary://317913145597975:CSjv2TKnr1rbbYU1W3hob6RPmS4@dyp54bpos');
+$_ENV['CLOUDINARY_URL'] = 'cloudinary://317913145597975:CSjv2TKnr1rbbYU1W3hob6RPmS4@dyp54bpos';
+$_SERVER['CLOUDINARY_URL'] = 'cloudinary://317913145597975:CSjv2TKnr1rbbYU1W3hob6RPmS4@dyp54bpos';
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;

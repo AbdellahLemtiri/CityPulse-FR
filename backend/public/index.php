@@ -4,7 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
-
+putenv('CLOUDINARY_URL=cloudinary://317913145597975:CSjv2TKnr1rbbYU1W3hob6RPmS4@dyp54bpos');
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;

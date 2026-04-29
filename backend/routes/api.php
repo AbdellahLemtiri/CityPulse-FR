@@ -27,15 +27,23 @@ Route::post('/login', [AuthController::class, 'login']);
 // Data publique
 Route::get('/cities', [cityController::class, 'index']);
 
+//........................,.............,,,,...................................//
 Route::get('/articles/shared/{slug}', [ArticleController::class, 'showBySlug']);
+//.............................................................................//
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetCode']);
 Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyCode']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+
+
+
+
 /*
 |--------------------------------------------------------------------------
 |  Pour TOUS les utilisateurs
 |--------------------------------------------------------------------------
 */
+
+
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 Route::middleware('auth:sanctum','active_sector','not_banned')->group(function () {
@@ -56,9 +64,7 @@ Route::middleware('auth:sanctum','active_sector','not_banned')->group(function (
     Route::get('/incidents', [IncidentController::class, 'index']);
 
     Route::post('/incidents', [IncidentController::class, 'store']);
-
-    Route::get('/proposals', [ProposalController::class, 'index']);
-    Route::post('/proposals', [ProposalController::class, 'store']);
+ 
 
     Route::get('/comments', [CommentController::class, 'index']);
     Route::post('/comments', [CommentController::class, 'store']);
@@ -69,11 +75,15 @@ Route::middleware('auth:sanctum','active_sector','not_banned')->group(function (
     Route::get('/duty-pharmacies', [DutyPharmacyController::class, 'index']);
 });
 
+
 /*
 |--------------------------------------------------------------------------
 |  ROUTES ADMIN
 |--------------------------------------------------------------------------
 */
+
+
+
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/users', [ModerationController::class, 'SerchUser']);
     Route::post('/users/ban', [ModerationController::class, 'toggleBan']);
@@ -92,14 +102,18 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::delete('/workflows/{category_id}/{partner_id}', [WorkflowController::class, 'removeWorkflow']);
 });
 
+
+
 /*
 |--------------------------------------------------------------------------
 |  ROUTES MANAGER 
 |--------------------------------------------------------------------------
 */
+
+
+
 Route::middleware(['auth:sanctum', 'role:manager','not_banned'])->prefix('manager')->group(function () {
     Route::get('/categories', [CategoryIncidentController::class, 'getCategoriesForManager']);
-
     Route::resource('/incidents', IncidentController::class)->only(['index', 'destroy', 'show']);
     Route::put('/incidents/{id}/validate', [IncidentController::class, 'qualifyIncident']);
     Route::put('/incidents/{id}/reject', [IncidentController::class, 'rejectIncident']);
@@ -111,11 +125,16 @@ Route::middleware(['auth:sanctum', 'role:manager','not_banned'])->prefix('manage
  
 });
 
+
+
 /*
 |--------------------------------------------------------------------------
 |  ROUTES editor  journaliste et manager 
 |--------------------------------------------------------------------------
 */
+
+
+
 Route::middleware(['auth:sanctum', 'role:journaliste|manager','not_banned'])->prefix('editor')->group(function () {
     Route::get('/articles', [ArticleController::class, 'getArticlesByEditor']);
     Route::post('/articles', [ArticleController::class, 'store']);
@@ -123,6 +142,7 @@ Route::middleware(['auth:sanctum', 'role:journaliste|manager','not_banned'])->pr
     Route::put('/articles/{article:slug}', [ArticleController::class, 'update']);
     Route::delete('/articles/{article:slug}', [ArticleController::class, 'destroy']);
 });
+
 
 
 /*
@@ -138,3 +158,4 @@ Route::middleware(['auth:sanctum', 'role:journaliste','not_banned'])->group(func
     Route::put('/pharmacies/{dutyPharmacy}', [DutyPharmacyController::class, 'update']);
     Route::delete('/pharmacies/{dutyPharmacy}', [DutyPharmacyController::class, 'destroy']);
 });
+    

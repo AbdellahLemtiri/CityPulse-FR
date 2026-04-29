@@ -26,7 +26,7 @@ class ArticleResource extends JsonResource
             'status'         => $this->status,
             'created_at'     => date('Y-m-d H:i  ', strtotime($this->created_at)),
             'author_avatar' => $this->user->photo
-                ? asset('storage/' . $this->user->photo->file_path)
+                ? $this->user->photo->file_path
                 : "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=$bg&color=fff",
             'likes_count'    => (int) $this->likes_count,
             'comments_count' => (int) $this->comments_count,
@@ -34,7 +34,7 @@ class ArticleResource extends JsonResource
             'author_name'    => $this->user ? $this->user->first_name . ' ' . $this->user->last_name : 'Inconnu',
             'sector_name'    => $this->sector?->name,
             'images' => $this->media->map(function ($item) {
-                return asset('storage/' . $item->file_path);
+                return $item->file_path; 
             }),
         ];
     }

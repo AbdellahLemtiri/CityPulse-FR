@@ -10,6 +10,7 @@ use App\Models\Partner;
 use App\Http\Requests\StorePartnerRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+
 class PartnerController extends Controller
 {
     /**
@@ -39,10 +40,11 @@ class PartnerController extends Controller
             $partner = Partner::create($data);
 
             if ($logoFile) {
-                $path = $logoFile->store('partners/logos', 'public');
+                $filename = uniqid() . '.' . $logoFile->getClientOriginalExtension();
+                $logoFile->move(public_path('uploads/partners'), $filename);
 
                 $partner->logo()->create([
-                    'file_path' => $path,
+                    'file_path' => config('app.url') . '/uploads/partners/' . $filename,
                     'file_type' => 'image',
                     'is_public' => true
                 ]);

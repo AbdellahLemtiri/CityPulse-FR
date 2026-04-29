@@ -23,7 +23,7 @@ class UpdateProfilAvatar extends FormRequest
     {
         return [
             //
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=2000,max_height=2000',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webj|max:2048|dimensions:max_width=2000,max_height=2000',
         ];
     }
 }

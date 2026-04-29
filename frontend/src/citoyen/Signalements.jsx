@@ -314,7 +314,7 @@ export default function Signalements() {
                         {images.map((img, index) => (
                           <div key={index} className="aspect-square relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 group">
                             <img src={img.url} className="w-full h-full object-cover" alt="Preview" />
-                            <button type="button" onClick={() => removeImage(index)} className="absolute inset-0 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button type="button" onClick={() => removeImage(index)} className="absolute inset-0 bg-gary-100 text-white flex items-center justify-center opacity-10  transition-opacity">
                               <span className="material-symbols-outlined">delete</span>
                             </button>
                           </div>
@@ -333,7 +333,7 @@ export default function Signalements() {
                       <div className="flex flex-col  gap-2">
                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">détecter automatiquement l'adresse</label>
                         <div className="flex gap-2">
-                          <input type="text" disabled value={location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : ''} className="flex-1 bg-gray-100 dark:bg-gray-900 border cursor-not-allowed border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" placeholder="Saisissez l'adresse ou le quartier..." />
+                          <input type="text" disabled value={location ? `${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}` : ''} className="flex-1 bg-gray-100 dark:bg-gray-900 border cursor-not-allowed border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" placeholder="automiquement" />
                           <button type="button" onClick={getLocation} className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-4 rounded-xl transition-colors flex items-center justify-center" title="Détecter ma position GPS">
                             <LocateFixed />
                           </button>

@@ -1,16 +1,16 @@
 <?php
 
 namespace Tests\Unit;
+ 
+use App\Models\User;
+ $users = User::getUsersByRole('citoyen');
+    echo $users;
 
-use PHPUnit\Framework\TestCase;
 
-class ExampleTest extends TestCase
-{
-    /**
-     * A basic test example.
-     */
-    public function test_that_true_is_true(): void
-    {
-        $this->assertTrue(true);
-    }
-}
+
+    use App\Models\Article;
+
+$articles = Article::with(['comments'=>function($q){
+    $q->whereNull('parent_id')->with('replies');
+}])->findOrFail(1);
+

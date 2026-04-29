@@ -337,12 +337,12 @@ export default function ManagerIncidents() {
                         <div className="flex flex-col items-center gap-4 w-full px-8">
                           <span className="material-symbols-outlined text-4xl text-primary-500 dark:text-primary-400">mic</span>
                           <audio controls className="w-full">
-                            <source src={`http://127.0.0.1:8000/storage/${selectedIncident.media[activeImageIndex].file_path}`} />
+                            <source src={`${selectedIncident.media[activeImageIndex].file_path}`} />
                             Votre navigateur ne supporte pas l'audio.
                           </audio>
                         </div>
                       ) : (
-                        <img src={`http://127.0.0.1:8000/storage/${selectedIncident.media[activeImageIndex].file_path}`} alt="Preuve" className="w-full h-full object-contain" />
+                        <img src={`${selectedIncident.media[activeImageIndex].file_path}`} alt="Preuve" className="w-full h-full object-contain" />
                       )}
                     </div>
 
@@ -355,7 +355,7 @@ export default function ManagerIncidents() {
                                 <span className="material-symbols-outlined text-gray-500 dark:text-gray-400">graphic_eq</span>
                               </div>
                             ) : (
-                              <img src={`http://127.0.0.1:8000/storage/${m.file_path}`} className="w-full h-full object-cover" />
+                              <img src={`${m.file_path}`} className="w-full h-full object-cover" />
                             )}
                           </button>
                         ))}

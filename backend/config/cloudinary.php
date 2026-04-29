@@ -1,0 +1,1 @@
+<?php return ['cloud_url' => 'cloudinary://317913145597975:CSjv2TKnr1rbbYU1W3hob6RPmS4@dyp54bpos'];

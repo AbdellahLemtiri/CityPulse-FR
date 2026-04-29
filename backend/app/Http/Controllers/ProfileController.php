@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,20 +38,27 @@ class ProfileController extends Controller
     public function updatePhoto(UpdateProfilAvatar $request)
     {
         $user = Auth::user();
-
         $image = $request->file('image');
-        if ($user->photo) {
-            Storage::disk('public')->delete($user->photo->file_path);
-            $user->photo()->delete();
+
+         if ($user->photo) {
+             $relativePath = str_replace(config('app.url') . '/', '', $user->photo->file_path);
+
+             if (File::exists(public_path($relativePath))) {
+                File::delete(public_path($relativePath));
+            }
+
+             $user->photo()->delete();
         }
-        $path = $image->store('avatars', 'public');
-        $user->photo()->create([
-            'file_path' => $path,
+
+        $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+
+         $image->move(public_path('uploads/citypulse_photos'), $filename);
+
+         $user->photo()->create([
+            'file_path' => config('app.url') . '/uploads/citypulse_photos/' . $filename,
             'file_type' => 'image',
             'is_public' => true,
         ]);
-
-
 
         return response()->json([
             'message' => 'Avatar modifié avec succès',

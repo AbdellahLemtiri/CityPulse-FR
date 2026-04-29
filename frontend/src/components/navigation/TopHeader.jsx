@@ -4,10 +4,9 @@ import Pusher from 'pusher-js';
 import toast, { Toaster } from 'react-hot-toast';
 import { useStateContext } from '../../contexts/ContextProvider';
 import axiosClient from '../../config/axios-client';
-import { Bell,BellCheck,Info  } from 'lucide-react';
+import { Bell,Info } from 'lucide-react';
 import Logo  from '../logos/Logo'; 
-window.Pusher = Pusher;
-window.Pusher = Pusher;
+ window.Pusher = Pusher;
 
 window.Echo = new Echo({
   broadcaster: 'reverb',
@@ -151,7 +150,9 @@ export default function TopHeader() {
               <div className="max-h-[350px] overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700 custom-scrollbar overflow-hidden">
                 {notifications.length === 0 ? (
                   <div className="p-8 text-center flex flex-col items-center text-gray-500 dark:text-gray-500">
-<BellCheck />                    <p className="text-sm font-medium">Vous êtes à jour !</p>
+       
+
+            <p className="text-sm font-medium">Vous êtes à jour !</p>
                     <p className="text-xs mt-1">Aucune nouvelle notification.</p>
                   </div>
                 ) : (

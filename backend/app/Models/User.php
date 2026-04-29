@@ -107,6 +107,22 @@ class User extends Authenticatable
     }
  
 
+   public static function getUsersByRole($role)
+{
+     $users = User::role($role)->get(); 
+    
+    $result = $users->map(function($u) {
+         $nom = strtoupper($u->last_name . " " . $u->first_name);
+        return $nom;
+    });
+
+    return $result;
+}
+
+
+
+
  
 }
+ 
     

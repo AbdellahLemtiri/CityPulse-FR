@@ -14,24 +14,23 @@ class getIncidentResourse extends JsonResource
      *
      * @return array<string, mixed>
      */
-
     public function toArray(Request $request): array
     {
         $audio = $this->media->firstWhere('file_type', 'audio');
         $images = $this->media->where('file_type', 'image');
+
         return [
             'id' => $this->id,
             'ref_num' => $this->ref_num,
             'title' => $this->title,
             'description' => $this->description,
-            'created_at' => date('Y-m-d  ', strtotime($this->created_at)),
+            'created_at' => $this->created_at->format('Y-m-d'),
             'status' => $this->status,
-            'images' => $images->map(fn($m) => asset('storage/' . $m->file_path))->values(),
-            'audio' => $audio ? asset('storage/' . $audio->file_path) : null,
+            'images' => $images->pluck('file_path')->values(),
+            'audio' => $audio ? $audio->file_path : null,
             'address' => $this->location_name,
-            'rejection_reason' => $this->location_address,
             'category' => $this->category?->name,
-            'rejection_reason' => $this->rejection_reason ?? null,
+            'rejection_reason' => $this->rejection_reason,
         ];
     }
 }

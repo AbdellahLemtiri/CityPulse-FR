@@ -42,13 +42,13 @@ class IncidentService
                 'user_id'     => $user->id,
                 'status'      => 'pending',
             ]);
-
             if (!empty($images)) {
                 foreach ($images as $image) {
-                    $path = $image->store('incidents/images', 'public');
+                     $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+                     $image->move(public_path('uploads/incidents'), $filename);
 
                     $incident->media()->create([
-                        'file_path' => $path,
+                        'file_path' => config('app.url') . '/uploads/incidents/' . $filename,
                         'file_type' => 'image',
                         'is_public' => true
                     ]);
@@ -56,10 +56,11 @@ class IncidentService
             }
 
             if ($audio) {
-                $path = $audio->store('incidents/audio', 'public');
+                $filename = uniqid() . '.' . $audio->getClientOriginalExtension();
+                $audio->move(public_path('uploads/incidents'), $filename);
 
                 $incident->media()->create([
-                    'file_path' => $path,
+                    'file_path' => config('app.url') . '/uploads/incidents/' . $filename,
                     'file_type' => 'audio',
                     'is_public' => true
                 ]);
