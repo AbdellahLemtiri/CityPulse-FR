@@ -223,8 +223,7 @@ export default function ManagerIncidents() {
             <div className="flex-1 w-full">
               <label className="block text-xs font-bold text-gray-400 uppercase  mb-2">Rechercher un Incident Par REF </label>
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-500 text-[20px]">search</span>
-                <input type="text" value={querySearch} onChange={(e) => setQuerySearch(e.target.value)} placeholder="Tapez un REF  ..." className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-red-500 " />
+                 <input type="text" value={querySearch} onChange={(e) => setQuerySearch(e.target.value)} placeholder="Tapez un REF  ..." className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-red-500 " />
               </div>
             </div>
           </div>
@@ -289,7 +288,7 @@ export default function ManagerIncidents() {
           <div className="py-6 flex justify-between items-center">
             <div>
               <button onClick={handleCloseDetail} className="text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 px-3 py-1.5 hover:bg-gray-50 hover:text-gray-900 dark:hover:text-white dark:hover:border-gray-500 font-bold text-xs uppercase flex items-center gap-2 mb-3 transition-colors">
-                <span className="material-symbols-outlined text-[16px]">arrow_back</span> Retour
+             Retour
               </button>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                 Ticket : <span className="text-primary-600 dark:text-primary-400">{selectedIncident.ref_num}</span>
@@ -306,8 +305,7 @@ export default function ManagerIncidents() {
                   <div>
                     <span className="block text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1">Déclarant</span>
                     <span className="block text-sm font-bold text-gray-900 dark:text-gray-300 flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[18px] text-gray-500">person</span>
-                      {selectedIncident.user?.first_name} {selectedIncident.user?.last_name}
+                       {selectedIncident.user?.first_name} {selectedIncident.user?.last_name}
                       <span className="text-gray-500 font-normal">({selectedIncident.user?.phone || 'Pas de N°'})</span>
                     </span>
                   </div>
@@ -327,16 +325,14 @@ export default function ManagerIncidents() {
               <div>
                 <h4 className="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase mb-3 flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
                   <span>Preuves </span>
-                  <span className="text-xs font-bold bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded">{selectedIncident.media?.length || 0} Fichier(s)</span>
-                </h4>
+                 </h4>
 
                 {selectedIncident.media && selectedIncident.media.length > 0 ? (
                   <div className="space-y-3">
                     <div className=" flex items-center justify-center p-2 h-64">
                       {selectedIncident.media[activeImageIndex].file_path.endsWith('.webm') || selectedIncident.media[activeImageIndex].file_path.endsWith('.mp3') ? (
                         <div className="flex flex-col items-center gap-4 w-full px-8">
-                          <span className="material-symbols-outlined text-4xl text-primary-500 dark:text-primary-400">mic</span>
-                          <audio controls className="w-full">
+                           <audio controls className="w-full">
                             <source src={`${selectedIncident.media[activeImageIndex].file_path}`} />
                             Votre navigateur ne supporte pas l'audio.
                           </audio>
@@ -352,8 +348,7 @@ export default function ManagerIncidents() {
                           <button key={m.id} onClick={() => setActiveImageIndex(idx)} className={`flex-shrink-0 w-16 h-16 rounded overflow-hidden border-2 ${activeImageIndex === idx ? 'border-primary-500' : 'border-gray-300 dark:border-gray-700'}`}>
                             {m.file_path.endsWith('.webm') || m.file_path.endsWith('.mp3') ? (
                               <div className="w-full h-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-gray-500 dark:text-gray-400">graphic_eq</span>
-                              </div>
+                               </div>
                             ) : (
                               <img src={`${m.file_path}`} className="w-full h-full object-cover" />
                             )}
@@ -364,8 +359,7 @@ export default function ManagerIncidents() {
                   </div>
                 ) : (
                   <div className="rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-32 flex flex-col items-center justify-center text-gray-500">
-                    <span className="material-symbols-outlined text-3xl mb-1">no_photography</span>
-                    <p className="text-sm font-bold">Aucun média attaché</p>
+                     <p className="text-sm font-bold">Aucun média attaché</p>
                   </div>
                 )}
               </div>
@@ -429,8 +423,7 @@ export default function ManagerIncidents() {
                       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded p-4">
                         <h6 className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-3">Partenaire Assigné</h6>
                         <div className="text-gray-900 dark:text-white font-bold text-sm flex items-center gap-2 mb-3">
-                          <span className="material-symbols-outlined text-gray-500 dark:text-gray-400 text-[18px]">domain</span>
-                          {selectedCatObj.partner.name}
+                           {selectedCatObj.partner.name}
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-800 pt-3">
                           <div className="flex flex-col">
@@ -473,7 +466,7 @@ export default function ManagerIncidents() {
                 {selectedIncident.status === 'rejected' && (
                   <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 rounded mt-4">
                     <span className="text-sm font-bold flex items-center gap-2 text-red-600 dark:text-red-500 mb-2">
-                      <span className="material-symbols-outlined text-[18px]">block</span> Ticket Refusé
+                      Ticket Refusé
                     </span>
                     <p className="text-xs text-gray-700 dark:text-gray-300 break-words break-all">Motif : {selectedIncident.rejection_reason}</p>
                   </div>
@@ -492,8 +485,7 @@ export default function ManagerIncidents() {
                       <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-4">
                         <h6 className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-3">Entité en charge</h6>
                         <div className="text-gray-900 dark:text-white font-bold text-sm flex items-center gap-2 mb-3">
-                          <span className="material-symbols-outlined text-gray-500 dark:text-gray-400 text-[18px]">domain</span>
-                          {selectedIncident.partner.name}
+                           {selectedIncident.partner.name}
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 pt-3">
                           <div className="flex flex-col">
@@ -543,8 +535,7 @@ export default function ManagerIncidents() {
                       <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-4">
                         <h6 className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-3">Traité et résolu par</h6>
                         <div className="text-gray-900 dark:text-white font-bold text-sm flex items-center gap-2 mb-3">
-                          <span className="material-symbols-outlined text-gray-500 dark:text-gray-400 text-[18px]">verified_user</span>
-                          {selectedIncident.partner.name}
+                           {selectedIncident.partner.name}
                         </div>
                         <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 pt-3">
                           <div className="flex flex-col">

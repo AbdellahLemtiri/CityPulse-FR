@@ -21,8 +21,7 @@ class WorkflowController extends Controller
                 'category_incidents.id as category_id',
                 'partners.name as partner_name',
                 'partners.id as partner_id'
-            )
-            ->get();
+            )->get();
 
         return response()->json($workflows, 200);
     }

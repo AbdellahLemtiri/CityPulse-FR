@@ -10,7 +10,7 @@ class Sector extends Model
 {
     //
 
-    protected $fillable = ['name', 'city', 'boundaries', 'description'];
+    protected $fillable = ['name', 'city', 'boundaries', 'description','status'];
     protected $casts = ['boundaries' => 'array'];
     public function users(): HasMany
     {

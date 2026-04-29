@@ -1,93 +1,90 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="fr">
 <head>
+    <meta charset="UTF-8">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width : 600px ;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        .header {
-            background: #1e3a8a;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .content {
-            padding: 20px;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #777;
-            margin-top: 20px;
-        }
-
-        .badge {
-            background: #f59e0b;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.5; background-color: #f9f9f9; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border: 1px solid #ccc; border-top: 5px solid #1e3a8a; }
+        .header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .header h2 { margin: 0; color: #1e3a8a; font-size: 20px; text-transform: uppercase; }
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+        .info-table th, .info-table td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        .info-table th { background-color: #f5f5f5; width: 30%; font-weight: bold; }
+        .section-title { font-weight: bold; font-size: 16px; margin-top: 25px; margin-bottom: 10px; color: #1e3a8a; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .desc-box { background: #fdfdfd; padding: 15px; border-left: 4px solid #1e3a8a; color: #444; font-style: italic; font-size: 14px; }
+        .contact-box { background: #eef2ff; padding: 15px; border: 1px dashed #1e3a8a; margin-top: 25px; text-align: center; font-size: 14px; }
+        .footer { text-align: center; font-size: 11px; color: #777; margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; }
+        .audio-btn { display: inline-block; background: #f59e0b; color: #fff; padding: 10px 15px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 13px; }
     </style>
 </head>
-
 <body>
     <div class="container">
         <div class="header">
-            <h2>SafiPulse - Ordre d'Intervention</h2>
+            <h2>Ordre d'Intervention</h2>
+            <p style="margin: 5px 0 0; color: #555; font-size: 14px;">Référence : <strong>{{ $incident->ref_num }}</strong></p>
         </div>
-        <div class="content">
-            <p>Bonjour l'équipe <strong>{{ $partner->name }}</strong>,</p>
-            <p>Un nouvel incident nécessite votre intervention dans votre secteur d'activité.</p>
 
-            <ul>
-                <li><strong>Référence :</strong> {{ $incident->ref_num }}</li>
-                <li><strong>Catégorie :</strong> <span class="badge">{{ $incident->category->name }}</span></li>
-                <li><strong>Problème :</strong> {{ $incident->title }}</li>
-                <li><strong>Adresse :</strong> {{ $incident->address }}</li>
- 
-            </ul>
+        <p>Bonjour l'équipe <strong>{{ $partner->name }}</strong>,</p>
+        <p>Veuillez trouver ci-dessous les détails d'un nouvel incident signalé dans votre secteur :</p>
 
-            <p><strong>Description citoyenne :</strong></p>
-            <blockquote style="background: #f9f9f9; padding: 10px; border-left: 4px solid #1e3a8a;">
-                {{ $incident->description }}
-            </blockquote>
-            <p><strong>Description citoyenne :</strong></p>
-            <div style="background: #eef2ff; padding: 15px; border-radius: 5px; margin-top: 20px;">
-                <p style="margin: 0;"><strong>Votre contact responsable :</strong></p>
-                <p style="margin: 5px 0 0 0;"> {{ $manager->first_name }} {{ $manager->last_name }} (Manager de Secteur)</p>
-                <p style="margin: 0;"> Vous pouvez répondre directement à cet email pour le contacter.</p>
+        <table class="info-table">
+            <tr>
+                <th>Catégorie</th>
+                <td>{{ $incident->category->name }}</td>
+            </tr>
+            <tr>
+                <th>Problème</th>
+                <td>{{ $incident->title }}</td>
+            </tr>
+            <tr>
+                <th>Adresse</th>
+                <td>{{ $incident->address }}</td>
+            </tr>
+            <tr>
+                <th>Délai (SLA)</th>
+                <td style="color: red; font-weight: bold;">{{ $partner->sla_hours }} heures</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Description Citoyenne</div>
+        <div class="desc-box">
+            {{ $incident->description ?? 'Aucune description textuelle fournie.' }}
+        </div>
+
+        @if($incident->media && $incident->media->count() > 0)
+            <div class="section-title">Pièces Jointes (Preuves)</div>
+            <div style="margin-top: 10px;">
+                @foreach ($incident->media as $media)
+                    
+                    {{-- Affichage de l'Image --}}
+                    @if($media->file_type === 'image')
+                        <div style="margin-bottom: 15px; text-align: center;">
+                            <img src="{{ $media->file_path }}" alt="Preuve Visuelle" style="max-width: 100%; height: auto; border: 2px solid #ddd; padding: 4px;">
+                        </div>
+                    @endif
+
+                    {{-- Affichage de l'Audio --}}
+                    @if($media->file_type === 'audio')
+                        <div style="margin-bottom: 15px; text-align: center;">
+                            <a href="{{ $media->file_path }}" target="_blank" class="audio-btn">
+                               Cliquez ici pour écouter l'enregistrement vocal
+                            </a>
+                        </div>
+                    @endif
+
+                @endforeach
             </div>
+        @endif
 
-@foreach ($incident->media as $media)
-         <div style="margin-top: 20px;">
-            <img src="{{ asset('storage/' . $media->file_path) }}" alt="Image" style="max-width: 100%; height: auto;">
+        <div class="contact-box">
+            <strong>Contact Responsable :</strong> {{ $manager->first_name }} {{ $manager->last_name }}<br>
+            <span style="font-size: 12px; color: #555;">Répondez directement à cet email pour le contacter.</span>
         </div>
- @endforeach
 
-         </div>
-
-        <p>Merci de prendre en charge ce ticket dans les délais convenus (SLA : {{ $partner->sla_hours }}h).</p>
-    </div>
-    <div class="footer">
-        Ceci est un message automatique généré par la plateforme SafiPulse.
-    </div>
+        <div class="footer">
+            Document généré automatiquement par la plateforme <strong>SafiPulse</strong>.<br>
+            Merci de votre réactivité.
+        </div>
     </div>
 </body>
-
 </html>

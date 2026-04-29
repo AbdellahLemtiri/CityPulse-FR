@@ -27,6 +27,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Data publique
 Route::get('/cities', [cityController::class, 'index']);
 
+Route::get('sectors/city', [SectorController::class, 'index']);
 //........................,.............,,,,...................................//
 Route::get('/articles/shared/{slug}', [ArticleController::class, 'showBySlug']);
 //.............................................................................//
@@ -64,7 +65,9 @@ Route::middleware('auth:sanctum','active_sector','not_banned')->group(function (
     Route::get('/incidents', [IncidentController::class, 'index']);
 
     Route::post('/incidents', [IncidentController::class, 'store']);
- 
+
+    Route::get('/proposals', [ProposalController::class, 'index']);
+    Route::post('/proposals', [ProposalController::class, 'store']);
 
     Route::get('/comments', [CommentController::class, 'index']);
     Route::post('/comments', [CommentController::class, 'store']);
@@ -114,6 +117,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
 Route::middleware(['auth:sanctum', 'role:manager','not_banned'])->prefix('manager')->group(function () {
     Route::get('/categories', [CategoryIncidentController::class, 'getCategoriesForManager']);
+
     Route::resource('/incidents', IncidentController::class)->only(['index', 'destroy', 'show']);
     Route::put('/incidents/{id}/validate', [IncidentController::class, 'qualifyIncident']);
     Route::put('/incidents/{id}/reject', [IncidentController::class, 'rejectIncident']);
@@ -134,7 +138,6 @@ Route::middleware(['auth:sanctum', 'role:manager','not_banned'])->prefix('manage
 */
 
 
-
 Route::middleware(['auth:sanctum', 'role:journaliste|manager','not_banned'])->prefix('editor')->group(function () {
     Route::get('/articles', [ArticleController::class, 'getArticlesByEditor']);
     Route::post('/articles', [ArticleController::class, 'store']);
@@ -142,7 +145,6 @@ Route::middleware(['auth:sanctum', 'role:journaliste|manager','not_banned'])->pr
     Route::put('/articles/{article:slug}', [ArticleController::class, 'update']);
     Route::delete('/articles/{article:slug}', [ArticleController::class, 'destroy']);
 });
-
 
 
 /*
@@ -158,4 +160,3 @@ Route::middleware(['auth:sanctum', 'role:journaliste','not_banned'])->group(func
     Route::put('/pharmacies/{dutyPharmacy}', [DutyPharmacyController::class, 'update']);
     Route::delete('/pharmacies/{dutyPharmacy}', [DutyPharmacyController::class, 'destroy']);
 });
-    

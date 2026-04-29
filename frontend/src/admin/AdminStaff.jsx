@@ -119,15 +119,11 @@ export default function AdminStaff() {
     fetchSectors();
   }, []);
 
-  const toggleStatus = (id) => {
-    if (window.confirm('Voulez-vous vraiment modifier le statut de cet accès ?')) {
-      setStaffList(staffList.map((s) => (s.id === id ? { ...s, is_banned: !s.is_banned, is_active: !s.is_active } : s)));
-    }
-  };
+ 
 
-  const handleApplyBan = async (userToStrike) => {
+  const handleApplyBan = async (uuid) => {
     try {
-      const response = await axiosClient.post(`/admin/users/ban`, { uuid: userToStrike.uuid });
+      const response = await axiosClient.post(`/admin/users/ban`, { uuid:uuid });
       toast.success('Banissement appliqué avec succès !');
     } catch (error) {
       toast.error("Une erreur est survenue lors de l'application de l'avertissement.");
@@ -200,7 +196,7 @@ export default function AdminStaff() {
                   <td className="p-4  text-center">{!staff.is_banned ? <span className="text-green-400 font-bold uppercase text-[10px] bg-green-900/30 border border-green-800/50 rounded px-2 py-1 tracking-wider">Actif</span> : <span className="text-red-400 font-bold uppercase text-[10px] bg-red-900/30 border border-red-800/50 rounded px-2 py-1 tracking-wider">Bloqué</span>}</td>
                   <td className="p-4 text-center flex justify-center items-center gap-3">
                     <span className="text-gray-600">|</span>
-                    <button onClick={() => toggleStatus(staff.id)} className={`${!staff.is_banned ? 'text-red-400 hover:text-red-300' : 'text-green-400 hover:text-green-300'} font-bold text-xs uppercase `}>
+                    <button onClick={() => handleApplyBan(staff.id)} className={`${!staff.is_banned ? 'text-red-400 hover:text-red-300' : 'text-green-400 hover:text-green-300'} font-bold text-xs uppercase `}>
                       {!staff.is_banned ? 'Bloquer' : 'Activer'}
                     </button>
                   </td>
