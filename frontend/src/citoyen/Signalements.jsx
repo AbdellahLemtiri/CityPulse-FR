@@ -347,7 +347,13 @@ export default function Signalements() {
                         Précédent
                       </button>
                       <button type="button" onClick={handleSubmit} disabled={images.length === 0 || !title || (!description && !mediaBlobUrl) || (!address && !location) || isSubmitting} className="px-6 py-2.5 rounded-xl font-bold bg-primary-600 hover:bg-primary-500 text-white shadow-md transition-colors disabled:opacity-50 flex items-center gap-2">
-                        {isSubmitting ? 'Envoi...' : 'Envoyer  '}
+                        {isSubmitting ? (
+                          <div className="flex justify-center py-10">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-200"></div>
+                          </div>
+                        ) : (
+                          'Envoyer'
+                        )}
                         {!isSubmitting && <SendHorizontal />}
                       </button>
                     </div>

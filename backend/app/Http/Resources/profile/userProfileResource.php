@@ -28,7 +28,7 @@ class userProfileResource extends JsonResource
             'sector_name' => $this->sector->name,
             'role' => $this->getRoleNames()->first(),
             'image' => $this->photo
-                ? asset('storage/' . $this->photo->file_path)
+                ? $this->photo->file_path 
                 : "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=$bg&color=fff",
         ];
     }

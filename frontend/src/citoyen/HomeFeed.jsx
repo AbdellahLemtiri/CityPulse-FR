@@ -43,8 +43,9 @@ export default function HomeFeed() {
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [isFetchComment, setIsFetchComment] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-
+  const [isCommenting, setIsCommenting] = useState(false);
   //  l'Observer
+
   const observer = useRef();
   const lastPostElementRef = useCallback(
     (node) => {
@@ -236,7 +237,7 @@ export default function HomeFeed() {
 
       setCommentText('');
       setReplyingToId(null);
-
+      setIsCommenting(true);
       if (!replyingToId) {
         setComments((prev) => [response.data.comment, ...prev]);
 
@@ -256,6 +257,8 @@ export default function HomeFeed() {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsCommenting(false);
     }
   };
 
@@ -430,9 +433,16 @@ export default function HomeFeed() {
                             placeholder="Écrire un commentaire...."
                             className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none dark:border-gray-600 focus:border-primary-600 dark:focus:border-primary-600 shadow-sm"
                           />
-                          <button onClick={() => handleSendComment(post.id)} disabled={!commentText.trim()} className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-primary-600 hover:text-primary-800 disabled:text-gray-400 w-8 h-8 flex items-center justify-center rounded-lg transition-colors">
-                            <SendHorizontal />
-                          </button>
+
+                          {isCommenting ? (
+                            <div className="flex justify-center py-10">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+                            </div>
+                          ) : (
+                            <button onClick={() => handleSendComment(post.id)} disabled={!commentText.trim()} className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-primary-600 hover:text-primary-800 disabled:text-gray-400 w-8 h-8 flex items-center justify-center rounded-lg transition-colors">
+                              <SendHorizontal />
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>

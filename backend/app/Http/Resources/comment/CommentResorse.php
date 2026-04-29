@@ -23,7 +23,7 @@ class CommentResorse extends JsonResource
             'created_at'    => date('H:i d-m-Y  ', strtotime($this->created_at)),
             'author_name' => $this->user->first_name . ' ' . $this->user->last_name,
             'photo' => $this->user->photo
-                ? asset('storage/' . $this->user->photo->file_path)
+                ? $this->user->photo->file_path
                 : "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=$bg&color=fff",
             'is_accessible' => $this->user->hasRole(['admin', 'manager', 'journaliste']),
             'replies' => ReplyCommentResorse::collection($this->whenLoaded('replies')),
