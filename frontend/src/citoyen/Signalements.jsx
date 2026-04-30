@@ -141,15 +141,15 @@ export default function Signalements() {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'pending':
-        return { color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-500', icon: 'schedule', text: 'En attente' };
+        return { color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-500', icon: '', text: 'En attente' };
       case 'validated':
-        return { color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-500', icon: 'settings', text: 'En cours' };
+        return { color: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-500', icon: '', text: 'En cours' };
       case 'resolved':
-        return { color: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-500', icon: 'check_circle', text: 'Résolu' };
+        return { color: 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-500', icon: '', text: 'Résolu' };
       case 'rejected':
-        return { color: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-500', icon: 'cancel', text: 'Rejeté' };
+        return { color: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-500', icon: '', text: 'Rejeté' };
       default:
-        return { color: 'bg-gray-100 text-gray-700', icon: 'info', text: status };
+        return { color: 'bg-gray-100 text-gray-700', icon: '', text: status };
     }
   };
 
@@ -168,14 +168,16 @@ export default function Signalements() {
         </div>
 
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 mt-4">
-          <button
-            onClick={() => {
-              resetForm();
-              setTab('crationTab');
-            }}
-            className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 active:scale-95">
-            <Compass /> signaler{' '}
-          </button>
+          {!isLoding && (
+            <button
+              onClick={() => {
+                resetForm();
+                setTab('crationTab');
+              }}
+              className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded-xl  transition-colors flex items-center justify-center gap-2 active:scale-95">
+              <Compass /> signaler{' '}
+            </button>
+          )}
         </div>
       </div>{' '}
       {isLoding && (
@@ -253,7 +255,7 @@ export default function Signalements() {
                 resetForm();
                 setTab('mesSignalements');
               }}
-              className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2 active:scale-95">
+              className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-3 px-6 rounded-xl  transition-colors flex items-center justify-center gap-2 active:scale-95">
               <span className="material-symbols-outlined">arrow_back</span>
               Retour
             </button>
@@ -346,9 +348,9 @@ export default function Signalements() {
                       <button type="button" onClick={() => setEtapForm(1)} className="px-6 py-2.5 rounded-xl font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                         Précédent
                       </button>
-                      <button type="button" onClick={handleSubmit} disabled={images.length === 0 || !title || (!description && !mediaBlobUrl) || (!address && !location) || isSubmitting} className="px-6 py-2.5 rounded-xl font-bold bg-primary-600 hover:bg-primary-500 text-white shadow-md transition-colors disabled:opacity-50 flex items-center gap-2">
+                      <button type="button" onClick={handleSubmit} disabled={images.length === 0 || !title || (!description && !mediaBlobUrl) || (!address && !location) || isSubmitting} className="px-6 py-2.5 rounded-xl font-bold bg-primary-600 hover:bg-primary-500 text-white  transition-colors disabled:opacity-50 flex items-center gap-2">
                         {isSubmitting ? (
-                          <div className="flex justify-center py-10">
+                          <div className="flex justify-center py-6">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-200"></div>
                           </div>
                         ) : (
@@ -365,8 +367,7 @@ export default function Signalements() {
         </>
       )}
       {selectedIncident && tab === 'detailTab' && (
-        <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl border flex flex-col flex-start border-gray-200 dark:border-gray-700 shadow-md">
-          {/* HEADER */}
+        <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg border flex flex-col flex-start border-gray-200 dark:border-gray-700 ">
           <div className="flex justify-between items-start">
             <div>
               <span className="text-sm mb-2 mt-2 font-bold">
@@ -384,7 +385,7 @@ export default function Signalements() {
             </button>
           </div>
 
-          <div className="my-8 p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
+          <div className="my-8 p-4 bg-white dark:bg-gray-900 rounded-lg">
             <h3 className="text-sm font-bold text-gray-500 mb-4">Suivi de l'intervention :</h3>
 
             {selectedIncident.status === 'rejected' ? (

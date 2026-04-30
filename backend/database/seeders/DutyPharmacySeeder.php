@@ -13,8 +13,8 @@ class DutyPharmacySeeder extends Seeder
      */
     public function run(): void
     {
-         $startDate = Carbon::create(2026, 4, 6, 0, 0, 0);
-        $endDate = Carbon::create(2026, 4, 12, 23, 59, 59);
+         $startDate = Carbon::create(2026, 4, 30, 0, 0, 0);
+        $endDate = Carbon::create(2026,  8, 30, 23, 59, 59);
 
         $pharmacies = [
              [

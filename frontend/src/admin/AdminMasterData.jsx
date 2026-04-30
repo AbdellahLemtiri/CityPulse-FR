@@ -168,8 +168,8 @@ export default function AdminMasterData() {
         {}
 
         {loading ? (
-          <div className="flex items-center justify-center min-h-screen bg-gray-900">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
           </div>
         ) : (
           activeTab === 'sectors' && (
@@ -233,10 +233,10 @@ export default function AdminMasterData() {
             <table className="w-full text-left border-collapse text-sm min-w-[600px]">
               <thead>
                 <tr className="bg-gray-900 border-b border-gray-700 uppercase text-xs text-gray-400">
-                  <th className="p-4 border-r border-gray-700 w-16 text-center">Logo</th>
-                  <th className="p-4 border-r border-gray-700">Société</th>
-                  <th className="p-4 border-r border-gray-700">Contact</th>
-                  <th className="p-4 border-r border-gray-700 text-center">SLA</th>
+                  <th className="p-4  w-16 text-center">Logo</th>
+                  <th className="p-4 ">Société</th>
+                  <th className="p-4 ">Contact</th>
+                  <th className="p-4  text-center">SLA</th>
                   <th className="p-4 text-center">Actions</th>
                 </tr>
               </thead>
@@ -250,17 +250,17 @@ export default function AdminMasterData() {
                 ) : (
                   partners.map((p) => (
                     <tr key={p.id} className="border-b border-gray-700 hover:bg-gray-700/50 ">
-                      <td className="p-4 border-r border-gray-700 text-center">
+                      <td className="p-4  text-center">
                         <div className="w-10 h-10 bg-gray-700 border border-gray-600 rounded-full mx-auto flex items-center justify-center overflow-hidden text-gray-400">{p.logo ? <img src={`http://localhost:8000/storage/${p.logo.file_path}`} alt="logo" className="w-full h-full object-cover" /> : '🏢'}</div>
                       </td>
-                      <td className="p-4 border-r border-gray-700 font-bold text-gray-200">{p.name}</td>
-                      <td className="p-4 border-r border-gray-700">
+                      <td className="p-4  font-bold text-gray-200">{p.name}</td>
+                      <td className="p-4 ">
                         <div className="text-xs text-gray-300 mb-1">{p.email}</div>
                         <div className="text-xs text-gray-500">
                           Fixe: <span className="text-gray-400">{p.phone_fix || '-'}</span>
                         </div>
                       </td>
-                      <td className="p-4 border-r border-gray-700 text-center font-bold text-primary-400">{p.sla_hours ? `${p.sla_hours}h` : '-'}</td>
+                      <td className="p-4  text-center font-bold text-primary-400">{p.sla_hours ? `${p.sla_hours}h` : '-'}</td>
                       <td className="p-4 text-center">
                         <button onClick={() => openModal('partner', true, p)} className="text-primary-400 font-bold text-xs uppercase hover:text-primary-300">
                           Modifier
@@ -329,8 +329,8 @@ export default function AdminMasterData() {
               <table className="w-full text-left border-collapse text-sm min-w-[500px]">
                 <thead>
                   <tr className="bg-gray-900 border-b border-gray-700 uppercase text-xs text-gray-400">
-                    <th className="p-4 border-r border-gray-700">Condition (Catégorie)</th>
-                    <th className="p-4 border-r border-gray-700">Action (Partenaire)</th>
+                    <th className="p-4 ">Condition (Catégorie)</th>
+                    <th className="p-4 ">Action (Partenaire)</th>
                     <th className="p-4 text-center w-24">Action</th>
                   </tr>
                 </thead>
@@ -344,11 +344,11 @@ export default function AdminMasterData() {
                   ) : (
                     workflows.map((wf) => (
                       <tr key={wf.pivot_id || wf.category_id} className="border-b border-gray-700 hover:bg-gray-700/50 ">
-                        <td className="p-4 border-r border-gray-700 font-bold text-gray-200">{wf.category_name}</td>
-                        <td className="p-4 border-r border-gray-700 text-primary-400 font-bold">{wf.partner_name}</td>
+                        <td className="p-4   font-bold text-gray-200">{wf.category_name}</td>
+                        <td className="p-4   text-primary-400 font-bold">{wf.partner_name}</td>
                         <td className="p-4 text-center">
                           <button onClick={() => handleDeleteRule(wf.category_id, wf.partner_id)} className="text-red-400 hover:text-red-300  p-1" title="Supprimer la règle">
-                            <span className="material-symbols-outlined text-[20px]">delete</span>
+                            supprimée
                           </button>
                         </td>
                       </tr>

@@ -32,24 +32,24 @@ export default function AdminBanMonitor() {
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
-    const handleApplyBan = async (userToStrike) => {
-      try {
-        const response = await axiosClient.post(`/admin/users/ban`, { uuid: userToStrike.uuid });
-        toast.success('Banissement appliqué avec succès !');
-      } catch (error) {
-        toast.error("Une erreur est survenue lors de l'application de l'avertissement.");
-      } finally {
-        setUserToStrike(null);
-      }
-      try {
-        const response = await axiosClient.get(`/manager/users?search=${query}`);
-        setFilteredUsers(response.data);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const handleApplyBan = async (userToStrike) => {
+    try {
+      const response = await axiosClient.post(`/admin/users/ban`, { uuid: userToStrike.uuid });
+      toast.success('Banissement appliqué avec succès !');
+    } catch (error) {
+      toast.error("Une erreur est survenue lors de l'application de l'avertissement.");
+    } finally {
+      setUserToStrike(null);
+    }
+    try {
+      const response = await axiosClient.get(`/manager/users?search=${query}`);
+      setFilteredUsers(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (searchQuery) {
@@ -108,8 +108,8 @@ export default function AdminBanMonitor() {
             {isLoading ? (
               <tr>
                 <td colSpan="6" className="p-8 text-center bg-gray-800">
-                  <div className="flex justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
+                  <div className="flex justify-center py-10">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
                   </div>
                 </td>
               </tr>
@@ -121,7 +121,7 @@ export default function AdminBanMonitor() {
               </tr>
             ) : (
               filteredUsers.map((user) => (
-                <tr key={user.id} className="border-b border-gray-700 hover:bg-gray-700/30 text-sm ">
+                <tr key={user.id} className="  hover:bg-gray-700/30 text-sm ">
                   <td className="p-4  font-bold text-gray-200">
                     {user.first_name + '  ' + user.last_name} <hr /> {user.created_at}
                   </td>

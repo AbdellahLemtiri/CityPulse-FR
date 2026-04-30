@@ -12,13 +12,13 @@ export default function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-64 bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-800 h-full fixed left-0 top-0 z-50 transition-colors duration-300">
       
-       <div className="p-6 flex items-center justify-center border-b border-transparent dark:border-gray-800/50">
+       <div className="p-4 flex items-center justify-center border-b border-transparent dark:border-gray-800/50">
          <Logo className="w-40 h-auto drop-shadow-sm" />
          
       </div>
 
-      <nav className="flex-1 px-4 space-y-2 mt-4 overflow-y-auto">
-        <hr className="my-4 border-gray-200 dark:border-gray-700" />
+      <nav className="flex-1 px-4 space-y-2 mt-2 overflow-y-auto">
+        <hr className="mb-4 border-gray-200 dark:border-gray-700" />
 
         <NavLink to="/homefeed" className={navClass}>
           <Newspaper size={20} /> <span>Fil d'actualité</span>

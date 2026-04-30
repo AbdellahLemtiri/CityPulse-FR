@@ -119,11 +119,9 @@ export default function AdminStaff() {
     fetchSectors();
   }, []);
 
- 
-
   const handleApplyBan = async (uuid) => {
     try {
-      const response = await axiosClient.post(`/admin/users/ban`, { uuid:uuid });
+      const response = await axiosClient.post(`/admin/users/ban`, { uuid: uuid });
       toast.success('Banissement appliqué avec succès !');
     } catch (error) {
       toast.error("Une erreur est survenue lors de l'application de l'avertissement.");
@@ -142,7 +140,7 @@ export default function AdminStaff() {
 
   return loading ? (
     <div className="flex justify-center py-10">
-      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-500"></div>
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
     </div>
   ) : (
     <div className="max-w-6xl mx-auto text-gray-200">

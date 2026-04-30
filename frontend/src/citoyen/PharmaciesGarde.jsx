@@ -52,16 +52,16 @@ function PharmacyCard({ pharmacy }) {
 
        <div className="flex gap-2">
 
-      <span  className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors text-sm"> 
+      <span  className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2   text-sm"> 
         {pharmacy.phone}
         </span>
-          <a href={`tel:${pharmacy.phone}`} className="flex-1 bg-primary-600 dark:bg-primary-600 text-white dark:text-primary-400 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-100 transition-colors text-sm">
+          <a href={`tel:${pharmacy.phone}`} className="flex-1 bg-primary-600 dark:bg-primary-600 text-white dark:text-primary-400 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-200  text-sm">
           <Phone size={16} /> Appeler
         </a>
 
        
         {pharmacy.location_url && (
-          <a href={pharmacy.location_url} target="_blank" rel="noopener noreferrer" className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors text-sm">
+          <a href={pharmacy.location_url} target="_blank" rel="noopener noreferrer" className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200  text-sm">
             <Map size={16} /> Y aller
           </a>
         )}

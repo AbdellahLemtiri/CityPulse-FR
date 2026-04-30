@@ -11,15 +11,15 @@ const SkeletonPost = () => (
     <div className="p-4 flex items-center gap-3">
       <div className="w-10 h-10 rounded-lg bg-gray-200 dark:bg-gray-700"></div>
       <div className="space-y-2 flex-1">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
-        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-l w-1/3"></div>
+        <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-l  w-1/4"></div>
       </div>
     </div>
     <div className="px-4 pb-3 space-y-2">
-      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
-      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
+      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-l  w-full"></div>
+      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-l   "></div>
     </div>
-    <div className="w-full h-48 bg-gray-200 dark:bg-gray-700 mt-2"></div>
+    <div className="w-full min-h-[400px] bg-gray-200 dark:bg-gray-700 mt-2 mb-2"></div>
   </div>
 );
 
@@ -224,6 +224,7 @@ export default function HomeFeed() {
 
   const handleSendComment = async (articleId) => {
     if (!commentText.trim()) return;
+    setIsCommenting(true);
 
     try {
       const payload = {
@@ -237,7 +238,6 @@ export default function HomeFeed() {
 
       setCommentText('');
       setReplyingToId(null);
-      setIsCommenting(true);
       if (!replyingToId) {
         setComments((prev) => [response.data.comment, ...prev]);
 
@@ -286,11 +286,12 @@ export default function HomeFeed() {
 
   return (
     <>
-      <div className="sticky relative w-full top-[40px] md:top-[64px] z-30 rounded-b-lg pt-2 pb-2 px-2 md:px-0 mb-4 bg-gray-50 dark:bg-gray-800">
-        <div className="bg-white dark:bg-gray-800 p-1 rounded-lg grid grid-cols-5 gap-2 font-bold text-sm border border-gray-200 dark:border-gray-700">
+      <div className="sticky  relative w-full top-[80px] md:top-[56px] z-30 rounded-b-lg pt-2 pb-2 px-2 md:px-0 mb-4 bg-gray-50 dark:bg-gray-800">
+        <div className="bg-white dark:bg-gray-800 pr-1 rounded-lg grid grid-cols-5 gap-1 font-bold text-sm border border-gray-200 dark:border-gray-700">
           <div className="col-span-2">
             <input type="text" placeholder="Rechercher" onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} className="w-full p-2 rounded-lg w-75 outline-none border border-gray-200 dark:border-gray-500 dark:focus:border-primary-500 focus:border-primary-500 bg-gray-100 dark:bg-gray-700 dark:text-white" />
           </div>
+
           {tabs.map((tab) => (
             <button
               key={tab}
@@ -299,7 +300,7 @@ export default function HomeFeed() {
                 setPosts([]);
                 setComments([]);
               }}
-              className={`flex-1 py-1.5 rounded-lg ${activeTab === tab ? 'bg-primary-100 dark:bg-primary-600/20 dark:text-primary-100 dark:primary-500 text-gray-500' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}>
+              className={`flex-1 py-1.5 rounded-lg ${activeTab === tab ? 'bg-primary-100 dark:bg-primary-600/20 dark:text-primary-100 dark:primary-500 text-gray-500 pr-1' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}>
               {tab}
             </button>
           ))}
@@ -439,7 +440,7 @@ export default function HomeFeed() {
                               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
                             </div>
                           ) : (
-                            <button onClick={() => handleSendComment(post.id)} disabled={!commentText.trim()} className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-primary-600 hover:text-primary-800 disabled:text-gray-400 w-8 h-8 flex items-center justify-center rounded-lg transition-colors">
+                            <button onClick={() => handleSendComment(post.id)} disabled={!commentText.trim() || isCommenting} className="absolute cursor-pointer right-2 top-1/2 -translate-y-1/2 text-primary-600 hover:text-primary-800 disabled:text-gray-400 w-8 h-8 flex items-center justify-center rounded-lg transition-colors">
                               <SendHorizontal />
                             </button>
                           )}
@@ -458,7 +459,6 @@ export default function HomeFeed() {
             )}
           </>
         )}
-
         {fullscreenImage && (
           <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in" onClick={() => setFullscreenImage(null)}>
             <button className="absolute top-4 right-4 text-white hover:text-gray-300 bg-black/50 p-2 rounded-full transition-colors" onClick={() => setFullscreenImage(null)}>

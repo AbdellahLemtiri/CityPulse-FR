@@ -119,7 +119,15 @@ export default function ManagerIncidents() {
   const handleResolveIncident = async () => {
     if (!selectedIncident) return;
     setIsResolving(true);
+
     try {
+      const updatedIncident = {
+        ...selectedIncident,
+        status: 'resolved',
+        rejection_reason: rejectionReason,
+      };
+      setIncidents(incidents.map((inc) => (inc.id === selectedIncident.id ? updatedIncident : inc)));
+
       const response = await axiosClient.put(`manager/incidents/${selectedIncident.id}/resolve`);
       toast.success('Ticket résolu avec succès.');
       setIncidents(incidents.filter((incident) => incident.id != selectedIncident.id));
@@ -187,29 +195,14 @@ export default function ManagerIncidents() {
     }
   };
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'pending':
-        return <span className="px-2 py-1 bg-yellow-100 text-yellow-700 border-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-400 border dark:border-yellow-800 text-xs font-bold rounded uppercase">En attente</span>;
-      case 'validated':
-        return <span className="px-2 py-1 bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400 border dark:border-blue-800 text-xs font-bold rounded uppercase">Validé & Assigné</span>;
-      case 'rejected':
-        return <span className="px-2 py-1 bg-red-100 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-400 border dark:border-red-800 text-xs font-bold rounded uppercase">Refusé</span>;
-      case 'resolved':
-        return <span className="px-2 py-1 bg-green-100 text-green-700 border-green-300 dark:bg-green-900/30 dark:text-green-400 border dark:border-green-800 text-xs font-bold rounded uppercase">Clôturé</span>;
-      case 'in_progress':
-        return <span className="px-2 py-1 bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-900/30 dark:text-orange-400 border dark:border-orange-800 text-xs font-bold rounded uppercase">En cours</span>;
-      default:
-        return <span className="px-2 py-1 bg-gray-200 text-gray-700 border-gray-300 dark:bg-gray-700 dark:text-gray-300 border dark:border-gray-600 text-xs font-bold rounded uppercase">{status}</span>;
-    }
-  };
+  
 
   const selectedCatObj = categories.find((c) => c.id === parseInt(selectedCategoryId));
 
   if (fetchingDetail) {
     return (
-      <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
+      <div className="flex justify-center py-10">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
       </div>
     );
   }
@@ -223,7 +216,7 @@ export default function ManagerIncidents() {
             <div className="flex-1 w-full">
               <label className="block text-xs font-bold text-gray-400 uppercase  mb-2">Rechercher un Incident Par REF </label>
               <div className="relative">
-                 <input type="text" value={querySearch} onChange={(e) => setQuerySearch(e.target.value)} placeholder="Tapez un REF  ..." className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-red-500 " />
+                <input type="text" value={querySearch} onChange={(e) => setQuerySearch(e.target.value)} placeholder="Tapez un REF  ..." className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-red-500 " />
               </div>
             </div>
           </div>
@@ -242,8 +235,8 @@ export default function ManagerIncidents() {
                 {isLoading ? (
                   <tr>
                     <td colSpan="6" className="p-8 text-center bg-white dark:bg-gray-800">
-                      <div className="flex justify-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
+                      <div className="flex justify-center py-10">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
                       </div>
                     </td>
                   </tr>
@@ -259,7 +252,7 @@ export default function ManagerIncidents() {
                       <td className="p-4 font-bold text-gray-900 dark:text-white">{incident.ref_num}</td>
                       <td className="p-4 text-gray-700 dark:text-gray-300">{incident.category || <span className="text-gray-400 dark:text-gray-500 italic">Non qualifié</span>}</td>
                       <td className="p-4 font-bold text-gray-800 dark:text-gray-200 break-words max-w-[200px] truncate">{incident.title}</td>
-                      <td className="p-4">{getStatusBadge(incident.status)}</td>
+                      <td className="p-4 font-bold ">{incident.status}</td>
                       <td className="p-4 text-right">
                         <button onClick={() => handleOpenDetail(incident)} className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 px-4 py-1.5 rounded text-xs font-bold uppercase transition-colors">
                           Gérer
@@ -288,11 +281,11 @@ export default function ManagerIncidents() {
           <div className="py-6 flex justify-between items-center">
             <div>
               <button onClick={handleCloseDetail} className="text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 px-3 py-1.5 hover:bg-gray-50 hover:text-gray-900 dark:hover:text-white dark:hover:border-gray-500 font-bold text-xs uppercase flex items-center gap-2 mb-3 transition-colors">
-             Retour
+                Retour
               </button>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                Ticket : <span className="text-primary-600 dark:text-primary-400">{selectedIncident.ref_num}</span>
-                {getStatusBadge(selectedIncident.status)}
+                Ticket : <span className=" ">{selectedIncident.ref_num}</span>
+            <span className='border font-bold p-2 border-gray-400'>    {selectedIncident.status} </span>
               </h3>
             </div>
           </div>
@@ -305,7 +298,7 @@ export default function ManagerIncidents() {
                   <div>
                     <span className="block text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1">Déclarant</span>
                     <span className="block text-sm font-bold text-gray-900 dark:text-gray-300 flex items-center gap-2">
-                       {selectedIncident.user?.first_name} {selectedIncident.user?.last_name}
+                      {selectedIncident.user?.first_name} {selectedIncident.user?.last_name}
                       <span className="text-gray-500 font-normal">({selectedIncident.user?.phone || 'Pas de N°'})</span>
                     </span>
                   </div>
@@ -325,14 +318,14 @@ export default function ManagerIncidents() {
               <div>
                 <h4 className="text-sm font-bold text-gray-600 dark:text-gray-400 uppercase mb-3 flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-2">
                   <span>Preuves </span>
-                 </h4>
+                </h4>
 
                 {selectedIncident.media && selectedIncident.media.length > 0 ? (
                   <div className="space-y-3">
                     <div className=" flex items-center justify-center p-2 h-64">
                       {selectedIncident.media[activeImageIndex].file_path.endsWith('.webm') || selectedIncident.media[activeImageIndex].file_path.endsWith('.mp3') ? (
                         <div className="flex flex-col items-center gap-4 w-full px-8">
-                           <audio controls className="w-full">
+                          <audio controls className="w-full">
                             <source src={`${selectedIncident.media[activeImageIndex].file_path}`} />
                             Votre navigateur ne supporte pas l'audio.
                           </audio>
@@ -346,12 +339,7 @@ export default function ManagerIncidents() {
                       <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
                         {selectedIncident.media.map((m, idx) => (
                           <button key={m.id} onClick={() => setActiveImageIndex(idx)} className={`flex-shrink-0 w-16 h-16 rounded overflow-hidden border-2 ${activeImageIndex === idx ? 'border-primary-500' : 'border-gray-300 dark:border-gray-700'}`}>
-                            {m.file_path.endsWith('.webm') || m.file_path.endsWith('.mp3') ? (
-                              <div className="w-full h-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                               </div>
-                            ) : (
-                              <img src={`${m.file_path}`} className="w-full h-full object-cover" />
-                            )}
+                            {m.file_path.endsWith('.webm') || m.file_path.endsWith('.mp3') ? <div className="w-full h-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center"></div> : <img src={`${m.file_path}`} className="w-full h-full object-cover" />}
                           </button>
                         ))}
                       </div>
@@ -359,7 +347,7 @@ export default function ManagerIncidents() {
                   </div>
                 ) : (
                   <div className="rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-32 flex flex-col items-center justify-center text-gray-500">
-                     <p className="text-sm font-bold">Aucun média attaché</p>
+                    <p className="text-sm font-bold">Aucun média attaché</p>
                   </div>
                 )}
               </div>
@@ -408,7 +396,9 @@ export default function ManagerIncidents() {
                           -- Choisir la catégorie --
                         </option>
                         {categories.length === 0 ? (
-                          <option value="" disabled >Aucune catégorie disponible</option>
+                          <option value="" disabled>
+                            Aucune catégorie disponible
+                          </option>
                         ) : (
                           categories.map((cat) => (
                             <option key={cat.id} value={cat.id}>
@@ -422,9 +412,7 @@ export default function ManagerIncidents() {
                     {selectedCatObj && selectedCatObj.partner && (
                       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded p-4">
                         <h6 className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-3">Partenaire Assigné</h6>
-                        <div className="text-gray-900 dark:text-white font-bold text-sm flex items-center gap-2 mb-3">
-                           {selectedCatObj.partner.name}
-                        </div>
+                        <div className="text-gray-900 dark:text-white font-bold text-sm flex items-center gap-2 mb-3">{selectedCatObj.partner.name}</div>
                         <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-800 pt-3">
                           <div className="flex flex-col">
                             <span className="text-xs text-gray-400 dark:text-gray-500 uppercase">Email</span>
@@ -465,9 +453,7 @@ export default function ManagerIncidents() {
 
                 {selectedIncident.status === 'rejected' && (
                   <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 rounded mt-4">
-                    <span className="text-sm font-bold flex items-center gap-2 text-red-600 dark:text-red-500 mb-2">
-                      Ticket Refusé
-                    </span>
+                    <span className="text-sm font-bold flex items-center gap-2 text-red-600 dark:text-red-500 mb-2">Ticket Refusé</span>
                     <p className="text-xs text-gray-700 dark:text-gray-300 break-words break-all">Motif : {selectedIncident.rejection_reason}</p>
                   </div>
                 )}
@@ -484,9 +470,7 @@ export default function ManagerIncidents() {
                     {selectedIncident.partner && (
                       <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-4">
                         <h6 className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-3">Entité en charge</h6>
-                        <div className="text-gray-900 dark:text-white font-bold text-sm flex items-center gap-2 mb-3">
-                           {selectedIncident.partner.name}
-                        </div>
+                        <div className="text-gray-900 dark:text-white font-bold text-sm flex items-center gap-2 mb-3">{selectedIncident.partner.name}</div>
                         <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 pt-3">
                           <div className="flex flex-col">
                             <span className="text-xs text-gray-400 dark:text-gray-500 uppercase">Email</span>
@@ -534,9 +518,7 @@ export default function ManagerIncidents() {
                     {selectedIncident.partner && (
                       <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-4">
                         <h6 className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-3">Traité et résolu par</h6>
-                        <div className="text-gray-900 dark:text-white font-bold text-sm flex items-center gap-2 mb-3">
-                           {selectedIncident.partner.name}
-                        </div>
+                        <div className="text-gray-900 dark:text-white font-bold text-sm flex items-center gap-2 mb-3">{selectedIncident.partner.name}</div>
                         <div className="grid grid-cols-2 gap-3 text-sm text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 pt-3">
                           <div className="flex flex-col">
                             <span className="text-xs text-gray-400 dark:text-gray-500 uppercase">Email</span>

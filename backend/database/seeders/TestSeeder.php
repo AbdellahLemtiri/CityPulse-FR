@@ -2,34 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Incident;
-use App\Models\Sector;
-use App\Models\Category;
-use App\Models\Badge;
-use Spatie\Permission\Models\Role;
-use App\Models\CategoryIncident;
-use Database\Seeders\CategoryIncidentSeder;
-use Database\Seeders\CategorySeeder;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Database\Seeders\PartnerSeeder;
-class DatabaseSeeder extends Seeder
+class TestSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $managerRole = Role::firstOrCreate(['name' => 'manager']);
-        $journalisteRole = Role::firstOrCreate(['name' => 'journaliste']);
-        $citoyenRole = Role::firstOrCreate(['name' => 'citoyen']);
-        $this->call(CitySeeder::class);
-
-        $this->call(CategoryIncidentSeder::class);
-        $this->call(PartnerSeeder::class);
 
 
-        $this->call(SectorSeeder::class);
         $users = [
             [
                 'first_name' => 'Abdellah',
@@ -42,7 +27,8 @@ class DatabaseSeeder extends Seeder
                 'last_name' => 'bojouni',
                 'email' => 'manager1@safipulse.ma',
                 'role' => 'manager'
-            ],  [
+            ],
+            [
                 'first_name' => 'isma',
                 'last_name' => 'sirjeedine',
                 'email' => 'isam@safipulse.ma',
@@ -117,9 +103,9 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('Safi@2026'),
                 'cin' => 'HH' . rand(100000, 999999),
                 'phone' => '06' . rand(10000000, 99999999),
-                'sector_id' => rand(1, 3),
-                'city_id' => 1,
-                'adresse' => 'Quartier Safi, Rue ' . rand(1, 50),
+                'sector_id' => rand(9, 29),
+                'city_id' =>rand(2, 27),
+                'adresse' => 'Quartier , Rue ' . rand(1, 50),
             ]));
 
             $user->assignRole($roleName);

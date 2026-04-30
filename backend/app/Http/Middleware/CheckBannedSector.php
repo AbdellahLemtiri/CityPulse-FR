@@ -16,7 +16,6 @@ class CheckBannedSector
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-
         if ($user && $user->sector && $user->sector->status === false) {
             return response()->json([
                 'message' => 'Action impossible : Votre secteur est actuellement inactif ou gelé.'
