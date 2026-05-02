@@ -45,7 +45,6 @@ export default function HomeFeed() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCommenting, setIsCommenting] = useState(false);
   //  l'Observer
-
   const observer = useRef();
   const lastPostElementRef = useCallback(
     (node) => {
@@ -329,11 +328,7 @@ export default function HomeFeed() {
                     <div>
                       <div className="flex items-center gap-1">
                         <h3 className="font-bold text-gray-900 dark:text-gray-100">{post.author_name}</h3>
-                        {post.sector_id === null && (
-                          <span className="material-symbols-outlined text-primary-500 text-[16px]" title="Compte Officiel">
-                            verified
-                          </span>
-                        )}
+                      
                       </div>
                       <p className="text-xs text-gray-500 flex items-center gap-1">{post.created_at}</p>
                     </div>

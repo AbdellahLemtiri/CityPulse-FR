@@ -66,14 +66,13 @@ export default function ManagePharmacies() {
        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <CalendarClock className="text-primary-500" />
-            Gardes Programmées (Ma Ville)
+             Gardes Programmées 
           </h2>
           <button
             onClick={() => navigate('/editor/pharmacies/create')}
             className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-2 px-4 rounded-xl  ransition-colors flex items-center gap-2 active:scale-95"
           >
-            Planifier <CalendarPlus size={20} />
+            Planifier  
           </button>
         </div>
 
@@ -115,9 +114,9 @@ export default function ManagePharmacies() {
                       <p className="font-bold text-gray-900 dark:text-white">{pharmacy.name}</p>
                       <div className="mt-1">
                         {isActive ? (
-                          <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold">Actuellement en garde</span>
+                          <span className="bg-green-100   px-2 py-0.5  text-[10px] font-bold">Actuellement en garde</span>
                         ) : (
-                          <span className="bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full text-[10px]">Historique</span>
+                          <span className="bg-gray-100 px-2 py-0.5  text-[10px]">Historique</span>
                         )}
                       </div>
                     </td>
@@ -125,10 +124,10 @@ export default function ManagePharmacies() {
                     <td className="p-4 text-sm font-medium text-green-600 dark:text-green-400">{new Date(pharmacy.start_date).toLocaleString()}</td>
                     <td className="p-4 text-sm font-medium text-red-600 dark:text-red-400">{new Date(pharmacy.end_date).toLocaleString()}</td>
                     <td className="p-4 flex items-center justify-end gap-2">
-                      <button onClick={() => handleEdit(pharmacy.id)} className="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors">
+                      <button onClick={() => handleEdit(pharmacy.id)} className="p-2  ">
                         <Pencil size={18} />
                       </button>
-                      <button onClick={() => handleDelete(pharmacy.id)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">
+                      <button onClick={() => handleDelete(pharmacy.id)} className="p-2  ">
                         <Trash2 size={18} />
                       </button>
                     </td>

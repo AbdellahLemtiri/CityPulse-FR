@@ -188,7 +188,7 @@ export default function JournalisteEditor() {
                   </div>
                 ) : formData.status === 'published' ? (
                   <>
-                    <span className="material-symbols-outlined text-[16px]">send</span> {isEditMode ? 'Mettre à jour' : "Publier l'Alerte"}
+                    {isEditMode ? 'Mettre à jour' : "Publier "}
                   </>
                 ) : (
                   <>Sauvegarder</>

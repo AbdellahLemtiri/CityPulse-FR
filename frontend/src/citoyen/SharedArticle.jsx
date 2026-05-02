@@ -86,17 +86,11 @@ export default function SharedArticle() {
       <div className="bg-white max-w-3xl justify-center h-full mx-auto dark:bg-gray-800 px-1.5 md:rounded-lg border-y md:border border-gray-200 dark:border-gray-700 mb-6">
         <div className="p-4 flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 flex items-center justify-center overflow-hidden">
-            <span className="material-symbols-outlined text-gray-500">account_circle</span>
+            <img src={post.author_avatar} className="w-10 h-10 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 flex items-center justify-center overflow-hidden" />
           </div>
           <div>
             <div className="flex items-center gap-1">
               <h3 className="font-bold text-gray-900 dark:text-gray-100">{article.author_name}</h3>
-
-              {article.sector_id === null && (
-                <span className="material-symbols-outlined text-blue-500 text-[16px]" title="Compte Officiel">
-                  verified
-                </span>
-              )}
             </div>
             <p className="text-xs text-gray-500 flex items-center gap-1">{article.created_at}</p>
           </div>
@@ -106,34 +100,6 @@ export default function SharedArticle() {
           <p className="text-gray-800 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">{article.content}</p>
         </div>
         <>{article.images && article.images.length > 0 && <ImageCarousel images={article.images} onImageClick={(clickedImageUrl) => setFullscreenImage(clickedImageUrl)} />}</>
-        <div className="flex items-center   pt-1.5  text-sm  grid grid-cols-3">
-          <button className="  ">
-            <span className={`text-gray-400   rounded-xl `}>{article.likes_count}</span>
-          </button>
-          <button className="  ">
-            <span className={`text-gray-400   rounded-xl `}>{article.comments_count}</span>
-          </button>{' '}
-          <button className="  ">
-            <span className={`text-gray-400   rounded-xl `}>...</span>
-          </button>
-        </div>
-
-        <div className="px-2 py-1 flex justify-between border-t border-gray-200 dark:border-gray-700 mt-2">
-          <button disabled className=" hover:bg-gray-50 dark:hover:bg-gray-700 cursor-not-allowed   border-gray-200 dark:border-gray-100 flex-1  flex items-center justify-center   py-1 text-gray-500 dark:text-gray-400  rounded-lg  group">
-            <span className={`rounded-xl    mr-2 px-2 ${article.is_liked ? 'text-green-500 dark:bg-primary-500/20  ' : 'text-gray-500  '}  `}>
-              <span className={`   material-symbols-outlined ${article.is_liked ? 'text-green-500    ' : 'text-gray-500  '}`}>check</span>
-            </span>
-            {'  '}
-          </button>
-
-          <button disabled className="flex-1  flex items-center justify-center cursor-not-allowed gap-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg  group">
-            <span className="material-symbols-outlined  ">comment</span>
-          </button>
-
-          <button disabled className="flex-1 flex items-center justify-center cursor-not-allowed gap-2 py-1 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700  rounded-lg  group">
-            <span className="material-symbols-outlined   ">share</span>
-          </button>
-        </div>
       </div>
       {fullscreenImage && (
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in" onClick={() => setFullscreenImage(null)}>

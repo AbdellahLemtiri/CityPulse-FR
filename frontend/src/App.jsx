@@ -10,7 +10,6 @@ import Register from './auth/Register';
 import Dashboard from './Dashboard';
 import HomeFeed from './citoyen/HomeFeed';
 import SharedArticle from './citoyen/SharedArticle';
-import Proposals from './citoyen/Proposals';
 import Signalements from './citoyen/Signalements';
 import PharmaciesGarde from './citoyen/PharmaciesGarde';
 import Profil from './citoyen/Profil';
@@ -19,7 +18,6 @@ import JournalisteEditor from './journaliste/JournalisteEditor';
 import BaseLayout from './components/layouts/BaseLayout';
 import ManagerLayout from './components/layouts/ManagerLayout';
 import ManagerIncidents from './manager/ManagerIncidents';
-import ManagerIdess from './manager/ManagerIdess';
 import ManagerModeration from './manager/ManagerModeration';
 import ManagerAlerts from './manager/ManagerAlerts';
 import JournalisteArticles from './journaliste/JournalisteArticles';
@@ -45,7 +43,6 @@ function App() {
           <Route index element={<Navigate to="/homefeed" replace />} />
           <Route path="/homefeed" element={<HomeFeed />} />
           <Route element={<ProtectedRoute allowedRoles={['citoyen']} />}>
-            <Route path="/idees" element={<Proposals />} />
             <Route path="/signalements" element={<Signalements />} />
           </Route>
 
@@ -59,7 +56,6 @@ function App() {
           <Route path="/manager" element={<ProtectedRoute allowedRoles={['manager']} />}>
             <Route index element={<Navigate to="incidents" replace />} />
             <Route path="incidents" element={<ManagerIncidents />} />
-            <Route path="idees" element={<ManagerIdess />} />
             <Route path="moderation" element={<ManagerModeration />} />
           </Route>
 

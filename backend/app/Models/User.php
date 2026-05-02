@@ -80,7 +80,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Incident::class);
     }
- 
+
     public function strikes(): HasMany
     {
         return $this->hasMany(Strike::class);
@@ -105,24 +105,9 @@ class User extends Authenticatable
             }
         });
     }
- 
 
-   public static function getUsersByRole($role)
-{
-     $users = User::role($role)->get(); 
-    
-    $result = $users->map(function($u) {
-         $nom = strtoupper($u->last_name . " " . $u->first_name);
-        return $nom;
-    });
-
-    return $result;
+    public function articles(): HasMany
+    {
+        return $this->hasMany(Article::class);
+    }
 }
-
-
-
-
- 
-}
- 
-    

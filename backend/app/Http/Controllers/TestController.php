@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Models\Incident;
+use App\Models\Partner;
+use App\Models\Article;
 class TestController extends Controller
 {
-    //
+    public function test()
+    {
 
-
- 
-
-
+      $resul = User::with('comments')
+    }
 }
+// $result = app(\App\Http\Controllers\TestController::class)->test();

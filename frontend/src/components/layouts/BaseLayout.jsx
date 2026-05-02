@@ -33,7 +33,7 @@ export default function BaseLayout() {
 
       <main id="main-container" className="flex-1 h-full overflow-y-auto relative no-scrollbar md:ml-72">
         <TopHeader />
-        <div id="app-content" className={`${containerMaxWidth} mx-auto p-4 md:p-8 pb-24 md:pb-8 transition-all`}>
+        <div id="app-content" className={`${containerMaxWidth} mx-auto p-4 md:p-8 pb-24 md:pb-8  `}>
           <Toaster position="top-center" />
           <Outlet />
         </div>

@@ -385,16 +385,15 @@ export default function Signalements() {
             </button>
           </div>
 
-          <div className="my-8 p-4 bg-white dark:bg-gray-900 rounded-lg">
+          <div className="my-8 p-4 bg-white   rounded-lg">
             <h3 className="text-sm font-bold text-gray-500 mb-4">Suivi de l'intervention :</h3>
 
             {selectedIncident.status === 'rejected' ? (
               <div className="flex items-center gap-2 text-red-500 bg-red-50 p-3 rounded-lg">
-                <span className="material-symbols-outlined">cancel</span>
-                <span className="font-bold">Incident rejeté par le responsable.</span>
+                 <span className="font-bold">Incident rejeté par le responsable.</span>
 
                 <span className="">Reject reason</span>
-                <p className="text-xs">{selectedIncident.reject_reason}</p>
+                <p className="text-xs">{selectedIncident.rejection_reason}</p>
               </div>
             ) : (
               <div className="flex items-center w-full relative">

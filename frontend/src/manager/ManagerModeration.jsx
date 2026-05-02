@@ -5,18 +5,18 @@ import toast from 'react-hot-toast';
 export default function ManagerModeration() {
   const [userToStrike, setUserToStrike] = useState(null);
   const [strikeReason, setStrikeReason] = useState('');
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [filteprimaryUsers, setFilteprimaryUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const handleSearch = async (query) => {
     setIsLoading(true);
     if (!query.trim()) {
-      setFilteredUsers([]);
+      setFilteprimaryUsers([]);
       return;
     }
     try {
       const response = await axiosClient.get(`/manager/users?search=${query}`);
-      setFilteredUsers(response.data);
+      setFilteprimaryUsers(response.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -48,7 +48,6 @@ export default function ManagerModeration() {
     setStrikeReason('Faux signalement');
   };
 
- 
   return (
     <div className="max-w-6xl mx-auto text-gray-800 dark:text-gray-200 pb-10 transition-colors duration-300">
       <div className="mb-6 mt-4">
@@ -61,7 +60,7 @@ export default function ManagerModeration() {
           <label className="block text-xs font-bold text-gray-400 uppercase  mb-2">Rechercher un citoyen</label>
           <div className="relative">
             <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-500 text-[20px]">search</span>
-            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Tapez un Nom, Email ..." className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-red-500 " />
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Tapez un Nom, Email ..." className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-primary-500 " />
           </div>
         </div>
       </div>
@@ -83,19 +82,19 @@ export default function ManagerModeration() {
               <tr>
                 <td colSpan="6" className="p-12 text-center bg-transparent">
                   <div className="flex justify-center flex-col items-center gap-2">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-500"></div>
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-500"></div>
                     <span className="text-xs font-bold text-gray-400">Chargement...</span>
                   </div>
                 </td>
               </tr>
-            ) : filteredUsers.length === 0 ? (
+            ) : filteprimaryUsers.length === 0 ? (
               <tr>
                 <td colSpan="6" className="p-12 text-center text-gray-400 font-bold bg-transparent italic">
                   Aucun utilisateur trouvé avec ces critères.
                 </td>
               </tr>
             ) : (
-              filteredUsers.map((user) => (
+              filteprimaryUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 text-sm transition-colors group">
                   <td className="p-4  dark:border-gray-700 font-bold text-gray-800 dark:text-gray-200">
                     <div className="flex flex-col">
@@ -114,24 +113,13 @@ export default function ManagerModeration() {
                   <td className="p-4  dark:border-gray-700 text-center font-mono font-bold text-gray-600 dark:text-gray-300 bg-gray-50/50 dark:bg-transparent">{user.cin}</td>
 
                   <td className="p-4  dark:border-gray-700 text-center">
-                    <span className={`font-black px-3 py-1 rounded-lg border text-[10px] uppercase ${user.strikes_count >= 2 ? 'bg-red-50 dark:bg-red-900/20 text-red-600 border-red-200 dark:border-red-900/30' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 border-emerald-200 dark:border-emerald-900/30'}`}>{user.strikes_count} / 3 Strikes</span>
+                    <span className={`font-black px-3 py-1 rounded-lg border text-[10px] uppercase ${user.strikes_count >= 2 ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 border-primary-200 dark:border-primary-900/30' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 border-emerald-200 dark:border-emerald-900/30'}`}>{user.strikes_count} / 3 Strikes</span>
                   </td>
 
-                  <td className="p-4  dark:border-gray-700 text-center">
-                    {user.is_banned ? (
-                      <span className="text-red-500 dark:text-red-400 font-black uppercase text-[10px] flex items-center justify-center gap-1">
-                         Banni
-                      </span>
-                    ) : (
-                      <span className="text-emerald-500 dark:text-emerald-400 font-black uppercase text-[10px] flex items-center justify-center gap-1">
-                      Actif
-                      </span>
-                    )}
-                  </td>
+                  <td className="p-4  dark:border-gray-700 text-center">{user.is_banned ? <span className="text-primary-500 dark:text-primary-400 font-black uppercase text-[10px] flex items-center justify-center gap-1">Banni</span> : <span className="text-emerald-500 dark:text-emerald-400 font-black uppercase text-[10px] flex items-center justify-center gap-1">Actif</span>}</td>
 
                   <td className="p-4 text-center">
-                    <button onClick={() => setUserToStrike(user)} disabled={user.is_banned} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase  flex items-center justify-center gap-2 mx-auto border ${user.is_banned ? 'bg-gray-100 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed -none' : 'bg-red-50 dark:bg-red-900/20 hover:bg-red-600 dark:hover:bg-red-600 text-red-600 dark:text-red-400 hover:text-white dark:hover:text-white border-red-200 dark:border-red-900/50 -sm'}`}>
-                   
+                    <button onClick={() => setUserToStrike(user)} disabled={user.is_banned} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase  flex items-center justify-center gap-2 mx-auto border ${user.is_banned ? 'bg-gray-100 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed -none' : 'bg-primary-600/50 dark:bg-primary-900/90 hover:bg-primary-600 dark:hover:bg-primary-600 text-primary-600 dark:text-primary-400 hover:text-white dark:hover:text-white border-primary-200 dark:border-primary-900/50 -sm'}`}>
                       {user.is_banned ? 'Suspendu' : 'Avertir'}
                     </button>
                   </td>
@@ -145,11 +133,8 @@ export default function ManagerModeration() {
       {userToStrike && (
         <div className="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg w-full max-w-md flex flex-col -2xl overflow-hidden transition-colors">
-            <div className="bg-red-600 p-4 flex justify-between items-center text-white">
-              <h3 className="font-black uppercase tracking-widest text-sm flex items-center gap-2">
-      
-                Sanction
-              </h3>
+            <div className="  p-4 flex justify-between items-center text-white">
+              <div className="font-black uppercase tracking-widest text-sm flex items-center gap-2"></div>
               <button onClick={() => setUserToStrike(null)} className="hover:bg-white/20 rounded-lg p-1 transition-colors leading-none">
                 <span className="material-symbols-outlined text-[22px]">close</span>
               </button>
@@ -159,19 +144,18 @@ export default function ManagerModeration() {
               <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-lg text-sm transition-colors">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-gray-500 dark:text-gray-400 font-bold uppercase text-[10px]">Cible :</span>
-                  <span className="font-black text-gray-900 dark:text-white underline decoration-red-500 decoration-2">
+                  <span className="font-black text-gray-900 dark:text-white   ">
                     {userToStrike.first_name} {userToStrike.last_name}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-500 dark:text-gray-400 font-bold uppercase text-[10px]">Strikes Actuels :</span>
-                  <span className={`font-black px-2 py-0.5 rounded-lg border text-xs ${userToStrike.strikes_count >= 2 ? 'text-red-500 border-red-500/20' : 'text-emerald-500 border-emerald-500/20'}`}>{userToStrike.strikes_count} / 3</span>
+                  <span className={`font-black px-2 py-0.5 rounded-lg border text-xs ${userToStrike.strikes_count >= 2 ? 'text-primary-500 border-primary-500/20' : 'text-emerald-500 border-emerald-500/20'}`}>{userToStrike.strikes_count} / 3</span>
                 </div>
 
                 {userToStrike.strikes_count === 2 && (
-                  <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-100 dark:border-red-900/50 rounded-lg flex items-start gap-2">
-                    <span className="material-symbols-outlined text-red-600 dark:text-red-400 text-[20px]">warning</span>
-                    <p className="font-black text-red-600 dark:text-red-300 text-[10px] uppercase leading-tight">Dernier avertissement : Le compte sera banni après validation.</p>
+                  <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-950/40 border border-primary-100 dark:border-primary-900/50 rounded-lg flex items-start gap-2">
+                    <p className="font-black text-primary-600 dark:text-primary-300 text-[10px] uppercase leading-tight">Dernier avertissement : Le compte sera banni après validation.</p>
                   </div>
                 )}
               </div>
@@ -180,15 +164,14 @@ export default function ManagerModeration() {
                 <div>
                   <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">Motif de la sanction *</label>
 
-                  <input value={strikeReason} onChange={(e) => setStrikeReason(e.target.value)} className="w-full border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-red-500    " />
+                  <input value={strikeReason} onChange={(e) => setStrikeReason(e.target.value)} className="w-full border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-primary-500    " />
                 </div>
 
                 <div className="flex gap-3 pt-2">
                   <button type="button" onClick={() => setUserToStrike(null)} className="flex-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 font-black py-3 rounded-lg uppercase text-[10px] transition-colors">
                     Annuler
                   </button>
-                  <button type="submit" className="flex-1 bg-red-600 hover:bg-red-700 text-white font-black py-3 rounded-lg uppercase text-[10px]  -lg -red-600/20 flex justify-center items-center gap-2">
-                    <span className="material-symbols-outlined text-[18px]">gavel</span>
+                  <button type="submit" className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-black py-3 rounded-lg uppercase text-[10px]  -lg -primary-600/20 flex justify-center items-center gap-2">
                     Confirmer
                   </button>
                 </div>

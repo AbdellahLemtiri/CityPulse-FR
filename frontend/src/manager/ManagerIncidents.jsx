@@ -361,7 +361,7 @@ export default function ManagerIncidents() {
 
                 {selectedIncident.status === 'pending' && actionPhase === 'initial' && (
                   <div className="flex gap-4">
-                    <button onClick={() => setActionPhase('rejecting')} className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded text-sm uppercase transition-colors">
+                    <button onClick={() => setActionPhase('rejecting')} className="flex-1 bg-primary-600  hover:bg-primary-700 text-white font-bold py-2 rounded text-sm uppercase  ">
                       Refuser
                     </button>
                     <button onClick={() => setActionPhase('categorizing')} className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 rounded text-sm uppercase transition-colors">
@@ -373,14 +373,14 @@ export default function ManagerIncidents() {
                 {selectedIncident.status === 'pending' && actionPhase === 'rejecting' && (
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-bold text-red-500 dark:text-red-400 uppercase mb-2">Motif du refus (Obligatoire)</label>
+                      <label className="block text-xs font-bold   uppercase mb-2">Motif du refus </label>
                       <textarea rows="3" value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} placeholder="Expliquez pourquoi ce ticket est refusé..." className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 rounded p-3 text-sm text-gray-900 dark:text-white outline-none break-words break-all" />
                     </div>
                     <div className="flex gap-2">
                       <button onClick={() => setActionPhase('initial')} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded text-sm font-bold uppercase transition-colors">
                         Annuler
                       </button>
-                      <button onClick={handleReject} className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold rounded text-sm uppercase transition-colors">
+                      <button onClick={handleReject} className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded text-sm uppercase transition-colors">
                         Confirmer le Refus
                       </button>
                     </div>
