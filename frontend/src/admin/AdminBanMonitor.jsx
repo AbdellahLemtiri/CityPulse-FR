@@ -77,10 +77,7 @@ export default function AdminBanMonitor() {
 
   return (
     <div className="max-w-6xl mx-auto text-gray-200 pb-10">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white uppercase tracking-wide">Modération & Sanctions (Strikes)</h2>
-        <p className="text-sm text-gray-400 mt-1">Recherchez un citoyen pour consulter son dossier disciplinaire ou lui appliquer un avertissement.</p>
-      </div>
+    
 
       <div className="    p-5 rounded-lg mb-6  flex flex-col sm:flex-row gap-4 items-end">
         <div className="flex-1 w-full">
@@ -138,18 +135,18 @@ export default function AdminBanMonitor() {
                   <td className="p-4  text-center">
                     {user.is_banned ? (
                       <span className="text-red-400 font-bold uppercase text-xs flex items-center justify-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">block</span> Banni
+                      Banni
                       </span>
                     ) : (
                       <span className="text-green-400 font-bold uppercase text-xs flex items-center justify-center gap-1">
-                        <span className="material-symbols-outlined text-[16px]">check_circle</span> Actif
+                     Actif
                       </span>
                     )}
                   </td>
 
                   <td className="p-4 text-center ">
                     <div className="flex flex-col   gap-3">
-                      <button onClick={() => handleApplyBan(user)} className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase  flex items-center justify-center gap-1 mx-auto ${user.is_banned ? 'bg-gray-900 border border-gray-700 text-gray-600 cursor-not-allowed' : 'bg-red-900/30 hover:bg-red-600 text-red-400 hover:text-white border border-red-800/50 hover:border-red-600'}`}>
+                      <button onClick={() => handleApplyBan(user)} className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase  flex items-center justify-center gap-1 mx-auto ${user.is_banned ? 'bg-gray-900 border border-gray-700 text-gray-600 cursor-not-allowed' : 'bg-priamry-600 hover:bg-priamry-600 text-red-400 hover:text-white border border-priamry-800/50 hover:border-priamry-600'}`}>
                         <span className="material-symbols-outlined text-[16px]">{user.is_banned ? 'lock' : 'warning'}</span>
                         {user.is_banned ? 'desbaner' : 'baner '}
                       </button>

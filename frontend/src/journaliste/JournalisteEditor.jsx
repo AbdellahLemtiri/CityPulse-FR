@@ -183,7 +183,7 @@ export default function JournalisteEditor() {
               </button>
               <button type="submit" disabled={isSubmitting} className="bg-primary-600 hover:bg-primary-500 text-white font-bold py-2.5 px-8 uppercase text-xs rounded-lg disabled:opacity-50 flex items-center gap-2 shadow-sm ">
                 {isSubmitting ? (
-                  <div className="flex justify-center py-10">
+                  <div className="flex justify-center ">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
                   </div>
                 ) : formData.status === 'published' ? (

@@ -1,5 +1,5 @@
 const CommentItem = ({ comment, onReply, level = 0 }) => {
-  const indentClass = level > 0 && level < 3 ? 'ml-6 md:ml-8 border-l-2 border-gray-200 dark:border-gray-700 pl-2 md:pl-4' : '';
+  const indentClass = level > 0 && level < 3 ? 'ml-6 md:ml-8   pl-2 md:pl-4' : '';
 
   return (
     <div className={`mb-2 mt-2 ${indentClass}`}>

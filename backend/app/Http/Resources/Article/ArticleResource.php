@@ -13,6 +13,7 @@ class ArticleResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+
     public function toArray(Request $request): array
     {
         $name = $this->user->first_name . ' ' . $this->user->last_name;
@@ -25,8 +26,7 @@ class ArticleResource extends JsonResource
             'scope'          => $this->scope,
             'status'         => $this->status,
             'created_at'     => date('Y-m-d H:i  ', strtotime($this->created_at)),
-            'author_avatar' => $this->user->photo
-                ? $this->user->photo->file_path
+            'author_avatar' => $this->user->photo? $this->user->photo->file_path
                 : "https://ui-avatars.com/api/?name=" . urlencode($name) . "&background=$bg&color=fff",
             'likes_count'    => (int) $this->likes_count,
             'comments_count' => (int) $this->comments_count,
@@ -39,3 +39,9 @@ class ArticleResource extends JsonResource
         ];
     }
 }
+
+
+
+
+
+// m5 hashid 

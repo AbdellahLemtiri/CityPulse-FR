@@ -771,6 +771,48 @@ const employees = [
     },
 ];
 
+
+
+
+
+
+
+
+// for(let i=0;i<employees.length;i++)
+// {
+//     let e = employees[i];
+//     let count_projetcs= em.projects.length;
+
+
+//     if(count_projetcs < 1)
+//     {
+//         obj['']
+//     }
+// }
+
+// console.log(obj);
+
+
+
+function countChar(chaine)
+{
+    let obj = {};
+
+    for(let c of chaine)
+    {
+        obj[c] = (obj[c] || 0) +1;
+    }
+    let str = '';
+    for(let k in obj)
+    {
+        str += k + obj[k];
+    }
+    return str;
+}
+
+
+console.log(countChar('aaabbbahhdhhhhauaduaid'));
+
 // 8. Croisement des Projets (Tableaux & Conditions) :
 // Trouve les employés qui travaillent sur "Project Alpha" ET "Project Gamma" en
 // même temps (tu dois vérifier que ces deux projets sont présents dans leur tableau projects).
@@ -876,3 +918,114 @@ const y = employees.map((e) => {
 });
 
 // console.log(y);
+
+
+
+const table = ['abdellah lemtiri'];
+
+ 
+
+ let res = 'Bonjour ';
+for(let t of table)
+{
+
+    let s = t.split(' ');
+    if(s.length === 2)
+    {
+        res+= s[1][0].toUpperCase() +'.'+ s[0];
+    }
+}
+
+console.log(res);
+
+
+const librairie = {
+  "library": {
+    "name": "Bibliothèque centrale",
+    "address": "10 rue de la Liberté, 75001 Paris",
+    "contact": {
+      "email": "contact@bibliotheque.fr",
+      "phone": "+33 1 23 45 67 89"
+    },
+    "books": [
+      {
+        "title": "Le Petit Prince",
+        "author": "Antoine de Saint-Exupéry",
+        "year": "19MM",
+        "pages": 156,
+        "available": true
+      },
+      {
+        "title": "1984",
+        "author": "George Orwell",
+        "year": 1949,
+        "pages": 328,
+        "available": false
+      },
+      {
+        "title": "Le rouge et le noir",
+        "author": "Stendhal",
+        "year": [1830, 1915],
+        "pages": 510,
+        "available": true
+      },
+      {
+        "title": "L'Étranger",
+        "author": "Albert Camus",
+        "year": 1942,
+        "pages": 123,
+        "available": true
+      },
+      {
+        "title": "Les Misérables",
+        "author": "Victor Hugo",
+        "year": 1862,
+        "pages": 1463,
+        "available": false
+      },
+      {
+        "title": "La Nuit des temps",
+        "author": "René Barjavel",
+        "year": 1968,
+        "pages": 442,
+        "available": false
+      },
+      {
+        "title": "Le Comte de Monte-Cristo",
+        "author": "Alexandre Dumas",
+        "year": 1844,
+        "pages": 1276,
+        "available": true
+      },
+      {
+        "title": "Le Chardonneret",
+        "author": "Donna Tartt",
+        "year": 2013,
+        "pages": 771,
+        "available": true
+      },
+      {
+        "title": "Sapiens: Une brève histoire de l'humanité",
+        "author": "Yuval Noah Harari",
+        "year": 2011,
+        "pages": 443,
+        "available": true
+      },
+      {
+        "title": "Voyage au centre de la Terre",
+        "author": "Jules Verne",
+        "year": 1864,
+        "pages": 350,
+        "available": true
+      },
+      {
+        "title": ["Voyage au centre de la Terre", "De la Terre à la Lune",
+          "L'Île mystérieuse"],
+        "author": "Jules Verne",
+        "pages": 350,
+        "available": true
+      }
+    ]
+  }
+}
+

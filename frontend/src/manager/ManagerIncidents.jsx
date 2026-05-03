@@ -124,8 +124,7 @@ export default function ManagerIncidents() {
       const updatedIncident = {
         ...selectedIncident,
         status: 'resolved',
-        rejection_reason: rejectionReason,
-      };
+       };
       setIncidents(incidents.map((inc) => (inc.id === selectedIncident.id ? updatedIncident : inc)));
 
       const response = await axiosClient.put(`manager/incidents/${selectedIncident.id}/resolve`);
@@ -216,7 +215,7 @@ export default function ManagerIncidents() {
             <div className="flex-1 w-full">
               <label className="block text-xs font-bold text-gray-400 uppercase  mb-2">Rechercher un Incident Par REF </label>
               <div className="relative">
-                <input type="text" value={querySearch} onChange={(e) => setQuerySearch(e.target.value)} placeholder="Tapez un REF  ..." className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-red-500 " />
+                <input type="text" value={querySearch} onChange={(e) => setQuerySearch(e.target.value)} placeholder="Tapez un REF  ..." className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-primary-600 " />
               </div>
             </div>
           </div>
@@ -310,7 +309,7 @@ export default function ManagerIncidents() {
 
                   <div className="pt-2">
                     <span className="block text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-2">Description</span>
-                    <p className="text-sm text-gray-800 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700 leading-relaxed italic break-words break-all">"{selectedIncident.description}"</p>
+                    <p className="text-sm text-gray-800 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border border-gray-200 dark:border-gray-700 leading-relaxed  break-words break-all">{selectedIncident.description}</p>
                   </div>
                 </div>
               </div>
@@ -347,7 +346,7 @@ export default function ManagerIncidents() {
                   </div>
                 ) : (
                   <div className="rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-32 flex flex-col items-center justify-center text-gray-500">
-                    <p className="text-sm font-bold">Aucun média attaché</p>
+                    <p className="text-sm font-bold">Aucun média  </p>
                   </div>
                 )}
               </div>

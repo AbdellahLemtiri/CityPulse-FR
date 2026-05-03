@@ -39,7 +39,7 @@ class ArticleController extends Controller
         $user = Auth::user();
 
          $req = $request->validated();
-
+       
         $articles = Article::select('id', 'content', 'slug', 'created_at', 'user_id', 'sector_id', 'city_id', 'status', 'scope')
             ->where('city_id', $user->city_id)
             ->with([

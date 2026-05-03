@@ -109,6 +109,14 @@
                 <th>Adresse</th>
                 <td>{{ $incident->address }}</td>
             </tr>
+
+           <tr>
+                <th>Adresse</th>
+                <td>{{ $incident->latitude }}</td>
+            </tr><tr>
+                <th>Adresse</th>
+                <td>{{ $incident->longitude }}</td>
+            </tr>
             <tr>
                 <th>Délai (SLA)</th>
                 <td style="color: red; font-weight: bold;">{{ $partner->sla_hours }} heures</td>
@@ -125,8 +133,7 @@
         <div style="margin-top: 10px;">
             @foreach ($incident->media as $media)
 
-            {{-- Affichage de l'Image --}}
-            @if($media->file_type === 'image')
+             @if($media->file_type === 'image')
             <div style="margin-bottom: 15px;">
                 <img src="{{ $media->file_path }}" alt="Preuve Visuelle" style="width: 400px; border: 1px solid #000000;">
             </div>

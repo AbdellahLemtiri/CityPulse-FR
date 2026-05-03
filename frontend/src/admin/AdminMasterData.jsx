@@ -74,15 +74,6 @@ export default function AdminMasterData() {
         formData.append('name', sectorData.name);
         if (sectorData.logo) formData.append('logo', sectorData.logo);
         break;
-      case 'partner':
-        endpoint = modalConfig.isEdit ? `/admin/partners/${modalConfig.id}` : '/admin/partners';
-        formData.append('name', partnerData.name);
-        formData.append('email', partnerData.email);
-        if (partnerData.phone_fix) formData.append('phone_fix', partnerData.phone_fix);
-        if (partnerData.whatsapp) formData.append('whatsapp', partnerData.whatsapp);
-        if (partnerData.sla_hours) formData.append('sla_hours', partnerData.sla_hours);
-        if (partnerData.logo) formData.append('logo', partnerData.logo);
-        break;
       default:
         return;
     }
@@ -233,12 +224,10 @@ export default function AdminMasterData() {
             <table className="w-full text-left border-collapse text-sm min-w-[600px]">
               <thead>
                 <tr className="bg-gray-900 border-b border-gray-700 uppercase text-xs text-gray-400">
-                  <th className="p-4  w-16 text-center">Logo</th>
-                  <th className="p-4 ">Société</th>
+                   <th className="p-4 ">Société</th>
                   <th className="p-4 ">Contact</th>
                   <th className="p-4  text-center">SLA</th>
-                  <th className="p-4 text-center">Actions</th>
-                </tr>
+                 </tr>
               </thead>
               <tbody>
                 {partners.length === 0 ? (
@@ -250,9 +239,7 @@ export default function AdminMasterData() {
                 ) : (
                   partners.map((p) => (
                     <tr key={p.id} className="border-b border-gray-700 hover:bg-gray-700/50 ">
-                      <td className="p-4  text-center">
-                        <div className="w-10 h-10 bg-gray-700 border border-gray-600 rounded-full mx-auto flex items-center justify-center overflow-hidden text-gray-400">{p.logo ? <img src={`http://localhost:8000/storage/${p.logo.file_path}`} alt="logo" className="w-full h-full object-cover" /> : '🏢'}</div>
-                      </td>
+                
                       <td className="p-4  font-bold text-gray-200">{p.name}</td>
                       <td className="p-4 ">
                         <div className="text-xs text-gray-300 mb-1">{p.email}</div>
@@ -261,11 +248,7 @@ export default function AdminMasterData() {
                         </div>
                       </td>
                       <td className="p-4  text-center font-bold text-primary-400">{p.sla_hours ? `${p.sla_hours}h` : '-'}</td>
-                      <td className="p-4 text-center">
-                        <button onClick={() => openModal('partner', true, p)} className="text-primary-400 font-bold text-xs uppercase hover:text-primary-300">
-                          Modifier
-                        </button>
-                      </td>
+                   
                     </tr>
                   ))
                 )}
@@ -426,10 +409,6 @@ export default function AdminMasterData() {
                     <div>
                       <label className="block text-xs font-bold text-gray-400 uppercase mb-2">SLA (Heures Max)</label>
                       <input type="number" min="1" value={partnerData.sla_hours} onChange={(e) => setPartnerData({ ...partnerData, sla_hours: e.target.value })} className="w-full border border-gray-600 rounded p-2.5 text-sm bg-gray-900 text-white focus:outline-none focus:border-primary-500" placeholder="Ex: 24, 48..." />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Logo du partenaire</label>
-                      <input type="file" accept="image/*" onChange={(e) => setPartnerData({ ...partnerData, logo: e.target.files[0] })} className="w-full border border-gray-600 rounded p-1.5 text-sm bg-gray-900 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-white hover:file:bg-gray-600 cursor-pointer" />
                     </div>
                   </>
                 )}

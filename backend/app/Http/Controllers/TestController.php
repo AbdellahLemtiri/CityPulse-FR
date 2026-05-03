@@ -12,7 +12,24 @@ class TestController extends Controller
     public function test()
     {
 
-      $resul = User::with('comments')
+      $resul = Incident::with('sector')->join('cities','cities.id','=','sectors.city_id')->get();
+      return $resul;
     }
 }
+
+
+
+
+
+
+
+
+
 // $result = app(\App\Http\Controllers\TestController::class)->test();
+
+
+
+
+
+
+// strtoupper

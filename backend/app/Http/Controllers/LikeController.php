@@ -26,7 +26,6 @@ class LikeController extends Controller
              $existingLike->delete();
             return response()->json(['message' => 'Unliked', 'liked' => false], 200);
         } else {
-            
              $model->likes()->create(['user_id' =>  $UserId]);
             return response()->json(['message' => 'Liked', 'liked' => true], 201);
         }

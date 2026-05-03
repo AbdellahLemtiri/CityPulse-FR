@@ -55,8 +55,7 @@ export default function Signalements() {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
-          setAddress('Position GPS détectée ');
-          toast.success('Position GPS récupérée ');
+           toast.success('Position GPS récupérée ');
         },
         (error) => {
           toast.error("Erreur de géolocalisation. Veuillez écrire l'adresse.");
@@ -100,7 +99,7 @@ export default function Signalements() {
       formData.append('address', address);
       images.forEach((img) => {
         formData.append('images[]', img.file);
-        // console.log(img.file instanceof File);
+        // console.log(img.file);
       });
 
       if (mediaBlobUrl) {
@@ -153,9 +152,7 @@ export default function Signalements() {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
-  };
+   
 
   console.log(address);
   return (
@@ -231,14 +228,12 @@ export default function Signalements() {
                       </div>
                       <h3 className="font-bold text-gray-900 dark:text-gray-100 text-sm md:text-base leading-tight mb-1 line-clamp-1">{incident.title}</h3>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-1 line-clamp-1">
-                        <span className="material-symbols-outlined text-[14px]">location_on</span>
-                        {incident.address}
+                         {incident.address}
                       </p>
                       <div className="mt-auto flex justify-between items-center border-t border-gray-100 dark:border-gray-700 pt-3">
                         <span className="text-[11px] text-gray-500 dark:text-gray-400">Envoyer a : {incident.created_at}</span>
 
-                        {incident.category ? <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-1 rounded-md">{incident.category}</span> : <span className="text-[10px] italic text-gray-400">Catégorie en attente</span>}
-                      </div>
+                       </div>
                     </div>
                   </div>
                 </div>
@@ -269,13 +264,13 @@ export default function Signalements() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="md:col-span-2">
                         <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Que se passe-t-il ? *</label>
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" placeholder="Ex: Fuite d'eau, nid de poule..." />
+                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none" placeholder=" " />
                       </div>
                     </div>
 
                     <div>
                       <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Détails (Texte ou Audio) *</label>
-                      <textarea rows="3" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none mb-3" placeholder="Détaillez le problème ici..."></textarea>
+                      <textarea rows="3" value={description} onChange={(e) => setDescription(e.target.value)} className="w-full bg-gray-100 dark:bg-gray-900 dark:text-white  border border-gray-50/50 focus:border-primary-200 dark:focus:border-primary-600  rounded-lg px-4 py-2 text-gray-900 dark:text-white outline-none resize-none mb-3" placeholder=" "></textarea>
 
                       <div className="  bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 flex flex-col    gap-3">
                         {!mediaBlobUrl ? (
@@ -343,7 +338,7 @@ export default function Signalements() {
                       </div>
                     </div>{' '}
                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Où se trouve le problème ? *</label>
-                    <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} className="flex-1 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" placeholder="Saisissez l'adresse ou le quartier..." />
+                    <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} className="flex-1 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none" placeholder="" />
                     <div className="border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-between gap-3">
                       <button type="button" onClick={() => setEtapForm(1)} className="px-6 py-2.5 rounded-xl font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                         Précédent
@@ -385,7 +380,7 @@ export default function Signalements() {
             </button>
           </div>
 
-          <div className="my-8 p-4 bg-white   rounded-lg">
+          <div className="my-8 p-4  rounded-lg">
             <h3 className="text-sm font-bold text-gray-500 mb-4">Suivi de l'intervention :</h3>
 
             {selectedIncident.status === 'rejected' ? (

@@ -413,8 +413,7 @@ export default function Profil() {
           </div>
         </div>
       </div>
-      {user.role === 'citoyen' && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-6 transition-colors overflow-hidden">
+         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 mb-6 transition-colors overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800/50">
             <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <span className="material-symbols-outlined text-primary-500 text-[20px]">lock</span>
@@ -465,8 +464,7 @@ export default function Profil() {
             )}
           </div>
         </div>
-      )}
-      {user.role === 'citoyen' && (
+       {user.role === 'citoyen' && (
         <div className="bg-primary-50 dark:bg-primary-700/20 rounded-lg border border-primary-600 dark:border-primary-900/30 p-6 mb-6">
           <p className="text-sm text-primary-600/80 dark:text-primary-400/80 mb-4">Une fois que vous supprimez votre compte, il n'y a pas de retour en arrière. Veuillez être certain.</p>
           <button onClick={() => setShowDeleteModal(true)} className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">

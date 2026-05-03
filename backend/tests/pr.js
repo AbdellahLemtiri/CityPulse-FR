@@ -1,61 +1,163 @@
-// nversion manuelle : Qleb mot bla reverse() (Khedmnaha 9bila, tktbha wnta mghmmed!).
+const librairie = {
+    library: {
+        name: "Bibliothèque centrale",
+        address: "10 rue de la Liberté, 75001 Paris",
+        contact: {
+            email: "contact@bibliotheque.fr",
+            phone: "+33 1 23 45 67 89",
+        },
+        books: [
+            {
+                title: "Le Petit Prince",
+                author: "Antoine de Saint-Exupéry",
+                year: "19MM",
+                pages: 156,
+                available: true,
+            },
+            {
+                title: "1984",
+                author: "George Orwell",
+                year: 1949,
+                pages: 328,
+                available: false,
+            },
+            {
+                title: "Le rouge et le noir",
+                author: "Stendhal",
+                year: [1830, 1915],
+                pages: 510,
+                available: true,
+            },
+            {
+                title: "L'Étranger",
+                author: "Albert Camus",
+                year: 1942,
+                pages: 123,
+                available: true,
+            },
+            {
+                title: "Les Misérables",
+                author: "Victor Hugo",
+                year: 1862,
+                pages: 1463,
+                available: false,
+            },
+            {
+                title: "La Nuit des temps",
+                author: "René Barjavel",
+                year: 1968,
+                pages: 442,
+                available: false,
+            },
+            {
+                title: "Le Comte de Monte-Cristo",
+                author: "Alexandre Dumas",
+                year: 1844,
+                pages: 1276,
+                available: true,
+            },
+            {
+                title: "Le Chardonneret",
+                author: "Donna Tartt",
+                year: 2013,
+                pages: 771,
+                available: true,
+            },
+            {
+                title: "Sapiens: Une brève histoire de l'humanité",
+                author: "Yuval Noah Harari",
+                year: 2011,
+                pages: 443,
+                available: true,
+            },
+            {
+                title: "Voyage au centre de la Terre",
+                author: "Jules Verne",
+                year: 1864,
+                pages: 350,
+                available: true,
+            },
+            {
+                title: [
+                    "Voyage au centre de la Terre",
+                    "De la Terre à la Lune",
+                    "L'Île mystérieuse",
+                ],
+                author: "Jules Verne",
+                pages: 350,
+                available: true,
+            },
+        ],
+    },
+};
 
-function reverse(chaine) {
-    let mot = "";
+let chaine = librairie.library.contact.email;
 
-    for (let i = chaine.length - 1; i >= 0; i--) {
-        mot += chaine[i];
+let nom = "";
+for (let i = 0; i < chaine.length; i++) {
+    if (chaine[i] === "@") {
+        for (let j = i + 1; j < chaine.length; j++) {
+            nom += chaine[j];
+        }
     }
-    return mot;
 }
 
-console.log(reverse("laravel-11"));
+console.log(nom);
 
-// Le Palindrome : T2eked wach l'mot kaytqra mn limen b7al mn liser (b7al "radar").
+let obj = {
+    totalBooks: 0,
+    availableBooks: 0,
+    unavailableBooks: 0,
+};
 
-function testPalandrom(chaine) {
-    if (reverse(chaine) === chaine) {
-        return true;
+let books = librairie.library.books;
+for (let b of books) {
+    obj["totalBooks"]++;
+
+    if (b.available) {
+        obj.availableBooks++;
     } else {
-        return false;
+        obj.unavailableBooks++;
     }
 }
-console.log(testPalandrom("laravel"));
 
-// Mot le plus long : Jbed l'mot li fih akbar 3adad dyal l'7rouf f phrase.
+console.log(obj);
 
-function Bonjour(chaine) {
-    let tmp = chaine.split(" ");
-    let pr = tmp[1][0].toUpperCase();
-    let motFinale = "Bonjour" + " " + pr + "." + tmp[0];
-    return motFinale;
-}
-console.log(Bonjour("abdelah lemtiri"));
-
-// Fréquence des caractères : Jbed l'7erf li m3awed bezaf f wahed l'mot (Khedmnaha 9bila b for imbriquées).
-
-function letrePlusUtile(chaine) {
-    let rs = chaine.split("");
-    let plus = ''
-    
-
+let max = 0;
+let idx = 0;
+for (let i = 0; i < books.length; i++) {
+    if (max < books[i].pages) {
+        max = books[i].pages;
+        idx = i;
+    }
 }
 
-// Premier caractère unique : Jbed awel 7erf li makayt3awedch ga3 f l'mot (Entrée: "aabbcdd" ➡️ Sortie: "c").
+console.log(books[idx]);
 
-// Suppression des doublons absolus : Khli ghir nsikha we7da mn kola 7erf (Entrée: "hello" ➡️ Sortie: "helo").
+let tab = [];
+for (let i = 0; i < books.length; i++) {
+    if (typeof books[i].year !== "number") {
+        tab.push(books[i]);
+    }
+}
 
-// Sous-chaîne manuelle (Substring) : Sawb fonction katakhod mot, debut, w fin, w katreje3 lik ghir dak l'morsso (bla ma tst3mel .slice()).
+console.log(tab);
 
-// 🔴 Niveau Difficile (Les Algorithmes d'Entretiens - FAANG)
-// Compression de chaîne : Entrée: "aaabbc" ➡️ Sortie: "a3b2c1" (Khedmnaha 9bila).
+let rs = books.reduce((acc, b) => {
+    if (Array.isArray(b.title)) {
+        b.title.map((e) => acc.push(e));
+    } else {
+        acc.push(b.title);
+    }
 
-// Anagrammes : T2eked wach zouj dyal l'mots fihom nafs l'7rouf b dbt (Entrée: "listen", "silent" ➡️ true).
+    return acc;
+}, []);
 
-// Rotation de chaîne : T2eked wach l'mot الثاني houwa ghir rotation dyal l'mot الأول (Entrée: "waterbottle", "erbottlewat" ➡️ true).
+console.log(rs);
 
-// La plus longue sous-chaîne sans répétition : Jbed atwel partie f string li mafiha ta 7erf m3awed (Entrée: "abcabcbb" ➡️ Sortie: "abc" - Hada s3iiiib).
+//  8. L'Extracteur de Contact (Object & String)
 
-// Validation des parenthèses : T2eked wach ga3 les parenthèses awla les accolades msdoudin mzyan (Entrée: "{[()]}" ➡️ true, "{[(])}" ➡️ false).
+// المطلوب: جبد ليا غير السمية ديال الـ Domaine ديال المكتبة من الإيمايل ديالهم
+// (يعني داكشي لي مورا الـ @، لي هو "bibliotheque.fr").
 
-// Implémentation de .includes() pour une phrase : T2eked wach wahed l'mot kamel kayn وسط wahed la phrase (bla ma tst3mel les méthodes wajdin, khassk tqaren string m3a string 7erf b 7erf).
+// القالب: غتخدم على librairie.library.contact.email وتستعمل بوكل for باش تاخذ غير الحروف لي مورا @.

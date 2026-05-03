@@ -21,6 +21,7 @@ use App\Http\Controllers\ModerationController;
 use App\Http\Controllers\DutyPharmacyController;
 use App\Http\Controllers\NotificationControlller;
 use App\Http\Controllers\Auth\PasswordResetController;
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -30,16 +31,14 @@ Route::get('/cities', [cityController::class, 'index']);
 Route::get('sectors/city', [SectorController::class, 'index']);
 //........................,.............,,,,...................................//
 Route::get('/articles/shared/{slug}', [ArticleController::class, 'showBySlug']);
-//.............................................................................//
+//..................................................................................//
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetCode']);
 Route::post('/verify-reset-code', [PasswordResetController::class, 'verifyCode']);
 Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 
-
-
 /*
-|--------------------------------------------------------------------------
+|------------------------------------------------------------------------------
 |  Pour TOUS les utilisateurs
 |--------------------------------------------------------------------------
 */
@@ -47,7 +46,13 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 
 Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
-Route::middleware('auth:sanctum','active_sector','not_banned')->group(function () {
+
+
+
+
+
+
+Route::middleware('auth:sanctum', 'active_sector', 'not_banned')->group(function () {
 
 
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -62,17 +67,15 @@ Route::middleware('auth:sanctum','active_sector','not_banned')->group(function (
     Route::post('/notifications/mark-as-read', [NotificationControlller::class, 'markAllAsRead']);
 
     Route::get('/articles', [ArticleController::class, 'index']);
-    Route::get('/incidents', [IncidentController::class, 'index']);
-
-    Route::post('/incidents', [IncidentController::class, 'store']);
-
-    Route::get('/proposals', [ProposalController::class, 'index']);
-    Route::post('/proposals', [ProposalController::class, 'store']);
 
     Route::get('/comments', [CommentController::class, 'index']);
-    Route::post('/comments', [CommentController::class, 'store']);
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 
+
+    Route::post('/comments', [CommentController::class, 'store']);
+
+    // ----------------------non implemente  --------------è------------------------------//
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+    // ----------------------------------------------------------------------//
     Route::post('/likes/toggle', [LikeController::class, 'toggle']);
 
     Route::get('/duty-pharmacies', [DutyPharmacyController::class, 'index']);
@@ -82,7 +85,7 @@ Route::middleware('auth:sanctum','active_sector','not_banned')->group(function (
 /*
 |--------------------------------------------------------------------------
 |  ROUTES ADMIN
-|--------------------------------------------------------------------------
+|-----------------------------------------------------------------------------
 */
 
 
@@ -108,37 +111,45 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
 
 /*
-|--------------------------------------------------------------------------
+|-----------------------------------------------------------------------------
 |  ROUTES MANAGER 
 |--------------------------------------------------------------------------
 */
 
 
 
-Route::middleware(['auth:sanctum', 'role:manager','not_banned'])->prefix('manager')->group(function () {
+Route::middleware(['auth:sanctum', 'role:manager', 'not_banned'])->prefix('manager')->group(function () {
     Route::get('/categories', [CategoryIncidentController::class, 'getCategoriesForManager']);
-
-    Route::resource('/incidents', IncidentController::class)->only(['index', 'destroy', 'show']);
+    Route::resource('/incidents', IncidentController::class)->only(['index','show']);
     Route::put('/incidents/{id}/validate', [IncidentController::class, 'qualifyIncident']);
     Route::put('/incidents/{id}/reject', [IncidentController::class, 'rejectIncident']);
     Route::put('/incidents/{incident}/resolve', [IncidentController::class, 'ResolveIncident']);
 
     Route::get('/users', [ModerationController::class, 'SerchUser']);
     Route::post('/users/strike', [ModerationController::class, 'strikeUser']);
-
- 
 });
 
+
+/*
+|--------------------------------------------------------------------------
+|  ROUTES Citoyen 
+|------------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth:sanctum', 'role:citoyen', 'active_sector', 'not_banned'])->group(function () {
+    Route::get('/incidents', [IncidentController::class, 'index']);
+    Route::post('/incidents', [IncidentController::class, 'store']);
+});
 
 
 /*
 |--------------------------------------------------------------------------
 |  ROUTES editor  journaliste et manager 
-|--------------------------------------------------------------------------
+|------------------------------------------------------------------------------
 */
 
 
-Route::middleware(['auth:sanctum', 'role:journaliste|manager','not_banned'])->prefix('editor')->group(function () {
+Route::middleware(['auth:sanctum', 'role:journaliste|manager', 'not_banned'])->prefix('editor')->group(function () {
     Route::get('/articles', [ArticleController::class, 'getArticlesByEditor']);
     Route::post('/articles', [ArticleController::class, 'store']);
     Route::get('/articles/{article:slug}', [ArticleController::class, 'showEditor']);
@@ -153,7 +164,7 @@ Route::middleware(['auth:sanctum', 'role:journaliste|manager','not_banned'])->pr
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth:sanctum', 'role:journaliste','not_banned'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:journaliste', 'not_banned'])->group(function () {
     Route::get('/pharmacies', [DutyPharmacyController::class, 'journalistIndex']);
     Route::post('/pharmacies', [DutyPharmacyController::class, 'store']);
     Route::get('/pharmacies/{dutyPharmacy}', [DutyPharmacyController::class, 'show']);

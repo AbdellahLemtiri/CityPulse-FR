@@ -72,11 +72,10 @@ export default function JournalisteArticles() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto text-gray-800 dark:text-gray-200  duration-300 pb-10">
+    <div className="max-w-6xl mx-auto text-gray-800 dark:text-gray-200  pb-10">
       <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-8 mt-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white uppercase tracking-wide">Mes Alertes & Articles</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Gérez vos publications, modifiez les brouillons ou créez de nouvelles alertes.</p>
+           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Gérez vos publications, modifiez les brouillons ou créez des nouvelles.</p>
         </div>
         <Link to="/editor/rediger" className="bg-primary-600 text-white font-bold py-2.5 px-6 rounded-lg text-sm uppercase flex items-center justify-center gap-2 ">
           <span className="material-symbols-outlined text-[18px]">edit_document</span>
@@ -84,13 +83,13 @@ export default function JournalisteArticles() {
         </Link>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-5 ">
+      <div className=" rounded-lg p-5 ">
         <div className="    p-5 rounded-xl mb-6  flex flex-col sm:flex-row gap-4 items-end">
           <div className="flex-1 w-full">
             <label className="block text-xs font-bold text-gray-400 uppercase  mb-2">Rechercher un par content : </label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-500 text-[20px]">search</span>
-              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Tapez des mot de content ..."  className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-red-500 " />
+              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Tapez des mot de content ..."  className="w-full border border-gray-600 pl-10 p-2 text-sm bg-gray-900 text-white rounded-lg focus:outline-none focus:border-primary-600   " />
             </div>
           </div>
         </div>
@@ -142,8 +141,7 @@ export default function JournalisteArticles() {
             {lastPage > 1 && (
               <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
                 <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="flex items-center gap-1 px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-600 ">
-                  <span className="material-symbols-outlined text-[18px]">chevron_left</span>
-                  Précédent
+                   Précédent
                 </button>
 
                 <span className="text-sm font-bold text-gray-500 dark:text-gray-400">
@@ -152,8 +150,7 @@ export default function JournalisteArticles() {
 
                 <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === lastPage} className="flex items-center gap-1 px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-600 ">
                   Suivant
-                  <span className="material-symbols-outlined text-[18px]">chevron_right</span>
-                </button>
+                 </button>
               </div>
             )}
           </>
