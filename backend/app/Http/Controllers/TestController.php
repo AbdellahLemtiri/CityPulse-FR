@@ -7,12 +7,13 @@ use App\Models\User;
 use App\Models\Incident;
 use App\Models\Partner;
 use App\Models\Article;
+use App\Models\Comment;
 class TestController extends Controller
 {
     public function test()
     {
 
-      $resul = Incident::with('sector')->join('cities','cities.id','=','sectors.city_id')->get();
+      $resul = Comment::withCount('replies');
       return $resul;
     }
 }
@@ -31,5 +32,5 @@ class TestController extends Controller
 
 
 
-
+//has('count',> 5)
 // strtoupper

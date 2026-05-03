@@ -44,7 +44,7 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 */
 
 
-Broadcast::routes(['middleware' => ['auth:sanctum']]);
+
 
 
 
@@ -171,3 +171,11 @@ Route::middleware(['auth:sanctum', 'role:journaliste', 'not_banned'])->group(fun
     Route::put('/pharmacies/{dutyPharmacy}', [DutyPharmacyController::class, 'update']);
     Route::delete('/pharmacies/{dutyPharmacy}', [DutyPharmacyController::class, 'destroy']);
 });
+
+
+
+
+
+
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
