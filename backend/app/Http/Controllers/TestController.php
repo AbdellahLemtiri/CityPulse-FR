@@ -8,12 +8,13 @@ use App\Models\Incident;
 use App\Models\Partner;
 use App\Models\Article;
 use App\Models\Comment;
+use Illuminate\Support\Facades\DB;
 class TestController extends Controller
 {
     public function test()
     {
 
-      $resul = Comment::withCount('replies');
+      $resul = DB::select('');
       return $resul;
     }
 }
