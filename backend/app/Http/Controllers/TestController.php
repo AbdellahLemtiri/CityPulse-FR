@@ -13,9 +13,8 @@ class TestController extends Controller
 {
     public function test()
     {
-
-      $resul = DB::select('');
-      return $resul;
+          
+      return $resul = 0;
     }
 }
 
@@ -33,5 +32,5 @@ class TestController extends Controller
 
 
 
-//has('count',> 5)
+//has('count','>', 5)
 // strtoupper

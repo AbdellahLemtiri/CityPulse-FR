@@ -45,13 +45,6 @@ Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']
 
 
 
-
-
-
-
-
-
-
 Route::middleware('auth:sanctum', 'active_sector', 'not_banned')->group(function () {
 
 

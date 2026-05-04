@@ -67,7 +67,7 @@ class SectorController extends Controller
         $sector->update(['status' => !$sector->status]);
         return response()->json([
             'message' => 'Secteur mis à jour avec succès',
-         ], 200);
+        ], 200);
     }
 
     /**
@@ -84,7 +84,7 @@ class SectorController extends Controller
     public function update(Request $request, string $id)
     {
         //
-        
+
     }
 
     /**
