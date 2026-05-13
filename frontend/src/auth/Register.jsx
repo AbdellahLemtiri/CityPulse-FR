@@ -130,7 +130,6 @@ export default function Register() {
 
   return (
     <div className="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-sans min-h-screen flex flex-col items-center p-6 relative overflow-hidden">
- 
       <header className="w-full max-w-lg flex items-center justify-between z-10 mb-4">
         <Link to="/login" className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-orange-600 transition">
           <ArrowLeft size={18} /> Retour
@@ -151,13 +150,13 @@ export default function Register() {
             <span className={step >= 3 ? 'text-orange-600' : ''}>Sécurité</span>
           </div>
           <div className="flex gap-2 h-1 ">
-            <div className={`flex-1 rounded-lg ${step >= 1 ? 'bg-orange-600  ' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
-            <div className={`flex-1 rounded-lg ${step >= 2 ? 'bg-orange-600  ' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
-            <div className={`flex-1 rounded-lg ${step >= 3 ? 'bg-orange-600  ' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
+            <div className={`flex-1 rounded-lg ${step >= 1 ? 'bg-orange-600 ' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
+            <div className={`flex-1 rounded-lg ${step >= 2 ? 'bg-orange-600 ' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
+            <div className={`flex-1 rounded-lg ${step >= 3 ? 'bg-orange-600 ' : 'bg-gray-200 dark:bg-slate-800'}`}></div>
           </div>
         </div>
 
-        <div className="w-full bg-white dark:bg-slate-900 p-8 rounded-lg   border border-gray-100 dark:border-slate-800 relative min-h-[400px]">
+        <div className="w-full bg-white dark:bg-slate-900 p-8 rounded-lg border border-gray-100 dark:border-slate-800 relative min-h-[400px]">
           <form onSubmit={onSubmit} className="flex flex-col h-full justify-between">
             <Toaster />
 
@@ -187,7 +186,7 @@ export default function Register() {
                 </div>
 
                 <div className="space-y-1 relative group">
-                  <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">CIN (Carte Nationale) *</label><span className="text-xs text-gray-500 dark:text-gray-400">({'non modifiable '})</span>
+                  <label className="text-[10px] font-bold uppercase text-gray-400 ml-1">CIN (Carte Nationale) *</label><span className="text-xs text-gray-500 dark:text-gray-400">{' (non modifiable)'}</span>
                   <div className="relative">
                     <input type="text" id="cin" value={formData.cin} onChange={handleChange} required placeholder="H123456" className={` ${fieldErrors.cin ? 'border-red-600' : 'border-gray-200 dark:border-slate-700'} w-full bg-gray-50 py-3 dark:text-white border dark:bg-slate-800 border-gray-200 dark:border-gray-600 focus:border-primary-600 dark:focus:border-primary-600 rounded-lg px-12 text-gray-900 outline-none resize-none uppercase `} />
                     <CreditCard size={20} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -204,17 +203,17 @@ export default function Register() {
                   {fieldErrors.telephone && <p className="text-[10px] text-red-500 ml-1">{fieldErrors.telephone}</p>}
                 </div>
 
-                <button type="button" onClick={nextStep} disabled={!formData.first_name || !formData.last_name || !formData.cin || !formData.telephone} className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl    flex items-center justify-center gap-2 mt-4 disabled:opacity-50">
+                <button type="button" onClick={nextStep} disabled={!formData.first_name || !formData.last_name || !formData.cin || !formData.telephone} className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 mt-4 disabled:opacity-50">
                   Suivant <ArrowRight size={18} />
                 </button>
               </div>
             )}
 
-             {step === 2 && (
+            {step === 2 && (
               <div className="animate-fade-in flex flex-col h-full justify-between space-y-4">
                 <div>
                   <h2 className="text-2xl font-bold mb-1">Votre Secteur</h2>
-                  <p className="text-sm text-gray-500 mb-4">Choisissez votre zone .</p>
+                  <p className="text-sm text-gray-500 mb-4">Choisissez votre zone.</p>
 
                   <div className="mt-3 relative group">
                     <label className="text-[10px] font-bold uppercase text-gray-400 ml-1 mb-1.5">Ville *</label>
@@ -232,9 +231,8 @@ export default function Register() {
 
                   <div className="mt-3 relative group">
                     <label className="text-[10px] font-bold uppercase text-gray-400 ml-1 ">L'annexe administrative *</label>
-
                     {isLoadingSectors ? (
-                      <div className="flex justify-center  ">
+                      <div className="flex justify-center ">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
                       </div>
                     ) : (
@@ -270,7 +268,7 @@ export default function Register() {
               </div>
             )}
 
-             {step === 3 && (
+            {step === 3 && (
               <div className="animate-fade-in flex flex-col h-full justify-between space-y-4">
                 <div>
                   <h2 className="text-2xl font-bold mb-1">Sécurisation</h2>
@@ -294,17 +292,21 @@ export default function Register() {
                           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                         </button>
                       </div>
-                      {formData.password && (
-                        <div className="mt-2 text-xs">
-                          <span className={pwdRules.length ? 'text-green-600' : 'text-gray-500'}>8 caractères </span>
-                          {' | '}
-                          <span className={pwdRules.upper ? 'text-green-600' : 'text-gray-500'}>Majuscule</span>
-                          {' | '}
-                          <span className={pwdRules.number ? 'text-green-600' : 'text-gray-500'}>Chiffre</span>
-                          {' | '}
-                          <span className={pwdRules.special ? 'text-green-600' : 'text-gray-500'}>Spécial @#$ ...</span>
+                      
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-medium">
+                        <div className={`flex items-center gap-1.5 transition-colors duration-300 ${pwdRules.length ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}`}>
+                          {pwdRules.length ? <Check size={14} /> : <X size={14} />} 8+ caractères
                         </div>
-                      )}
+                        <div className={`flex items-center gap-1.5 transition-colors duration-300 ${pwdRules.upper ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}`}>
+                          {pwdRules.upper ? <Check size={14} /> : <X size={14} />} Majuscule
+                        </div>
+                        <div className={`flex items-center gap-1.5 transition-colors duration-300 ${pwdRules.number ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}`}>
+                          {pwdRules.number ? <Check size={14} /> : <X size={14} />} Chiffre
+                        </div>
+                        <div className={`flex items-center gap-1.5 transition-colors duration-300 ${pwdRules.special ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}`}>
+                          {pwdRules.special ? <Check size={14} /> : <X size={14} />} Spécial (@, #, $...)
+                        </div>
+                      </div>
                     </div>
 
                     <div className="flex items-start gap-3 pt-2">
@@ -320,15 +322,14 @@ export default function Register() {
                   <button type="button" onClick={prevStep} className="px-6 border border-gray-200 dark:border-slate-700 text-gray-500 font-bold py-3 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-800">
                     Retour
                   </button>
-                  <button type="submit" disabled={loading || !isPasswordValid || !formData.terms} className="flex-1 bg-primary-600 dark:bg-primary-400 text-white dark:text-gray-100 hover:opacity-90 font-bold py-3 rounded-xl   flex items-center justify-center gap-2 disabled:opacity-50">
+                  <button type="submit" disabled={loading || !isPasswordValid || !formData.terms} className="flex-1 bg-primary-600 dark:bg-primary-400 text-white dark:text-gray-100 hover:opacity-90 font-bold py-3 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50">
                     {loading ? (
-                      <div className="flex justify-center  ">
+                      <div className="flex justify-center ">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
                       </div>
                     ) : (
                       <>
-                        {' '}
-                       { 'Terminer' }<CheckCircle2 size={18} />
+                        Terminer <CheckCircle2 size={18} />
                       </>
                     )}
                   </button>
