@@ -29,7 +29,7 @@ Dans un contexte de modernisation des services publics, **CityPulse** répond à
 
 ---
 
-## 🛠️ Stack Technologique (2030 Standard)
+## 🛠️ Stack Technologique 
 
 Pour garantir une plateforme hautement disponible et évolutive, CityPulse repose sur une **Architecture Découplée (Decoupled Architecture)**.
 
@@ -71,7 +71,7 @@ CityPulse interconnecte cinq profils pour une boucle de résolution transparente
 
 ---
 
-## 📅 Planification Agile (Roadmap)
+## 📅 Planification Agile  
 
 Le projet est piloté selon la méthodologie **Agile Scrum** en 8 Sprints :
 
